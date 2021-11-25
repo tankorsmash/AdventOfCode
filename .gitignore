@@ -1,0 +1,129 @@
+#elm generates a main.js file, I dont want to worry about it
+main.js
+
+
+## TEMP WHILE I DONT HAVE MOBILE SUPPORT
+proj.android
+proj.ios_mac
+proj.win32/.vs/
+
+
+.DS_Store
+**/.DS_Store
+
+cocos2d - 3.10/**
+cocos2d pre 3.10 i think/**
+cocos2d/**
+bin/**
+
+**/xcuserdata/**
+**/build/**
+
+*.a
+*.o
+**.o.d
+*.so
+
+*.sdf
+*.opensdf
+
+*~
+*.un
+*.sw[a-z]
+
+*.lib
+*.dll
+*.pdb
+
+**/Debug/**
+
+*.tlog
+
+*ipch*
+proj.win32/Debug.win32/beatupisis.log
+
+*.exe
+*.apk
+*.apk.*
+
+*/bin/*
+*/obj/*
+*.obj
+*.o.d$
+*.ilk
+
+*tags*
+
+raw/*
+# raw/MagnoliaCreator/
+raw/MagnoliaCreator/packages
+raw/MagnoliaCreator/json
+raw/MagnoliaCreator/local
+raw/MagnoliaCreator/settings
+raw/MagnoliaCreator/creator.d.ts
+raw/MagnoliaCreator/jsconfig.json
+raw/MagnoliaCreator/.gitignore
+
+!raw/MagnoliaCreator/
+!raw/MagnoliaCreator/assets
+!raw/MagnoliaCreator/ccreator
+!raw/MagnoliaCreator/project.json
+
+#ignore all the output of the creator, because we track it in raw/MagnoliaCreator/
+Resources/creator
+
+proj.win32/beatupisis.v12.suo
+proj.win32/Debug.win32/*
+
+
+proj.android/assets/*
+proj.android/assets/
+proj.android/obj/*
+proj.android/obj/
+
+Doxy*
+
+*.7z
+
+
+proj.win32/Debug.win32.zip
+proj.win32/Debug.win32/
+proj.win32/Release.win32/
+*.psess
+*.user
+*.suo
+*.v12.suo
+*.vsp
+
+*.pyc
+
+python/
+
+node_modules/
+
+proj.android/gen/com/tankorsmash/buildupthebase/*
+CMakeLists.txt
+androidpublisher.dat
+**.keystore
+*.zip
+*.TMP
+
+*/local/logs/project.log
+
+# misc files I don't need attached to my git
+reddit_post*
+
+# audio
+*.mp3
+*.ogg
+*.wav
+
+
+# elm specific
+# elm-package generated files
+elm-stuff
+# elm-repl generated files
+repl-temp-*
+
+# zig
+zig-cache/
