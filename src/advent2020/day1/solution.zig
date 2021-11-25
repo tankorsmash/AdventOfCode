@@ -1,6 +1,12 @@
 const std = @import("std");
 const File = std.fs.File;
+const fmt = std.fmt;
 // const io = @import("stdio");
+
+
+pub fn intToString(int: u32, buf: []u8) ![]const u8 {
+    return try std.fmt.bufPrint(buf, "{}", .{int});
+}
 
 pub fn solve(x: i32, y: i32) anyerror!i32 {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -15,15 +21,20 @@ pub fn solve(x: i32, y: i32) anyerror!i32 {
     var in_stream = buf_reader.reader();
 
 
-    var all_lines: std.ArrayList([]u8) = std.ArrayList([]u8).init(allocator);
+    var all_lines: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
     _ = all_lines;
 
-    var line_buf: [5]u8 = undefined;
-    while (try in_stream.readUntilDelimiterOrEof(&line_buf, '\n')) |line| {
-        // do something with line...
-        std.log.info("Reading line: {s}", .{line});
+    var line_buf: [10]u8 = undefined;
+    while (try in_stream.readUntilDelimiterOrEof(&line_buf, '\n')) |raw_line| {
+        var line = std.mem.trimRight(u8, raw_line, "\r\n");
 
-        try all_lines.append(line);
+        const guess = fmt.parseInt(i32, line, 10) catch {
+            std.log.info("Invalid number: {d}\n", .{line});
+            continue;
+        };
+        try all_lines.append(guess);
     }
+
+    std.log.info("result: {d}", .{all_lines.items});
     return x+y;
 }
