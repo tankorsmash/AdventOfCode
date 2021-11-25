@@ -1,13 +1,8 @@
 const std = @import("std");
 const File = std.fs.File;
 const fmt = std.fmt;
-// const io = @import("stdio");
 
-pub fn intToString(int: u32, buf: []u8) ![]const u8 {
-    return try std.fmt.bufPrint(buf, "{}", .{int});
-}
-
-pub fn solve(x: i32, y: i32) anyerror!i32 {
+pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
@@ -33,26 +28,32 @@ pub fn solve(x: i32, y: i32) anyerror!i32 {
         try all_values.append(guess);
     }
 
-    std.log.info("values: {d}", .{all_values.items});
+    // std.log.info("values: {d}", .{all_values.items});
+
+    var found_part_one = false;
+    var found_part_two = false;
 
     for (all_values.items) |val, idx| {
-        _ = val;
-        _ = idx;
-
         for (all_values.items) |other_val, other_idx| {
-            _ = other_val;
-            _ = other_idx;
-
             if (other_idx == idx) {
                 continue;
             }
 
-            if (val + other_val == 2020) {
+            if (val + other_val == 2020 and !found_part_one) {
                 std.log.info("answer is {d}", .{val * other_val});
-                break;
+                found_part_one = true;
+            }
+
+            for (all_values.items) |third_val, third_idx| {
+                if (third_idx == idx or third_idx == other_idx) {
+                    continue;
+                }
+
+                if (val + other_val + third_val == 2020 and !found_part_two) {
+                    std.log.info("answer is {d}", .{val * other_val * third_val});
+                    found_part_two = true;
+                }
             }
         }
     }
-
-    return x + y;
 }
