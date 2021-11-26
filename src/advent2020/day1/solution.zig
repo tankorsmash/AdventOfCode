@@ -10,7 +10,7 @@ pub fn solve() anyerror!void {
 
     const allocator = &arena.allocator;
 
-    var all_values = try load_input.load_input(allocator, 1);
+    var all_values = try load_input.load_input_i32(allocator, 1);
 
     var found_part_one = false;
     var found_part_two = false;

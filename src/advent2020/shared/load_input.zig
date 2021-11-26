@@ -3,7 +3,7 @@ const File = std.fs.File;
 const fmt = std.fmt;
 const bufPrint = std.fmt.bufPrint;
 
-pub fn load_input(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayList(i32) {
+pub fn load_input_raw(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayList(std.ArrayList(u8)) {
     var filename = try fmt.allocPrint(allocator, "src/advent2020/day{d}/input.txt", .{day});
 
     std.log.info("loaded filename: {s}", .{filename});
@@ -14,19 +14,35 @@ pub fn load_input(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayLis
     var buf_reader = std.io.bufferedReader(file.reader());
     var in_stream = buf_reader.reader();
 
-    var all_values: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
+    var all_values: std.ArrayList(std.ArrayList(u8)) = std.ArrayList(std.ArrayList(u8)).init(allocator);
 
     var line_buf: [10]u8 = undefined;
     while (try in_stream.readUntilDelimiterOrEof(&line_buf, '\n')) |raw_line| {
         var line = std.mem.trimRight(u8, raw_line, "\r\n");
 
-        const guess = fmt.parseInt(i32, line, 10) catch {
-            std.log.info("Invalid number: {d}\n", .{line});
+        var inner_arr = std.ArrayList(u8).init(allocator);
+        for (line) |c| {
+            try inner_arr.append(c);
+        }
+        try all_values.append(inner_arr);
+    }
+
+    std.log.info("values: {d}", .{all_values.items});
+    return all_values;
+}
+
+pub fn load_input_i32(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayList(i32) {
+    var raw_values = try load_input_raw(allocator, day);
+
+    var all_values: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
+
+    for (raw_values.items) |inner_arr| {
+        const guess = fmt.parseInt(i32, inner_arr.items[0..], 10) catch {
+            std.log.info("Invalid number: {d}\n", .{inner_arr.items[0..]});
             continue;
         };
         try all_values.append(guess);
     }
 
-    std.log.info("values: {d}", .{all_values.items});
     return all_values;
 }
