@@ -127,3 +127,6 @@ repl-temp-*
 
 # zig
 zig-cache/
+.zigmod
+zigmod.lock
+deps.zig
