@@ -17,7 +17,7 @@ pub fn solve() anyerror!void {
             }
 
             if (val + other_val == 2020 and !found_part_one) {
-                std.log.info("answer is {d}", .{val * other_val});
+                std.log.info("Part 1: {d}", .{val * other_val});
                 found_part_one = true;
             }
 
@@ -27,7 +27,7 @@ pub fn solve() anyerror!void {
                 }
 
                 if (val + other_val + third_val == 2020 and !found_part_two) {
-                    std.log.info("answer is {d}", .{val * other_val * third_val});
+                    std.log.info("Part 2: {d}", .{val * other_val * third_val});
                     found_part_two = true;
                 }
             }
