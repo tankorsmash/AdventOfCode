@@ -13,7 +13,7 @@ pub fn solve() anyerror!void {
     var all_values = try load_input.load_input_line_bytes(allocator, 1);
 
     for (all_values.items) |bytes| {
-        const guess = try fmt.allocPrint(allocator, "{s}", .{bytes});
+        const guess: []u8 = try fmt.allocPrint(allocator, "{s}", .{bytes.items});
         // const guess = fmt.parseInt([]u8, bytes.items[0..], 10) catch |err| {
         //     std.log.info("err: {any}\n", .{err});
         //     std.log.info("Invalid number: {d}\n", .{bytes.items[0..]});
@@ -21,6 +21,6 @@ pub fn solve() anyerror!void {
         // };
 
         //TODO make `guess` be an actual ascii string, because allocPrint doesn't do it
-        std.log.info("Line: {s}", .{guess});
+        std.log.info("happy: {s}", .{guess});
     }
 }
