@@ -15,21 +15,25 @@ pub fn solve() anyerror!void {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
         return;
     };
+    var str: *const [3:0]u8 = "asd";
+    _ = str;
 
     for (all_values.items) |arr_bytes| {
-        const bytes: []u8 = arr_bytes.items;
+        var bytes: []u8 = arr_bytes.items;
+        // var text: *const [11:0]u8 = "word1 WORD2";
+
         std.log.info("pre-split: {s}", .{bytes});
 
-        const split_iter = std.mem.split(u8, bytes, " ");
-        const text = "word1 WORD2";
-        _ = text;
+        var split_iter = std.mem.split(u8, bytes, " ");
         // var split_iter = std.mem.split(u8, text, " ");
 
-        const splitted = split_iter.next().?;
-        std.log.info("QWE idx 0:::: {s}", .{splitted});
+        var splitted = split_iter.next();
+        // std.log.info("QWE idx 0:::: {s}", .{splitted});
+
+        // _ = text;
         _ = splitted;
 
-        const guess: [:0]u8 = try fmt.allocPrint(allocator, "{s}", .{bytes});
+        const guess= try fmt.allocPrint(allocator, "{s}", .{splitted});
         // const guess = fmt.parseInt([]u8, bytes.items[0..], 10) catch |err| {
         //     std.log.info("err: {any}\n", .{err});
         //     std.log.info("Invalid number: {d}\n", .{bytes.items[0..]});
