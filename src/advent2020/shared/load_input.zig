@@ -3,19 +3,8 @@ const File = std.fs.File;
 const fmt = std.fmt;
 const bufPrint = std.fmt.bufPrint;
 
-
-pub fn load_input(day: u32) anyerror!std.ArrayList(i32) {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    // defer arena.deinit(); //if i uncomment this, the array gets destroyed
-
-    const allocator = &arena.allocator;
-
+pub fn load_input(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayList(i32) {
     var filename = try fmt.allocPrint(allocator, "src/advent2020/day{d}/input.txt", .{day});
-    // defer allocator.free(filename);
-
-    // var filename: [256]u8 = undefined;
-    //
-    // _ = try bufPrint(&filename, "src/advent2020/day{d}/input.txt", .{day});
 
     std.log.info("loaded filename: {s}", .{filename});
 
@@ -26,7 +15,6 @@ pub fn load_input(day: u32) anyerror!std.ArrayList(i32) {
     var in_stream = buf_reader.reader();
 
     var all_values: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
-    _ = all_values;
 
     var line_buf: [10]u8 = undefined;
     while (try in_stream.readUntilDelimiterOrEof(&line_buf, '\n')) |raw_line| {

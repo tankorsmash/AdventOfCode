@@ -5,11 +5,16 @@ const fmt = std.fmt;
 const load_input = @import("../shared/load_input.zig");
 
 pub fn solve() anyerror!void {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
 
-    var all_values = try load_input.load_input(1);
+    const allocator = &arena.allocator;
+
+    var all_values = try load_input.load_input(allocator, 1);
 
     var found_part_one = false;
     var found_part_two = false;
+
     for (all_values.items) |val, idx| {
         for (all_values.items) |other_val, other_idx| {
             if (other_idx == idx) {
@@ -17,7 +22,7 @@ pub fn solve() anyerror!void {
             }
 
             if (val + other_val == 2020 and !found_part_one) {
-                std.log.info("Part 1: {d}", .{val * other_val});
+                std.log.info("Advent Day 1 Part 1:: {d}", .{val * other_val});
                 found_part_one = true;
             }
 
@@ -27,7 +32,7 @@ pub fn solve() anyerror!void {
                 }
 
                 if (val + other_val + third_val == 2020 and !found_part_two) {
-                    std.log.info("Part 2: {d}", .{val * other_val * third_val});
+                    std.log.info("Advent Day 1 Part 2:: {d}", .{val * other_val * third_val});
                     found_part_two = true;
                 }
             }
