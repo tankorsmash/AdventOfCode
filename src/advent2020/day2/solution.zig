@@ -13,6 +13,6 @@ pub fn solve() anyerror!void {
     var all_values = try load_input.load_input_raw(allocator, 1);
 
     for (all_values.items) |line| {
-
+        std.log.info("Line: {any}", .{line.items});
     }
 }
