@@ -6,7 +6,6 @@ const day2 = @import("advent2020/day2/solution.zig");
 pub fn main() anyerror!void {
     std.log.info("{}", .{day1.solve()});
     std.log.info("{}", .{day2.solve()});
-
 }
 
 test "basic test" {
