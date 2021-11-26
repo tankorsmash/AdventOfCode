@@ -16,8 +16,19 @@ pub fn solve() anyerror!void {
         return ;
     };
 
-    for (all_values.items) |bytes| {
-        const guess: []u8 = try fmt.allocPrint(allocator, "{s}", .{bytes.items});
+    for (all_values.items) |arr_bytes| {
+        const bytes: []u8 = arr_bytes.items;
+        std.log.info("pre-split: {s}", .{bytes});
+
+        // const split_iter = std.mem.split(u8, bytes, " ");
+        const text = "word1 WORD2";
+        var split_iter = std.mem.split(u8, text, " ");
+
+        const splitted = split_iter.next().?;
+        std.log.info("QWE idx 0:::: {s}", .{splitted});
+        _ = splitted;
+
+        const guess: []u8 = try fmt.allocPrint(allocator, "{s}", .{bytes});
         // const guess = fmt.parseInt([]u8, bytes.items[0..], 10) catch |err| {
         //     std.log.info("err: {any}\n", .{err});
         //     std.log.info("Invalid number: {d}\n", .{bytes.items[0..]});
