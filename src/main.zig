@@ -1,6 +1,7 @@
 const std = @import("std");
 
 const day1 = @import("advent2020/day1/solution.zig");
+const day2 = @import("advent2020/day2/solution.zig");
 
 pub fn main() anyerror!void {
     const result = day1.solve();
