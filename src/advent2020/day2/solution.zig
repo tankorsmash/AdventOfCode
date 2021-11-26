@@ -10,7 +10,11 @@ pub fn solve() anyerror!void {
 
     const allocator = &arena.allocator;
 
-    var all_values = try load_input.load_input_line_bytes(allocator, 1);
+    const day = 2;
+    var all_values = load_input.load_input_line_bytes(allocator, day) catch |err| {
+        std.log.err("error loading input for Day {d}! {any}", .{day, err});
+        return ;
+    };
 
     for (all_values.items) |bytes| {
         const guess: []u8 = try fmt.allocPrint(allocator, "{s}", .{bytes.items});

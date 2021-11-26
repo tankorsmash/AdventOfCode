@@ -16,7 +16,7 @@ pub fn load_input_line_bytes(allocator: *std.mem.Allocator, day: u32) anyerror!s
 
     var all_values: std.ArrayList(std.ArrayList(u8)) = std.ArrayList(std.ArrayList(u8)).init(allocator);
 
-    var line_buf: [10]u8 = undefined;
+    var line_buf: [2048]u8 = undefined; //TODO figure out if this is a good idea or not. seems like its just asking for trouble once I get more data in here again
     while (try in_stream.readUntilDelimiterOrEof(&line_buf, '\n')) |raw_line| {
         var line = std.mem.trimRight(u8, raw_line, "\r\n");
 
