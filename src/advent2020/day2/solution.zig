@@ -10,7 +10,7 @@ pub fn solve() anyerror!void {
 
     const allocator = &arena.allocator;
 
-    var all_values = try load_input.load_input_raw(allocator, 1);
+    var all_values = try load_input.load_input_line_bytes(allocator, 1);
 
     for (all_values.items) |line| {
         std.log.info("Line: {any}", .{line.items});

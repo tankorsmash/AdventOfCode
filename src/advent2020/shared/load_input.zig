@@ -3,7 +3,7 @@ const File = std.fs.File;
 const fmt = std.fmt;
 const bufPrint = std.fmt.bufPrint;
 
-pub fn load_input_raw(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayList(std.ArrayList(u8)) {
+pub fn load_input_line_bytes(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayList(std.ArrayList(u8)) {
     var filename = try fmt.allocPrint(allocator, "src/advent2020/day{d}/input.txt", .{day});
 
     std.log.info("loaded filename: {s}", .{filename});
@@ -32,7 +32,7 @@ pub fn load_input_raw(allocator: *std.mem.Allocator, day: u32) anyerror!std.Arra
 }
 
 pub fn load_input_i32(allocator: *std.mem.Allocator, day: u32) anyerror!std.ArrayList(i32) {
-    var raw_values = try load_input_raw(allocator, day);
+    var raw_values = try load_input_line_bytes(allocator, day);
 
     var all_values: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
 
