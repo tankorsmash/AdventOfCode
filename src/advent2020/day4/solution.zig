@@ -6,51 +6,56 @@ const load_input = @import("../shared/load_input.zig");
 
 const c = @cImport(@cInclude("C:/code/utils/vcpkg/installed/x64-windows/include/curl/curl.h"));
 
-pub fn myfunc(data: []u8, size: u32, nmemb: u32, userdata: *c_void) !void {
+const assert = @import("std").debug.assert;
+
+pub fn myfunc(data: []u8, size: u32, count: u32, userdata: *c_void) !void {
     _ = data;
-    _ = size;
-    _ = nmemb;
+    _ = size; //always supposed to be 1
+    // assert(size == 1);
+
+    _ = count;
     _ = userdata;
-    std.log.info("size of resp to write: {d}", .{size});
-
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-
-    // var orig_data_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
-    // _ = orig_data_ptr;
-
-    std.log.info("cast is done", .{});
-
-    std.log.info("size is: {d}", .{size});
-    std.log.info("nmemb is: {d}", .{nmemb});
-    var realsize: u64 = size * nmemb;
-    std.log.info("realsize is: {d}", .{realsize});
-    // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
-    // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
-
-    const allocator = &arena.allocator;
-    var new_chunk = try allocator.alloc(u8, realsize+1);
-    _= new_chunk;
-    std.mem.copy(u8, new_chunk, data);
-
-    std.log.info("copy is done", .{});
-
-    // var some_ptr_nullable:?*c_void = std.c.realloc(orig_data_ptr, size*nmemb);
-    // std.log.info("realloc is done", .{});
-    // if (some_ptr_nullable == null) {
-    //     std.log.err("some_ptr_nullable is null", .{});
-    //     return;
-    // } else {
-    //     std.log.info("some_ptr_nullable is NOT NULL YAY", .{});
-    // }
-    // var some_ptr:*c_void = some_ptr_nullable.?;
-    // _ = some_ptr;
-
-    var some_valid_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
-    _ = some_valid_ptr;
-    var some_orig_data = some_valid_ptr.*;
-    _ = some_orig_data;
-    std.log.info("some data cast is done", .{});
+    std.log.info("RANDOM PRINT", .{});
+    // std.log.info("size of resp to write: {d}", .{size});
+    //
+    // var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    // defer arena.deinit();
+    //
+    // // var orig_data_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
+    // // _ = orig_data_ptr;
+    //
+    // std.log.info("cast is done", .{});
+    //
+    // std.log.info("size is: {d}", .{size});
+    // std.log.info("count is: {d}", .{count});
+    // var realsize: u64 = size * count;
+    // std.log.info("realsize is: {d}", .{realsize});
+    // // var some_ptr:u8 = std.c.realloc(userdata, size*count).?;
+    // // var some_ptr:u8 = std.c.realloc(userdata, size*count).?;
+    //
+    // const allocator = &arena.allocator;
+    // var new_chunk = try allocator.alloc(u8, realsize+1);
+    // _= new_chunk;
+    // std.mem.copy(u8, new_chunk, data);
+    //
+    // std.log.info("copy is done", .{});
+    //
+    // // var some_ptr_nullable:?*c_void = std.c.realloc(orig_data_ptr, size*count);
+    // // std.log.info("realloc is done", .{});
+    // // if (some_ptr_nullable == null) {
+    // //     std.log.err("some_ptr_nullable is null", .{});
+    // //     return;
+    // // } else {
+    // //     std.log.info("some_ptr_nullable is NOT NULL YAY", .{});
+    // // }
+    // // var some_ptr:*c_void = some_ptr_nullable.?;
+    // // _ = some_ptr;
+    //
+    // var some_valid_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
+    // _ = some_valid_ptr;
+    // var some_orig_data = some_valid_ptr.*;
+    // _ = some_orig_data;
+    // std.log.info("some data cast is done", .{});
 
     // var orig_data: []u8 = orig_data_ptr.*;
     // _ = orig_data;
@@ -63,7 +68,7 @@ pub fn myfunc(data: []u8, size: u32, nmemb: u32, userdata: *c_void) !void {
     // std.mem.copy([]u8, @ptrCast(u8, userdata), ptr);
     // std.mem.copy(u8, valid_data[0..10], ptr[0..1]);
 
-    // std.log.info("{any} {d} {d} {d}", .{ptr, size, nmemb, userdata});
+    // std.log.info("{any} {d} {d} {d}", .{ptr, size, count, userdata});
     // std.log.info("\n\nSTART {any}\n", .{valid_data});
 }
 
@@ -82,9 +87,9 @@ pub fn solve() anyerror!void {
         _ = c.curl_easy_setopt(curl, c.CURLOPT_URL, "http://httpbin.org/get");
         _ = c.curl_easy_setopt(curl, c.CURLOPT_FOLLOWLOCATION, @intCast(i32, 1));
 
-        _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEFUNCTION, myfunc);
+        _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEFUNCTION, &myfunc);
 
-        var chunk: []u8 = try allocator.alloc(u8, 256*100 );
+        var chunk: []u8 = try allocator.alloc(u8, 256);
         _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEDATA, &chunk);
 
         var res = c.curl_easy_perform(curl);
