@@ -17,16 +17,41 @@ pub fn myfunc(ptr: []u8, size: u32, nmemb: u32, userdata: *c_void) void {
 
     var valid_data_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
     _ = valid_data_ptr;
-    // _ = std.c.realloc(valid_data_ptr, size+1);
+
+    std.log.info("cast is done", .{});
+
+    var realsize = size * nmemb;
+    std.log.info("realsize is: {d}", .{realsize});
+    // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
+    // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
+
+    // var some_ptr_nullable:?*c_void = std.c.realloc(valid_data_ptr, size*nmemb);
+    std.log.info("realloc is done", .{});
+    // if (some_ptr_nullable == null) {
+    //     std.log.err("some_ptr_nullable is null", .{});
+    //     return;
+    // } else {
+    //     std.log.info("some_ptr_nullable is NOT NULL YAY", .{});
+    // }
+    // var some_ptr:*c_void = some_ptr_nullable.?;
+    // _ = some_ptr;
+
+    var some_valid_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
+    _ = some_valid_ptr;
+    var some_valid_data = some_valid_ptr.*;
+    _ = some_valid_data;
+    std.log.info("some data cast is done", .{});
 
     var valid_data: []u8 = valid_data_ptr.*;
     _ = valid_data;
+    // std.log.info("\n\nPTR IS: {any}\n", .{ptr});
+    std.log.info("\n\nVALID_DATA: {any}\n", .{valid_data});
 
     // std.mem.copy([]u8, @ptrCast(u8, userdata), ptr);
-    // std.mem.copy(u8, userdata, ptr);
+    // std.mem.copy(u8, valid_data[0..10], ptr[0..1]);
 
     // std.log.info("{any} {d} {d} {d}", .{ptr, size, nmemb, userdata});
-    std.log.info("\n\nSTART {any}\n", .{valid_data});
+    // std.log.info("\n\nSTART {any}\n", .{valid_data});
 }
 
 pub fn solve() anyerror!void {
@@ -46,7 +71,7 @@ pub fn solve() anyerror!void {
 
         _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEFUNCTION, myfunc);
 
-        var chunk: []u8 = try allocator.alloc(u8, 256 * 10000);
+        var chunk: []u8 = try allocator.alloc(u8, 256*100 );
         _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEDATA, chunk);
 
         var res = c.curl_easy_perform(curl);
