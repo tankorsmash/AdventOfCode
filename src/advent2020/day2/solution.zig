@@ -24,23 +24,46 @@ pub fn solve() anyerror!void {
 
         std.log.info("pre-split: {s}", .{bytes});
 
+        //ie 13-17, s:, ssssssssssssssssgssj
         var split_iter = std.mem.split(u8, bytes, " ");
         // var split_iter = std.mem.split(u8, text, " ");
+        _ = split_iter;
 
-        var splitted = split_iter.next();
-        // std.log.info("QWE idx 0:::: {s}", .{splitted});
+        //ie 13-17
+        var raw_count_rule = split_iter.next().?;
+        var split_count_rule = std.mem.split(u8, raw_count_rule, "-");
+        _ = raw_count_rule;
 
-        // _ = text;
-        _ = splitted;
+        //ie 13
+        var raw_count_min = split_count_rule.next().?;
+        _ = raw_count_min;
+        var count_min: i32 = try fmt.parseInt(i32, raw_count_min[0..], 10);
+        _ = count_min;
 
-        const guess= try fmt.allocPrint(allocator, "{s}", .{splitted});
-        // const guess = fmt.parseInt([]u8, bytes.items[0..], 10) catch |err| {
-        //     std.log.info("err: {any}\n", .{err});
-        //     std.log.info("Invalid number: {d}\n", .{bytes.items[0..]});
-        //     continue;
-        // };
+        //ie 17
+        var raw_count_max = split_count_rule.next().?;
+        _ = raw_count_max;
+        var count_max = try fmt.parseInt(i32, raw_count_max[0..], 10);
+        _ = count_max;
 
-        //TODO make `guess` be an actual ascii string, because allocPrint doesn't do it
-        std.log.info("happy: {s}", .{guess});
+        //ie s:
+        var raw_char_rule = split_iter.next().?;
+        _ = raw_char_rule;
+        //ie s, since its always one character
+        var char_rule: []u8  = try fmt.allocPrint(allocator, "{s}", .{raw_char_rule[0..1]});
+        _ = char_rule;
+        std.log.info("char rule {s}", .{char_rule});
+
+
+        //ie ssssssssssssssssgssj
+        var raw_password = split_iter.next().?;
+        _ = raw_password;
+
+        var char_appearances:usize = std.mem.count(u8, raw_password, char_rule);
+        // @compileLog(@TypeOf(char_appearances));
+        std.log.info("char_appearances: {d}", .{char_appearances});
+
+        // const stringed = try fmt.allocPrint(allocator, "{s}", .{splitted});
+        std.log.info("happy: {s}", .{try fmt.allocPrint(allocator, "{s}", .{raw_count_rule})});
     }
 }
