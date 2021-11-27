@@ -15,6 +15,13 @@ pub fn build(b: *std.build.Builder) void {
     const exe = b.addExecutable("advent", "src/main.zig");
     exe.setTarget(target);
     exe.setBuildMode(mode);
+
+    exe.linkLibC();
+    exe.addIncludeDir("C:/code/utils/vcpkg/installed/x64-windows/include/curl");
+    exe.addLibPath("C:/code/utils/vcpkg/installed/x64-windows/lib");
+    // exe.addLibPath("C:/code/utils/vcpkg/installed/x64-windows/bin"); //libcurl.dll is here, but idk how to access it
+    exe.linkSystemLibraryName("libcurl");
+
     deps.addAllTo(exe);
     exe.install();
 
