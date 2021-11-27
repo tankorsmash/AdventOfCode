@@ -27,7 +27,7 @@ pub fn load_input_line_bytes(allocator: *std.mem.Allocator, day: u32) anyerror!s
         try all_values.append(inner_arr);
     }
 
-    std.log.info("values: {d}", .{all_values.items});
+    // std.log.info("values: {d}", .{all_values.items});
     return all_values;
 }
 

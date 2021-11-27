@@ -4,8 +4,8 @@ const day1 = @import("advent2020/day1/solution.zig");
 const day2 = @import("advent2020/day2/solution.zig");
 
 pub fn main() anyerror!void {
-    std.log.info("{}", .{day1.solve()});
-    std.log.info("{}", .{day2.solve()});
+    std.log.info("Day1 Error?: {}", .{day1.solve()});
+    std.log.info("Day2 Error?: {}", .{day2.solve()});
 }
 
 test "basic test" {

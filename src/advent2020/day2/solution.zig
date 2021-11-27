@@ -18,11 +18,13 @@ pub fn solve() anyerror!void {
     var str: *const [3:0]u8 = "asd";
     _ = str;
 
+    var num_valid_passwords: u32 = 0;
+
     for (all_values.items) |arr_bytes| {
         var bytes: []u8 = arr_bytes.items;
         // var text: *const [11:0]u8 = "word1 WORD2";
 
-        std.log.info("pre-split: {s}", .{bytes});
+        // std.log.info("pre-split: {s}", .{bytes});
 
         //ie 13-17, s:, ssssssssssssssssgssj
         var split_iter = std.mem.split(u8, bytes, " ");
@@ -52,7 +54,7 @@ pub fn solve() anyerror!void {
         //ie s, since its always one character
         var char_rule: []u8  = try fmt.allocPrint(allocator, "{s}", .{raw_char_rule[0..1]});
         _ = char_rule;
-        std.log.info("char rule {s}", .{char_rule});
+        // std.log.info("char rule {s}", .{char_rule});
 
 
         //ie ssssssssssssssssgssj
@@ -61,9 +63,18 @@ pub fn solve() anyerror!void {
 
         var char_appearances:usize = std.mem.count(u8, raw_password, char_rule);
         // @compileLog(@TypeOf(char_appearances));
-        std.log.info("char_appearances: {d}", .{char_appearances});
+        // std.log.info("char_appearances: {d}", .{char_appearances});
+
+        const is_valid_password: bool = char_appearances >= count_min and char_appearances <= count_max;
+        // std.log.info("is_valid_password: {b}", .{is_valid_password});
+
+        if (is_valid_password) {
+            num_valid_passwords += 1;
+        }
 
         // const stringed = try fmt.allocPrint(allocator, "{s}", .{splitted});
-        std.log.info("happy: {s}", .{try fmt.allocPrint(allocator, "{s}", .{raw_count_rule})});
+        // std.log.info("happy: {s}", .{try fmt.allocPrint(allocator, "{s}", .{raw_count_rule})});
     }
+
+    std.log.info("Advent Day 2 Part 1:: The number of valid passwords: {d}", .{num_valid_passwords});
 }
