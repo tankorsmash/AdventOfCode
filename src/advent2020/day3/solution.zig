@@ -24,12 +24,26 @@ pub fn solve() anyerror!void {
     std.log.info("col_width {}", .{col_width});
 
     var col: u32 = 0;
+    var row: u32 = 0;
 
-    var row:u32 = 0;
+    const Path = struct { down: u32, right: u32 };
+
+    const paths = [_]Path{
+        Path{ .down = 1, .right = 1 },
+        Path{ .down = 3, .right = 1 },
+        Path{ .down = 5, .right = 1 },
+        Path{ .down = 7, .right = 1 },
+        Path{ .down = 1, .right = 2 },
+    };
+    _ = paths;
+
+    var path_idx: u32 = 0;
+    _ = path_idx;
+
     for (all_values.items) |arr_bytes| {
         var bytes: []u8 = arr_bytes.items;
 
-        var cell = bytes[col % col_width..(col % col_width)+1];
+        var cell = bytes[col % col_width .. (col % col_width) + 1];
         // var is_tree = cell[0] == "#";
         var is_tree = std.mem.eql(u8, cell, "#");
         if (is_tree) {
@@ -41,6 +55,6 @@ pub fn solve() anyerror!void {
         // std.log.info("len {}", .{std.mem.len(bytes)});
     }
 
-    std.log.info("Advent Day {d} Part 1:: {d}", .{day, num_valid_part1_passwords});
+    std.log.info("Advent Day {d} Part 1:: {d}", .{ day, num_valid_part1_passwords });
     // std.log.info("Advent Day {d} Part 2:: {d}", .{day, num_valid_part2_passwords});
 }
