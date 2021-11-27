@@ -4,16 +4,7 @@ const fmt = std.fmt;
 
 const load_input = @import("../shared/load_input.zig");
 
-// const c = @cImport({
-//     // @cDefine("CURL_GLOBAL_WIN32", "1");
-//     // @cUndef("CURL_PULL_WS2TCPIP_H");
-//     // @cUndef("__MINGW32__");
-//     @cInclude("../../../external/curl-7.80.0/include/curl/curl.h");
-//
-//     // @cInclude("curl/curl.h");
-// });
-
-const c = @cImport(@cInclude("curl/curl.h"));
+const c = @cImport(@cInclude("C:/code/utils/vcpkg/installed/x64-windows/include/curl/curl.h"));
 
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -22,9 +13,18 @@ pub fn solve() anyerror!void {
     const allocator = &arena.allocator;
 
     var curl = c.curl_easy_init();
+    defer c.curl_easy_cleanup(curl);
 
     if (curl != null) {
         std.log.info("curl loaded", .{});
+
+        _ = c.curl_easy_setopt(curl, c.CURLOPT_URL, "http://httpbin.org/get");
+
+        var res = c.curl_easy_perform(curl);
+
+        if (res != c.CURLE_OK) {
+            std.log.err("CURL ERROR: {d}", .{res});
+        }
     }
 
     const day = 4;
