@@ -54,7 +54,7 @@ pub fn solve() anyerror!void {
 
         for (paths_dirs) |path, path_idx| {
             if (row_idx % path.down == 0) {
-                const col: u32 = col_idx * path.right;
+                const col: u32 = (col_idx / path.down) * path.right;
                 var cell = bytes[col % col_width .. (col % col_width) + 1];
                 var is_tree = std.mem.eql(u8, cell, "#");
                 if (is_tree) {
