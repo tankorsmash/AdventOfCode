@@ -6,17 +6,15 @@ const load_input = @import("../shared/load_input.zig");
 
 const c = @cImport(@cInclude("C:/code/utils/vcpkg/installed/x64-windows/include/curl/curl.h"));
 
-pub fn myfunc(ptr: []u8, size: u32, nmemb: u32, userdata: *c_void) void {
-    _ = ptr;
+pub fn myfunc(data: []u8, size: u32, nmemb: u32, userdata: *c_void) void {
+    _ = data;
     _ = size;
     _ = nmemb;
     _ = userdata;
     std.log.info("size of resp to write: {d}", .{size});
 
-    // _ = std.c.realloc(userdata, size+1);
-
-    var valid_data_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
-    _ = valid_data_ptr;
+    var orig_data_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
+    _ = orig_data_ptr;
 
     std.log.info("cast is done", .{});
 
@@ -25,7 +23,7 @@ pub fn myfunc(ptr: []u8, size: u32, nmemb: u32, userdata: *c_void) void {
     // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
     // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
 
-    // var some_ptr_nullable:?*c_void = std.c.realloc(valid_data_ptr, size*nmemb);
+    // var some_ptr_nullable:?*c_void = std.c.realloc(orig_data_ptr, size*nmemb);
     std.log.info("realloc is done", .{});
     // if (some_ptr_nullable == null) {
     //     std.log.err("some_ptr_nullable is null", .{});
@@ -38,14 +36,17 @@ pub fn myfunc(ptr: []u8, size: u32, nmemb: u32, userdata: *c_void) void {
 
     var some_valid_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
     _ = some_valid_ptr;
-    var some_valid_data = some_valid_ptr.*;
-    _ = some_valid_data;
+    var some_orig_data = some_valid_ptr.*;
+    _ = some_orig_data;
     std.log.info("some data cast is done", .{});
 
-    var valid_data: []u8 = valid_data_ptr.*;
-    _ = valid_data;
+    var orig_data: []u8 = orig_data_ptr.*;
+    _ = orig_data;
     // std.log.info("\n\nPTR IS: {any}\n", .{ptr});
-    std.log.info("\n\nVALID_DATA: {any}\n", .{valid_data});
+    std.log.info("\n\nORIG_DATA: {any}\n", .{orig_data});
+
+    // var ptr = std.c.realloc(, size+1);
+    // _ = ptr;
 
     // std.mem.copy([]u8, @ptrCast(u8, userdata), ptr);
     // std.mem.copy(u8, valid_data[0..10], ptr[0..1]);
