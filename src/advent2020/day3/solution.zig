@@ -25,7 +25,7 @@ pub fn solve() anyerror!void {
 
     var col_idx: u32 = 0;
     var p1_col: u32 = 0;
-    var row: u32 = 0;
+    var row_idx: u32 = 0;
 
     const Path = struct { down: u32, right: u32 };
 
@@ -41,9 +41,6 @@ pub fn solve() anyerror!void {
     var path_trees = [5]u32{ 0, 0, 0, 0, 0 };
     _ = path_trees;
 
-    var path_idx: u64 = 0;
-    _ = path_idx;
-
     for (all_values.items) |arr_bytes| {
         var bytes: []u8 = arr_bytes.items;
 
@@ -56,16 +53,13 @@ pub fn solve() anyerror!void {
             }
         }
 
-        for (paths_dirs) |path, idx| {
-            _ = path;
-            _ = idx;
-
-            if (row % path.down == 0) {
+        for (paths_dirs) |path, path_idx| {
+            if (row_idx % path.down == 0) {
                 const col: u32 = col_idx * path.right;
                 var cell = bytes[col % col_width .. (col % col_width) + 1];
                 var is_tree = std.mem.eql(u8, cell, "#");
                 if (is_tree) {
-                    path_trees[idx] += 1;
+                    path_trees[path_idx] += 1;
                 }
             }
         }
@@ -73,7 +67,7 @@ pub fn solve() anyerror!void {
         p1_col += 3;
         col_idx += 1;
 
-        row += 1;
+        row_idx += 1;
         // std.log.info("len {}", .{std.mem.len(bytes)});
     }
 
