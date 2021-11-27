@@ -38,10 +38,10 @@ pub fn solve() anyerror!void {
     };
     _ = paths_dirs;
 
-    var path_trees = [5]u8{ 0, 0, 0, 0, 0 };
+    var path_trees = [5]u32{ 0, 0, 0, 0, 0 };
     _ = path_trees;
 
-    var path_idx: u32 = 0;
+    var path_idx: u64 = 0;
     _ = path_idx;
 
     for (all_values.items) |arr_bytes| {
@@ -60,7 +60,7 @@ pub fn solve() anyerror!void {
             _ = path;
             _ = idx;
 
-            if (row % path.down == 1) {
+            if (row % path.down == 0) {
                 const col: u32 = col_idx * path.right;
                 var cell = bytes[col % col_width .. (col % col_width) + 1];
                 var is_tree = std.mem.eql(u8, cell, "#");
@@ -77,6 +77,7 @@ pub fn solve() anyerror!void {
         // std.log.info("len {}", .{std.mem.len(bytes)});
     }
 
+    std.log.info("path_trees {any}", .{path_trees});
     part2_tree_num = path_trees[0] * path_trees[1] * path_trees[2] * path_trees[3] * path_trees[4];
 
     std.log.info("Advent Day {d} Part 1:: {d}", .{ day, part1_tree_num });
