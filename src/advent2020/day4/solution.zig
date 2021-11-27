@@ -6,25 +6,37 @@ const load_input = @import("../shared/load_input.zig");
 
 const c = @cImport(@cInclude("C:/code/utils/vcpkg/installed/x64-windows/include/curl/curl.h"));
 
-pub fn myfunc(data: []u8, size: u32, nmemb: u32, userdata: *c_void) void {
+pub fn myfunc(data: []u8, size: u32, nmemb: u32, userdata: *c_void) !void {
     _ = data;
     _ = size;
     _ = nmemb;
     _ = userdata;
     std.log.info("size of resp to write: {d}", .{size});
 
-    var orig_data_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
-    _ = orig_data_ptr;
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    // var orig_data_ptr: *[]u8 = @ptrCast(*[]u8, @alignCast(@alignOf([]u8), userdata));
+    // _ = orig_data_ptr;
 
     std.log.info("cast is done", .{});
 
-    var realsize = size * nmemb;
+    std.log.info("size is: {d}", .{size});
+    std.log.info("nmemb is: {d}", .{nmemb});
+    var realsize: u64 = size * nmemb;
     std.log.info("realsize is: {d}", .{realsize});
     // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
     // var some_ptr:u8 = std.c.realloc(userdata, size*nmemb).?;
 
+    const allocator = &arena.allocator;
+    var new_chunk = try allocator.alloc(u8, realsize+1);
+    _= new_chunk;
+    std.mem.copy(u8, new_chunk, data);
+
+    std.log.info("copy is done", .{});
+
     // var some_ptr_nullable:?*c_void = std.c.realloc(orig_data_ptr, size*nmemb);
-    std.log.info("realloc is done", .{});
+    // std.log.info("realloc is done", .{});
     // if (some_ptr_nullable == null) {
     //     std.log.err("some_ptr_nullable is null", .{});
     //     return;
@@ -40,10 +52,10 @@ pub fn myfunc(data: []u8, size: u32, nmemb: u32, userdata: *c_void) void {
     _ = some_orig_data;
     std.log.info("some data cast is done", .{});
 
-    var orig_data: []u8 = orig_data_ptr.*;
-    _ = orig_data;
+    // var orig_data: []u8 = orig_data_ptr.*;
+    // _ = orig_data;
     // std.log.info("\n\nPTR IS: {any}\n", .{ptr});
-    std.log.info("\n\nORIG_DATA: {any}\n", .{orig_data});
+    // std.log.info("\n\nORIG_DATA: {any}\n", .{orig_data});
 
     // var ptr = std.c.realloc(, size+1);
     // _ = ptr;
@@ -73,7 +85,7 @@ pub fn solve() anyerror!void {
         _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEFUNCTION, myfunc);
 
         var chunk: []u8 = try allocator.alloc(u8, 256*100 );
-        _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEDATA, chunk);
+        _ = c.curl_easy_setopt(curl, c.CURLOPT_WRITEDATA, &chunk);
 
         var res = c.curl_easy_perform(curl);
         std.log.info("done performing the web request", .{});
