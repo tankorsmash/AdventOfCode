@@ -18,24 +18,28 @@ pub fn solve() anyerror!void {
     var str: *const [3:0]u8 = "asd";
     _ = str;
 
-    var num_valid_part1_passwords: u32 = 0;
-    // var num_valid_part2_passwords: u32 = 0;
+    var part1_tree_num: u32 = 0;
+    var part2_tree_num: u32 = 0;
     const col_width = std.mem.len(all_values.items[0].items);
     std.log.info("col_width {}", .{col_width});
 
-    var col: u32 = 0;
+    var col_idx: u32 = 0;
+    var p1_col: u32 = 0;
     var row: u32 = 0;
 
     const Path = struct { down: u32, right: u32 };
 
-    const paths = [_]Path{
-        Path{ .down = 1, .right = 1 },
-        Path{ .down = 3, .right = 1 },
-        Path{ .down = 5, .right = 1 },
-        Path{ .down = 7, .right = 1 },
-        Path{ .down = 1, .right = 2 },
+    const paths_dirs = [5]Path{
+        Path{ .right = 1, .down = 1 },
+        Path{ .right = 3, .down = 1 },
+        Path{ .right = 5, .down = 1 },
+        Path{ .right = 7, .down = 1 },
+        Path{ .right = 1, .down = 2 },
     };
-    _ = paths;
+    _ = paths_dirs;
+
+    var path_trees = [5]u8{ 0, 0, 0, 0, 0 };
+    _ = path_trees;
 
     var path_idx: u32 = 0;
     _ = path_idx;
@@ -43,18 +47,38 @@ pub fn solve() anyerror!void {
     for (all_values.items) |arr_bytes| {
         var bytes: []u8 = arr_bytes.items;
 
-        var cell = bytes[col % col_width .. (col % col_width) + 1];
-        // var is_tree = cell[0] == "#";
-        var is_tree = std.mem.eql(u8, cell, "#");
-        if (is_tree) {
-            num_valid_part1_passwords += 1;
+        //part1
+        {
+            var cell = bytes[p1_col % col_width .. (p1_col % col_width) + 1];
+            var is_tree = std.mem.eql(u8, cell, "#");
+            if (is_tree) {
+                part1_tree_num += 1;
+            }
         }
 
-        col += 3;
+        for (paths_dirs) |path, idx| {
+            _ = path;
+            _ = idx;
+
+            if (row % path.down == 1) {
+                const col: u32 = col_idx * path.right;
+                var cell = bytes[col % col_width .. (col % col_width) + 1];
+                var is_tree = std.mem.eql(u8, cell, "#");
+                if (is_tree) {
+                    path_trees[idx] += 1;
+                }
+            }
+        }
+
+        p1_col += 3;
+        col_idx += 1;
+
         row += 1;
         // std.log.info("len {}", .{std.mem.len(bytes)});
     }
 
-    std.log.info("Advent Day {d} Part 1:: {d}", .{ day, num_valid_part1_passwords });
-    // std.log.info("Advent Day {d} Part 2:: {d}", .{day, num_valid_part2_passwords});
+    part2_tree_num = path_trees[0] * path_trees[1] * path_trees[2] * path_trees[3] * path_trees[4];
+
+    std.log.info("Advent Day {d} Part 1:: {d}", .{ day, part1_tree_num });
+    std.log.info("Advent Day {d} Part 2:: {d}", .{ day, part2_tree_num });
 }
