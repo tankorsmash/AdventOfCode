@@ -62,7 +62,7 @@ pub fn process_hgt(bytes: []const u8) bool {
 
     const in_idx = std.mem.indexOf(u8, bytes, "in");
     if (in_idx != null) {
-        var value: i32 = parse_int(bytes[cm_idx.?..]) catch return false;
+        var value: i32 = parse_int(bytes[in_idx.?..]) catch return false;
         return 150 <= value <= 193;
     }
     return false;
@@ -139,11 +139,15 @@ pub fn solve() anyerror!void {
     const allocator = &arena.allocator;
     const day = 4;
 
+    std.log.info("logging {d}", .{1});
+
     var all_values = load_input.load_input_line_bytes(allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
         return;
     };
 
+    std.log.info("logging {d}", .{2});
+    validator_map = std.StringHashMap(fn ([]const u8) bool).init(allocator);
     try validator_map.put("byr", process_byr); // (Birth Year)
     try validator_map.put("iyr", process_iyr); // (Issue Year)
     try validator_map.put("eyr", process_eyr); // (Expiration Year)
@@ -153,6 +157,7 @@ pub fn solve() anyerror!void {
     try validator_map.put("pid", process_pid); // (Passport ID)
     try validator_map.put("cid", process_cid); // (Country ID)
 
+    std.log.info("logging {d}", .{3});
     var req_fields = [_][]const u8{
         "byr", // (Birth Year)
         "iyr", // (Issue Year)
@@ -163,23 +168,25 @@ pub fn solve() anyerror!void {
         "pid", // (Passport ID)
         "cid", // (Country ID)
     };
-    var valid_fields = try init_valid_map(allocator);
-    _ = valid_fields;
     _ = req_fields;
 
+    std.log.info("logging {d}", .{4});
     const num_req_fields = std.mem.len(req_fields);
     std.log.info("There are {d} required fields", .{num_req_fields});
 
     var part1_valid_passports_found: i32 = 0;
     var part2_valid_passports_found: i32 = 0;
 
+    std.log.info("logging {d}", .{5});
     var raw_lines: std.ArrayList(std.ArrayList(u8)) = std.ArrayList(std.ArrayList(u8)).init(allocator);
     _ = raw_lines;
 
+    std.log.info("logging {d}", .{6});
     var num_fields_found: i32 = 0;
     var field_keys_found = std.ArrayList([]const u8).init(allocator);
     _ = field_keys_found;
 
+    std.log.info("logging {d}", .{7});
     for (all_values.items) |arr_bytes, line_idx| {
         _ = line_idx;
         var bytes: []u8 = arr_bytes.items;
@@ -187,6 +194,8 @@ pub fn solve() anyerror!void {
 
         var len_bytes = std.mem.len(bytes);
         if (len_bytes == 0) {
+            var valid_fields = try init_valid_map(allocator);
+            _ = valid_fields;
             //process old passport
             for (raw_lines.items) |pp_bytes| {
                 std.log.info(":: processing the line {d}:: '{s}'", .{ line_idx, pp_bytes.items });
@@ -207,9 +216,21 @@ pub fn solve() anyerror!void {
 
                         var validator_fn = get_validator(key).?;
 
-                        _ = validator_fn;
+                        try valid_fields.put(key, validator_fn(value));
                     }
                 }
+            }
+
+            var it = valid_fields.iterator();
+
+            var is_valid_part2_passport: bool = true;
+            while (it.next()) |entry| {
+                const value = entry.value_ptr.*;
+                if (!value) { is_valid_part2_passport = false; break; }
+                std.log.info("entry checking -- k: {s}, v: {b}", .{entry.key_ptr.*, value});
+            }
+            if (is_valid_part2_passport) {
+                part2_valid_passports_found += 1;
             }
 
             std.log.info("field keys found: #{d} {s}", .{ num_fields_found, field_keys_found.items });
