@@ -38,7 +38,7 @@ pub fn process_iyr(bytes: []const u8) bool {
 
     var value: i32 = parse_int(bytes) catch return false;
 
-    return value >= 2010 and value <= 2020;
+    return 2010 <= value <= 2020;
 }
 
 pub fn process_eyr(bytes: []const u8) bool {
@@ -48,17 +48,24 @@ pub fn process_eyr(bytes: []const u8) bool {
 
     var value: i32 = parse_int(bytes) catch return false;
 
-    return value >= 2020 and value <= 2030;
+    return 2020 <= value <= 2030;
 }
 
 pub fn process_hgt(bytes: []const u8) bool {
     _ = bytes;
+
+    const cm_idx = std.mem.indexOf(u8, bytes, "cm");
+    if (cm_idx != null) {
+        var value: i32 = parse_int(bytes[cm_idx.?..]) catch return false;
+        return 150 <= value <= 193;
+    }
+
+    const in_idx = std.mem.indexOf(u8, bytes, "in");
+    if (in_idx != null) {
+        var value: i32 = parse_int(bytes[cm_idx.?..]) catch return false;
+        return 150 <= value <= 193;
+    }
     return false;
-    //TODO
-    //
-    // var value: i32 = parse_int(bytes) catch return false;
-    //
-    // return value >= 2020 and value <= 2030;
 }
 
 pub fn process_hcl(bytes: []const u8) bool {
