@@ -8,13 +8,63 @@ pub fn valid_len(bytes: []const u8, req_size: u32) bool {
     return std.mem.len(bytes) == req_size;
 }
 
+pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
+    var value: i32 = std.fmt.parseUnsigned(u8, bytes, 10) catch |err| {
+        if (err == error.InvalidCharacter) {
+            std.log.err("err: Invalid Character: {any}", .{bytes});
+            return 0;
+        }
+
+        return 0;
+    };
+
+    return value;
+}
+
 pub fn process_byr(bytes: []const u8) bool {
     if (!valid_len(bytes, 4)) {
         return false;
     }
 
-    return true;
+    var value: i32 = parse_int(bytes) catch return false;
+
+    return value >= 1920 and value <= 2002;
 }
+
+pub fn process_iyr(bytes: []const u8) bool {
+    if (!valid_len(bytes, 4)) {
+        return false;
+    }
+
+    var value: i32 = parse_int(bytes) catch return false;
+
+    return value >= 2010 and value <= 2020;
+}
+
+pub fn process_eyr(bytes: []const u8) bool {
+    if (!valid_len(bytes, 4)) {
+        return false;
+    }
+
+    var value: i32 = parse_int(bytes) catch return false;
+
+    return value >= 2020 and value <= 2030;
+}
+
+pub fn process_hgt(bytes: []const u8) bool {
+    _ = bytes;
+    return false;
+     //TODO
+    //
+    // var value: i32 = parse_int(bytes) catch return false;
+    //
+    // return value >= 2020 and value <= 2030;
+}
+
+pub fn process_hcl(bytes: []const u8) bool {_ = bytes; return false;}
+pub fn process_ecl(bytes: []const u8) bool {_ = bytes; return false;}
+pub fn process_pid(bytes: []const u8) bool {_ = bytes; return false;}
+pub fn process_cid(bytes: []const u8) bool {_ = bytes; return false;}
 
 pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
     var valid_fields = std.StringHashMap(bool).init(allocator);
@@ -30,9 +80,10 @@ pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
     return valid_fields;
 }
 
-pub fn get_validator(key: []const u8) fn ([]const u8) bool {
-    _ = key;
-    return process_byr;
+var validator_map: std.StringHashMap(fn ([]const u8) bool) = undefined;
+
+pub fn get_validator(key: []const u8) ?(fn ([]const u8) bool) {
+    return validator_map.get(key);
 }
 
 pub fn solve() anyerror!void {
@@ -40,12 +91,21 @@ pub fn solve() anyerror!void {
     defer arena.deinit();
 
     const allocator = &arena.allocator;
-
     const day = 4;
+
     var all_values = load_input.load_input_line_bytes(allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
         return;
     };
+
+    try validator_map.put("byr",process_byr); // (Birth Year)
+    try validator_map.put("iyr",process_iyr); // (Issue Year)
+    try validator_map.put("eyr",process_eyr); // (Expiration Year)
+    try validator_map.put("hgt",process_hgt); // (Height)
+    try validator_map.put("hcl",process_hcl); // (Hair Color)
+    try validator_map.put("ecl",process_ecl); // (Eye Color)
+    try validator_map.put("pid",process_pid); // (Passport ID)
+    try validator_map.put("cid",process_cid); // (Country ID)
 
     var req_fields = [_][]const u8{
         "byr", // (Birth Year)
@@ -99,7 +159,7 @@ pub fn solve() anyerror!void {
                     if (!std.mem.eql(u8, "cid", key)) {
                         num_fields_found += 1;
 
-                        var validator_fn = get_validator(key);
+                        var validator_fn = get_validator(key).?;
 
                         _ = validator_fn;
                     }
