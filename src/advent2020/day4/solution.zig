@@ -54,17 +54,29 @@ pub fn process_eyr(bytes: []const u8) bool {
 pub fn process_hgt(bytes: []const u8) bool {
     _ = bytes;
     return false;
-     //TODO
+    //TODO
     //
     // var value: i32 = parse_int(bytes) catch return false;
     //
     // return value >= 2020 and value <= 2030;
 }
 
-pub fn process_hcl(bytes: []const u8) bool {_ = bytes; return false;}
-pub fn process_ecl(bytes: []const u8) bool {_ = bytes; return false;}
-pub fn process_pid(bytes: []const u8) bool {_ = bytes; return false;}
-pub fn process_cid(bytes: []const u8) bool {_ = bytes; return false;}
+pub fn process_hcl(bytes: []const u8) bool {
+    _ = bytes;
+    return false;
+}
+pub fn process_ecl(bytes: []const u8) bool {
+    _ = bytes;
+    return false;
+}
+pub fn process_pid(bytes: []const u8) bool {
+    _ = bytes;
+    return false;
+}
+pub fn process_cid(bytes: []const u8) bool {
+    _ = bytes;
+    return false;
+}
 
 pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
     var valid_fields = std.StringHashMap(bool).init(allocator);
@@ -98,14 +110,14 @@ pub fn solve() anyerror!void {
         return;
     };
 
-    try validator_map.put("byr",process_byr); // (Birth Year)
-    try validator_map.put("iyr",process_iyr); // (Issue Year)
-    try validator_map.put("eyr",process_eyr); // (Expiration Year)
-    try validator_map.put("hgt",process_hgt); // (Height)
-    try validator_map.put("hcl",process_hcl); // (Hair Color)
-    try validator_map.put("ecl",process_ecl); // (Eye Color)
-    try validator_map.put("pid",process_pid); // (Passport ID)
-    try validator_map.put("cid",process_cid); // (Country ID)
+    try validator_map.put("byr", process_byr); // (Birth Year)
+    try validator_map.put("iyr", process_iyr); // (Issue Year)
+    try validator_map.put("eyr", process_eyr); // (Expiration Year)
+    try validator_map.put("hgt", process_hgt); // (Height)
+    try validator_map.put("hcl", process_hcl); // (Hair Color)
+    try validator_map.put("ecl", process_ecl); // (Eye Color)
+    try validator_map.put("pid", process_pid); // (Passport ID)
+    try validator_map.put("cid", process_cid); // (Country ID)
 
     var req_fields = [_][]const u8{
         "byr", // (Birth Year)
