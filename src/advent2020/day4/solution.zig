@@ -56,15 +56,25 @@ pub fn process_hgt(bytes: []const u8) bool {
 
     const cm_idx = std.mem.indexOf(u8, bytes, "cm");
     if (cm_idx != null) {
-        var value: i32 = parse_int(bytes[cm_idx.?..]) catch return false;
+        var potential_height = bytes[cm_idx.?..];
+        var value: i32 = parse_int(potential_height) catch {
+            std.log.info("{s} not a valid int", .{potential_height});
+            return false;
+        };
         return 150 <= value <= 193;
     }
 
     const in_idx = std.mem.indexOf(u8, bytes, "in");
     if (in_idx != null) {
-        var value: i32 = parse_int(bytes[in_idx.?..]) catch return false;
+        var potential_height = bytes[in_idx.?..];
+        var value: i32 = parse_int(potential_height) catch {
+            std.log.info("{s} not a valid int", .{potential_height});
+            return false;
+        };
         return 150 <= value <= 193;
     }
+
+    std.log.info("{s} is not a valid height", .{bytes});
     return false;
 }
 
@@ -213,11 +223,11 @@ pub fn solve() anyerror!void {
                     std.log.info(":: Found {s} -- value: {s}", .{ key, value });
                     if (!std.mem.eql(u8, "cid", key)) {
                         num_fields_found += 1;
-
-                        var validator_fn = get_validator(key).?;
-
-                        try valid_fields.put(key, validator_fn(value));
                     }
+
+                    var validator_fn = get_validator(key).?;
+
+                    try valid_fields.put(key, validator_fn(value));
                 }
             }
 
@@ -226,8 +236,8 @@ pub fn solve() anyerror!void {
             var is_valid_part2_passport: bool = true;
             while (it.next()) |entry| {
                 const value = entry.value_ptr.*;
-                if (!value) { is_valid_part2_passport = false; break; }
                 std.log.info("entry checking -- k: {s}, v: {b}", .{entry.key_ptr.*, value});
+                if (!value) { is_valid_part2_passport = false; break; }
             }
             if (is_valid_part2_passport) {
                 part2_valid_passports_found += 1;
