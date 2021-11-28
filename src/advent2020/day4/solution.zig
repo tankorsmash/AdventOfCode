@@ -91,16 +91,25 @@ pub fn process_ecl(bytes: []const u8) bool {
     _ = bytes;
 
     const valid_ecls = [_][]const u8 {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
-    _ = valid_ecls;
+
+    for (valid_ecls) |potential_color| {
+        if (std.mem.eql(u8, potential_color, bytes)) {
+            return true;
+        }
+    }
     return false;
 }
 pub fn process_pid(bytes: []const u8) bool {
     _ = bytes;
-    return false;
+    const len = std.mem.len(bytes);
+    if (len != 9) { return false; }
+
+    _ = parse_int(bytes) catch return false;
+    return true;
 }
 pub fn process_cid(bytes: []const u8) bool {
     _ = bytes;
-    return false;
+    return true;
 }
 
 pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
