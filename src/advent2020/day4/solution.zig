@@ -9,11 +9,13 @@ pub fn valid_len(bytes: []const u8, req_size: u32) bool {
 }
 
 pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
-    var value: i32 = std.fmt.parseUnsigned(u8, bytes, 10) catch |err| {
+    var value: i32 = std.fmt.parseUnsigned(i32, bytes, 10) catch |err| {
         if (err == error.InvalidCharacter) {
             std.log.err("err: Invalid Character: {any}", .{bytes});
             return 0;
         }
+
+        std.log.err("err {}: Unknown error parsing int: {any}", .{err, bytes});
 
         return 0;
     };
@@ -56,7 +58,7 @@ pub fn process_hgt(bytes: []const u8) bool {
 
     const cm_idx = std.mem.indexOf(u8, bytes, "cm");
     if (cm_idx != null) {
-        var potential_height = bytes[cm_idx.?..];
+        var potential_height = bytes[0..cm_idx.?];
         var value: i32 = parse_int(potential_height) catch {
             std.log.info("{s} not a valid int", .{potential_height});
             return false;
@@ -66,7 +68,7 @@ pub fn process_hgt(bytes: []const u8) bool {
 
     const in_idx = std.mem.indexOf(u8, bytes, "in");
     if (in_idx != null) {
-        var potential_height = bytes[in_idx.?..];
+        var potential_height = bytes[0..in_idx.?];
         var value: i32 = parse_int(potential_height) catch {
             std.log.info("{s} not a valid int", .{potential_height});
             return false;
@@ -227,7 +229,12 @@ pub fn solve() anyerror!void {
 
                     var validator_fn = get_validator(key).?;
 
-                    try valid_fields.put(key, validator_fn(value));
+
+                    var is_valid = validator_fn(value);
+
+                    std.log.info("Value: {s} is valid?: {b}", .{value, is_valid});
+
+                    try valid_fields.put(key, is_valid);
                 }
             }
 
