@@ -70,10 +70,28 @@ pub fn process_hgt(bytes: []const u8) bool {
 
 pub fn process_hcl(bytes: []const u8) bool {
     _ = bytes;
+    const hcl_idx = std.mem.indexOfPos(u8, bytes, 0, "#");
+    if (hcl_idx == null) { return false;}
+
+    //exactly 6 bytes
+    if (std.mem.len(bytes[1..]) != 6) { return false; }
+
+    //a-f or 0.9
+    for (bytes[1..]) |char| {
+        const is_char: bool = char >= 'a' and char <= ('a'+5);
+        const is_num: bool = char >= '0' and char <= ('0'+9);
+        if (!(is_char or is_num) ) {
+            return false;
+        }
+        _ = char;
+    }
     return false;
 }
 pub fn process_ecl(bytes: []const u8) bool {
     _ = bytes;
+
+    const valid_ecls = [_][]const u8 {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
+    _ = valid_ecls;
     return false;
 }
 pub fn process_pid(bytes: []const u8) bool {
