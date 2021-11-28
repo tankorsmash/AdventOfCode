@@ -47,6 +47,10 @@ pub fn solve() anyerror!void {
         {
             var cell = bytes[p1_col % col_width .. (p1_col % col_width) + 1];
             var is_tree = std.mem.eql(u8, cell, "#");
+
+            // var cell = bytes[p1_col % col_width]; //also works
+            // var is_tree = cell[0] == '#';
+
             if (is_tree) {
                 part1_tree_num += 1;
             }
