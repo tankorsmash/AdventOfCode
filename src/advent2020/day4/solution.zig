@@ -140,7 +140,7 @@ pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
     try valid_fields.put("hcl", false); // (Hair Color)
     try valid_fields.put("ecl", false); // (Eye Color)
     try valid_fields.put("pid", false); // (Passport ID)
-    try valid_fields.put("cid", false); // (Country ID)
+    try valid_fields.put("cid", true); // (Country ID) hardcoded to true
 
     return valid_fields;
 }
