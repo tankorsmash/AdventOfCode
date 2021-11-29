@@ -151,7 +151,7 @@ pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
     return valid_fields;
 }
 
-pub fn init_value_map(allocator: *std.mem.Allocator) !std.StringHashMap(?[] const u8) {
+pub fn init_value_map(allocator: *std.mem.Allocator) !std.StringHashMap(?[]const u8) {
     var valid_fields = std.StringHashMap(?[]const u8).init(allocator);
     try valid_fields.put("byr", null); // (Birth Year)
     try valid_fields.put("iyr", null); // (Issue Year)
@@ -200,13 +200,16 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
         try valid_fields.put(key, is_valid);
     }
 
-
     var is_valid_part2_passport: bool = true;
 
     for (req_fields) |field_name| {
         var field_valid: ?bool = valid_fields.get(field_name);
         var field_value: ??[]const u8 = value_map.get(field_name);
         std.log.info("Checking {s}: {b} --  {s}", .{ field_name, field_valid, field_value });
+
+        if (!field_valid.?) {
+            is_valid_part2_passport = false;
+        }
     }
 
     // var it = valid_fields.iterator();
@@ -222,8 +225,7 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
     return is_valid_part2_passport;
 }
 
-pub fn collect_entries(allocator: *std.mem.Allocator, raw_lines:std.ArrayList(std.ArrayList(u8))) !std.ArrayList(std.ArrayList(u8)) {
-
+pub fn collect_entries(allocator: *std.mem.Allocator, raw_lines: std.ArrayList(std.ArrayList(u8))) !std.ArrayList(std.ArrayList(u8)) {
     var all_entries = std.ArrayList(std.ArrayList(u8)).init(allocator);
     _ = all_entries;
     //process old passport
@@ -275,7 +277,6 @@ pub fn solve() anyerror!void {
     try validator_map.put("pid", process_pid); // (Passport ID)
     try validator_map.put("cid", process_cid); // (Country ID)
 
-
     const num_req_fields = std.mem.len(req_fields);
     std.log.info("There are {d} required fields", .{num_req_fields});
 
@@ -291,12 +292,12 @@ pub fn solve() anyerror!void {
         _ = bytes;
 
         var len_bytes = std.mem.len(bytes);
-        var empty_line : bool = len_bytes == 0;
+        var empty_line: bool = len_bytes == 0;
         if (empty_line) {
             var all_entries = try collect_entries(allocator, raw_lines);
             var passport_is_valid = try is_passport_valid(allocator, all_entries);
 
-            std.log.info("is pp valid? {b}", .{passport_is_valid});
+            std.log.info("Passport valid? {b}", .{passport_is_valid});
 
             if (passport_is_valid) {
                 part2_valid_passports_found += 1;
