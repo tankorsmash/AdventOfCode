@@ -22,20 +22,22 @@ pub fn split(bounds: Bounds, take_lower: bool) Bounds {
     _ = take_lower;
     var result = Bounds{ .lower = bounds.lower, .upper = bounds.upper };
 
-    const range = bounds.upper - bounds.lower + 1;
-    std.log.info("range: {d}", .{range});
-    std.log.info("range/2: {d}", .{@divExact(range, 2)});
+    const range = (bounds.upper - bounds.lower) + 1;
+    const half_range = @divExact(range, 2);
+    // std.debug.print("range: {d}\n", .{range});
+    // std.debug.print("range/2: {d}\n", .{half_range});
 
     if (take_lower) {
         // result.upper /= @intCast(i32, 2);
-        result.upper = @divExact(result.upper + 1, 2) - 1;
+        result.upper = result.upper - half_range;
     } else {
         // result.lower /= @intCast(i32, 2);
-        result.lower = @divExact(result.upper + 1, 2) - 1;
+        result.lower = result.lower + half_range;
     }
 
     return result;
 }
+
 
 pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
     var value: i32 = std.fmt.parseUnsigned(i32, bytes, 10) catch |err| {
@@ -82,16 +84,16 @@ pub fn solve() anyerror!void {
         _ = col;
         for (ticket.items) |char| {
             // var wrapped = [_]u8{char};
-            std.log.info("char: {s}", .{([_]u8{char})[0..]});
-            // if (char == 'F') {
-            //     row = split(row, true);
-            // } else if (char == 'B') {
-            //     row = split(row, false);
-            // } else if (char == 'L') {
-            //     col = split(col, true);
-            // } else if (char == 'R') {
-            //     col = split(col, false);
-            // }
+            // std.log.info("char: {s}", .{([_]u8{char})[0..]});
+            if (char == 'F') {
+                row = split(row, true);
+            } else if (char == 'B') {
+                row = split(row, false);
+            } else if (char == 'L') {
+                col = split(col, true);
+            } else if (char == 'R') {
+                col = split(col, false);
+            }
         }
 
         const seat_id = row.lower * 8 + col.lower;
