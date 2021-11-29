@@ -180,7 +180,7 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
     _ = valid_fields;
 
     for (entries.items) |entry| {
-        std.log.info("processing the entry {s}", .{entry.items});
+        // std.log.info("processing the entry {s}", .{entry.items});
         var split_entries = std.mem.split(u8, entry.items, ":");
         _ = split_entries;
 
@@ -188,14 +188,14 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
         // try field_keys_found.append(key);
         var value = split_entries.next().?;
         try value_map.put(key, value);
-        std.log.info(":: Found {s} -- value: {s}", .{ key, value });
+        // std.log.info(":: Found {s} -- value: {s}", .{ key, value });
         if (!std.mem.eql(u8, "cid", key)) {
             num_fields_found += 1;
         }
 
         var validator_fn = get_validator(key).?;
         var is_valid = validator_fn(value);
-        std.log.info("Value: {s} is valid?: {b}", .{ value, is_valid });
+        // std.log.info("key: {s} is valid?: {b}", .{ key, is_valid });
 
         try valid_fields.put(key, is_valid);
     }
