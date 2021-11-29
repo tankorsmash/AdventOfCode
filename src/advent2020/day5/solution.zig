@@ -22,12 +22,16 @@ pub fn split(bounds: Bounds, take_lower: bool) Bounds {
     _ = take_lower;
     var result = Bounds{ .lower = bounds.lower, .upper = bounds.upper };
 
+    const range = bounds.upper - bounds.lower + 1;
+    std.log.info("range: {d}", .{range});
+    std.log.info("range/2: {d}", .{@divExact(range, 2)});
+
     if (take_lower) {
         // result.upper /= @intCast(i32, 2);
-        result.upper = @divExact(result.upper-1, @intCast(i32, 2));
+        result.upper = @divExact(result.upper + 1, 2) - 1;
     } else {
         // result.lower /= @intCast(i32, 2);
-        result.lower = @divExact(result.upper-1, @intCast(i32, 2));
+        result.lower = @divExact(result.upper + 1, 2) - 1;
     }
 
     return result;
@@ -69,6 +73,7 @@ pub fn solve() anyerror!void {
     };
     _ = all_values;
 
+
     var seat_ids = std.ArrayList(i32).init(allocator);
 
     for (all_values.items) |ticket| {
@@ -76,22 +81,24 @@ pub fn solve() anyerror!void {
         var col = Bounds{ .lower = 0, .upper = 7 };
         _ = col;
         for (ticket.items) |char| {
-            if (char == 'F') {
-                row = split(row, true);
-            } else if (char == 'B') {
-                row = split(row, false);
-            } else if (char == 'L') {
-                col = split(col, true);
-            } else if (char == 'R') {
-                col = split(col, false);
-            }
+            // var wrapped = [_]u8{char};
+            std.log.info("char: {s}", .{([_]u8{char})[0..]});
+            // if (char == 'F') {
+            //     row = split(row, true);
+            // } else if (char == 'B') {
+            //     row = split(row, false);
+            // } else if (char == 'L') {
+            //     col = split(col, true);
+            // } else if (char == 'R') {
+            //     col = split(col, false);
+            // }
         }
 
-        const seat_id = row.lower*8 + col.lower;
+        const seat_id = row.lower * 8 + col.lower;
 
         try seat_ids.append(seat_id);
 
-        std.log.info("result: {any} - {any}. seat: {d}", .{row, col, seat_id});
+        std.log.info("result: {any} - {any}. seat: {d}", .{ row, col, seat_id });
     }
 
     _ = seat_ids;
