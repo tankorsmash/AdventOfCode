@@ -73,7 +73,7 @@ pub fn process_hgt(bytes: []const u8) bool {
             std.log.info("{s} not a valid int", .{potential_height});
             return false;
         };
-        return 150 <= value <= 193;
+        return 59 <= value <= 76;
     }
 
     std.log.info("{s} is not a valid height", .{bytes});
@@ -92,12 +92,13 @@ pub fn process_hcl(bytes: []const u8) bool {
     for (bytes[1..]) |char| {
         const is_char: bool = char >= 'a' and char <= ('a'+5);
         const is_num: bool = char >= '0' and char <= ('0'+9);
+        std.log.info("char {d} is char? {b} is num? {b}", .{char, is_char, is_num});
         if (!(is_char or is_num) ) {
             return false;
         }
         _ = char;
     }
-    return false;
+    return true;
 }
 pub fn process_ecl(bytes: []const u8) bool {
     _ = bytes;
