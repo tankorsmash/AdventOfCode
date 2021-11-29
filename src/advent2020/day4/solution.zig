@@ -2,7 +2,7 @@ const std = @import("std");
 const File = std.fs.File;
 const fmt = std.fmt;
 
-const load_input = @import("../shared/load_input.zig");
+const load_input = @import("./../shared/load_input.zig");
 
 const expect = std.testing.expect;
 const expectEqual = std.testing.expectEqual;
@@ -342,7 +342,9 @@ pub fn solve() anyerror!void {
     std.log.info("Advent Day {d} Part 2:: {d}", .{ day, part2_valid_passports_found });
 }
 
-test "day4 test" {
+test "day4test" {
+    std.log.info("ASDASDA", .{});
+
     try expect(1 == 1231231); //this should fail but it doesnt because of the @import above
     //byr
     try expectFalse(process_byr("1231231"));
