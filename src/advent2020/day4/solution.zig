@@ -151,6 +151,20 @@ pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
     return valid_fields;
 }
 
+pub fn init_value_map(allocator: *std.mem.Allocator) !std.StringHashMap(?[] const u8) {
+    var valid_fields = std.StringHashMap(?[]const u8).init(allocator);
+    try valid_fields.put("byr", null); // (Birth Year)
+    try valid_fields.put("iyr", null); // (Issue Year)
+    try valid_fields.put("eyr", null); // (Expiration Year)
+    try valid_fields.put("hgt", null); // (Height)
+    try valid_fields.put("hcl", null); // (Hair Color)
+    try valid_fields.put("ecl", null); // (Eye Color)
+    try valid_fields.put("pid", null); // (Passport ID)
+    try valid_fields.put("cid", null); // (Country ID) hardcoded to true
+
+    return valid_fields;
+}
+
 var validator_map: std.StringHashMap(fn ([]const u8) bool) = undefined;
 
 pub fn get_validator(key: []const u8) ?(fn ([]const u8) bool) {
@@ -161,6 +175,8 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
     _ = entries;
     var num_fields_found: i32 = 0; //for part1,otherwise unused though
     var valid_fields = try init_valid_map(allocator);
+    var value_map = try init_value_map(allocator);
+    _ = value_map;
     _ = valid_fields;
 
     for (entries.items) |entry| {
@@ -171,6 +187,7 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
         var key = split_entries.next().?;
         // try field_keys_found.append(key);
         var value = split_entries.next().?;
+        try value_map.put(key, value);
         std.log.info(":: Found {s} -- value: {s}", .{ key, value });
         if (!std.mem.eql(u8, "cid", key)) {
             num_fields_found += 1;
@@ -183,18 +200,25 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
         try valid_fields.put(key, is_valid);
     }
 
-    var it = valid_fields.iterator();
 
     var is_valid_part2_passport: bool = true;
-    while (it.next()) |entry| {
-        const key = entry.key_ptr.*;
-        const value = entry.value_ptr.*;
-        std.log.info("entry checking -- k: {s}, v: {b}", .{ key, value });
-        if (!value) {
-            is_valid_part2_passport = false;
-            break;
-        }
+
+    for (req_fields) |field_name| {
+        var field_valid: ?bool = valid_fields.get(field_name);
+        var field_value: ??[]const u8 = value_map.get(field_name);
+        std.log.info("Checking {s}: {b} --  {s}", .{ field_name, field_valid, field_value });
     }
+
+    // var it = valid_fields.iterator();
+    // while (it.next()) |entry| {
+    //     const key = entry.key_ptr.*;
+    //     const value = entry.value_ptr.*;
+    //     std.log.info("entry checking -- k: {s}, v: {b}", .{ key, value });
+    //     if (!value) {
+    //         is_valid_part2_passport = false;
+    //         break;
+    //     }
+    // }
     return is_valid_part2_passport;
 }
 
@@ -218,6 +242,17 @@ pub fn collect_entries(allocator: *std.mem.Allocator, raw_lines:std.ArrayList(st
     return all_entries;
 }
 
+var req_fields = [_][]const u8{
+    "byr", // (Birth Year)
+    "iyr", // (Issue Year)
+    "eyr", // (Expiration Year)
+    "hgt", // (Height)
+    "hcl", // (Hair Color)
+    "ecl", // (Eye Color)
+    "pid", // (Passport ID)
+    "cid", // (Country ID)
+};
+
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -240,17 +275,6 @@ pub fn solve() anyerror!void {
     try validator_map.put("pid", process_pid); // (Passport ID)
     try validator_map.put("cid", process_cid); // (Country ID)
 
-    var req_fields = [_][]const u8{
-        "byr", // (Birth Year)
-        "iyr", // (Issue Year)
-        "eyr", // (Expiration Year)
-        "hgt", // (Height)
-        "hcl", // (Hair Color)
-        "ecl", // (Eye Color)
-        "pid", // (Passport ID)
-        "cid", // (Country ID)
-    };
-    _ = req_fields;
 
     const num_req_fields = std.mem.len(req_fields);
     std.log.info("There are {d} required fields", .{num_req_fields});
