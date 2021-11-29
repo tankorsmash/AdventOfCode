@@ -10,31 +10,24 @@ pub fn expectFalse(result: bool) !void {
     try expect(!result);
 }
 
-
 pub fn valid_len(bytes: []const u8, req_size: u32) bool {
     return std.mem.len(bytes) == req_size;
 }
 
-pub const Bounds = struct {
-    lower: i32,
-    upper: i32
-};
+pub const Bounds = struct { lower: i32, upper: i32 };
 
-pub fn split(bounds: Bounds, take_lower:bool) Bounds {
-// pub fn split(num: i32, take_lower:bool) i32{
+pub fn split(bounds: Bounds, take_lower: bool) Bounds {
+    // pub fn split(num: i32, take_lower:bool) i32{
     _ = bounds;
     _ = take_lower;
-    var result = Bounds {
-        .lower = bounds.lower,
-        .upper = bounds.upper
-    };
+    var result = Bounds{ .lower = bounds.lower, .upper = bounds.upper };
 
     if (take_lower) {
         // result.upper /= @intCast(i32, 2);
-        result.upper = @divExact(result.upper, @intCast(i32, 2));
+        result.upper = @divExact(result.upper-1, @intCast(i32, 2));
     } else {
         // result.lower /= @intCast(i32, 2);
-        result.lower = @divExact(result.upper, @intCast(i32, 2));
+        result.lower = @divExact(result.upper-1, @intCast(i32, 2));
     }
 
     return result;
@@ -62,12 +55,12 @@ pub fn solve() anyerror!void {
     const allocator = &arena.allocator;
     const day = 5;
 
-    const starting_val = Bounds{.lower=0, .upper=128};
-
-    // const pairs = split(starting_val, false);
-    std.log.info("starting pairs: {}", .{starting_val});
-    std.log.info("taking lower: {any}", .{split(starting_val, false)});
-    std.log.info("taking upper: {any}", .{split(starting_val, true)});
+    // const starting_val = Bounds{.lower=0, .upper=128};
+    //
+    // // const pairs = split(starting_val, false);
+    // std.log.info("starting pairs: {}", .{starting_val});
+    // std.log.info("taking lower: {any}", .{split(starting_val, false)});
+    // std.log.info("taking upper: {any}", .{split(starting_val, true)});
 
     // var all_values :std.ArrayList(std.ArrayList(u8)) = undefined;
     var all_values = load_input.load_input_line_bytes(allocator, day) catch |err| {
@@ -76,6 +69,35 @@ pub fn solve() anyerror!void {
     };
     _ = all_values;
 
-    std.log.info("Advent Day {d} Part 1:: {d}", .{ day, 1 });
+    var seat_ids = std.ArrayList(i32).init(allocator);
+
+    for (all_values.items) |ticket| {
+        var row = Bounds{ .lower = 0, .upper = 127 };
+        var col = Bounds{ .lower = 0, .upper = 7 };
+        _ = col;
+        for (ticket.items) |char| {
+            if (char == 'F') {
+                row = split(row, true);
+            } else if (char == 'B') {
+                row = split(row, false);
+            } else if (char == 'L') {
+                col = split(col, true);
+            } else if (char == 'R') {
+                col = split(col, false);
+            }
+        }
+
+        const seat_id = row.lower*8 + col.lower;
+
+        try seat_ids.append(seat_id);
+
+        std.log.info("result: {any} - {any}. seat: {d}", .{row, col, seat_id});
+    }
+
+    _ = seat_ids;
+
+    const max_seat_id = std.mem.max(i32, seat_ids.items);
+    //TODO its not 507
+    std.log.info("Advent Day {d} Part 1:: {d}", .{ day, max_seat_id });
     std.log.info("Advent Day {d} Part 2:: {d}", .{ day, 2 });
 }
