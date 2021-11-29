@@ -100,10 +100,25 @@ pub fn solve() anyerror!void {
 
         try seat_ids.append(seat_id);
 
-        std.log.info("result: {any} - {any}. seat: {d}", .{ row, col, seat_id });
+        // std.log.info("result: {any} - {any}. seat: {d}", .{ row, col, seat_id });
     }
 
     _ = seat_ids;
+
+    const max_seats = 1024;
+
+    var current_seat:i32 = 1; //seat id 0 doesnt exist
+    while (current_seat < max_seats) : (current_seat+=1) {
+        if (std.mem.indexOf(i32, seat_ids.items, ([_]i32{current_seat})[0..]) == null) {
+            std.log.info("Didnt find seat ID: {d}", .{current_seat});
+        }
+    }
+
+
+    // for (seat_ids) |seat_id| {
+    //
+    //
+    // }
 
     const max_seat_id = std.mem.max(i32, seat_ids.items);
     //TODO its not 507
