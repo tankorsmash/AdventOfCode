@@ -96,7 +96,7 @@ pub fn process_hcl(bytes: []const u8) bool {
     for (bytes[1..]) |char| {
         const is_char: bool = char >= 'a' and char <= ('a' + 5);
         const is_num: bool = char >= '0' and char <= ('0' + 9);
-        std.log.info("char {d} is char? {b} is num? {b}", .{ char, is_char, is_num });
+        // std.log.info("char {d} is char? {b} is num? {b}", .{ char, is_char, is_num });
         if (!(is_char or is_num)) {
             return false;
         }
@@ -202,7 +202,12 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
 
     var is_valid_part2_passport: bool = true;
 
+    // var keys = [][]u8{ "hcl" };
     for (req_fields) |field_name| {
+        // if (!std.mem.eql(u8, field_name, "byr")) {
+        //     continue;
+        // }
+
         var field_valid: ?bool = valid_fields.get(field_name);
         var field_value: ??[]const u8 = value_map.get(field_name);
         std.log.info("Checking {s}: {b} --  {s}", .{ field_name, field_valid, field_value });
