@@ -107,23 +107,29 @@ pub fn solve() anyerror!void {
 
     const max_seats = 1024;
 
+    // const lookup(row: i32, col:i32) i32 {
+    //     return row * 8 + col;
+    // }
+
     var current_seat:i32 = 1; //seat id 0 doesnt exist
+    var missing_seat:i32 = -1;
     while (current_seat < max_seats) : (current_seat+=1) {
         if (std.mem.indexOf(i32, seat_ids.items, ([_]i32{current_seat})[0..]) == null) {
-            std.log.info("Didnt find seat ID: {d}", .{current_seat});
+
+            if (std.mem.indexOf(i32, seat_ids.items, ([_]i32{current_seat-1})[0..]) != null) {
+                if (std.mem.indexOf(i32, seat_ids.items, ([_]i32{current_seat+1})[0..]) != null) {
+                    std.log.info("Didnt find seat ID: {d}", .{current_seat});
+                    missing_seat = current_seat;
+                }
+            }
         }
     }
 
 
-    // for (seat_ids) |seat_id| {
-    //
-    //
-    // }
-
     const max_seat_id = std.mem.max(i32, seat_ids.items);
     //TODO its not 507
     std.log.info("Advent Day {d} Part 1:: {d}", .{ day, max_seat_id });
-    std.log.info("Advent Day {d} Part 2:: {d}", .{ day, 2 });
+    std.log.info("Advent Day {d} Part 2:: {d}", .{ day, missing_seat });
 }
 
 test "ASDA" {
