@@ -108,3 +108,7 @@ pub fn solve() anyerror!void {
     std.log.info("Advent Day {d} Part 1:: {d}", .{ day, max_seat_id });
     std.log.info("Advent Day {d} Part 2:: {d}", .{ day, 2 });
 }
+
+test "ASDA" {
+    expect(true);
+}

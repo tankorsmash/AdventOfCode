@@ -18,16 +18,17 @@ pub fn split(bounds: Bounds, take_lower: bool) Bounds {
     _ = take_lower;
     var result = Bounds{ .lower = bounds.lower, .upper = bounds.upper };
 
-    const range = bounds.upper - bounds.lower + 1;
-    std.log.info("range: {d}", .{range});
-    std.log.info("range/2: {d}", .{@divExact(range, 2)});
+    const range = (bounds.upper - bounds.lower) + 1;
+    const half_range = @divExact(range, 2);
+    // std.debug.print("range: {d}\n", .{range});
+    // std.debug.print("range/2: {d}\n", .{half_range});
 
     if (take_lower) {
         // result.upper /= @intCast(i32, 2);
-        result.upper = @divExact(result.upper + 1, 2) - 1;
+        result.upper = result.upper - half_range;
     } else {
         // result.lower /= @intCast(i32, 2);
-        result.lower = @divExact(result.upper + 1, 2) - 1;
+        result.lower = result.lower + half_range;
     }
 
     return result;
@@ -44,23 +45,44 @@ pub fn main() anyerror!void {
     defer arena.deinit();
 
     const allocator = &arena.allocator;
-    _ =try  load_input.load_input_line_bytes(allocator, 1);
+    _ = try load_input.load_input_line_bytes(allocator, 1);
 }
-
-
 
 test "basic test" {
     try std.testing.expectEqual(10, 3 + 7);
 
-    try expect( 1 ==1);
-    var value : i32 = 100;
+    try expect(1 == 1);
+    var value: i32 = 100;
 
     try expect(value > 1);
     try expect(value < 1000);
     // try expect(1 < value < 1000);
+}
 
-    const starting_val = Bounds{.lower=0, .upper=127};
-    try expectEqual(split(starting_val, false), Bounds{.lower=64, .upper=127});
-    try expectEqual(split(starting_val, true), Bounds{.lower=0, .upper=63});
 
+test "split higher" {
+    const starting_val = Bounds{ .lower = 0, .upper = 127 };
+    try expectEqual(@intCast(i32, 64), split(starting_val, false).lower);
+    try expectEqual(@intCast(i32, 127), split(starting_val, false).upper);
+}
+test "split lower" {
+    const starting_val = Bounds{ .lower = 0, .upper = 127 };
+    try expectEqual((Bounds{ .lower = 0, .upper = 63 }).lower, split(starting_val, true).lower);
+    try expectEqual((Bounds{ .lower = 0, .upper = 63 }).upper, split(starting_val, true).upper);
+}
+
+test "split higher smaller" {
+    const starting_val = Bounds{ .lower = 64, .upper = 127 };
+    try expectEqual(@intCast(i32, 96), split(starting_val, false).lower);
+    try expectEqual(@intCast(i32, 127), split(starting_val, false).upper);
+}
+test "split lower smaller lower" {
+    const starting_val = Bounds{ .lower = 0, .upper = 63 };
+    try expectEqual(@intCast(i32, 0), split(starting_val, true).lower);
+    try expectEqual(@intCast(i32, 31), split(starting_val, true).upper);
+}
+test "split lower smaller upper" {
+    const starting_val = Bounds{ .lower = 0, .upper = 63 };
+    try expectEqual(@intCast(i32, 32), split(starting_val, false).lower);
+    try expectEqual(@intCast(i32, 63), split(starting_val, false).upper);
 }
