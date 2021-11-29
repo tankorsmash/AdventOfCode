@@ -4,6 +4,13 @@ const fmt = std.fmt;
 
 const load_input = @import("../shared/load_input.zig");
 
+const expect = std.testing.expect;
+const expectEqual = std.testing.expectEqual;
+pub fn expectFalse(result: bool) !void {
+    try expect(!result);
+}
+
+
 pub fn valid_len(bytes: []const u8, req_size: u32) bool {
     return std.mem.len(bytes) == req_size;
 }
@@ -271,6 +278,7 @@ pub fn solve() anyerror!void {
     const allocator = &arena.allocator;
     const day = 4;
 
+    // var all_values :std.ArrayList(std.ArrayList(u8)) = undefined;
     var all_values = load_input.load_input_line_bytes(allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
         return;
@@ -332,4 +340,25 @@ pub fn solve() anyerror!void {
 
     std.log.info("Advent Day {d} Part 1:: {d}", .{ day, part1_valid_passports_found });
     std.log.info("Advent Day {d} Part 2:: {d}", .{ day, part2_valid_passports_found });
+}
+
+test "day4 test" {
+    try expect(1 == 1231231); //this should fail but it doesnt because of the @import above
+    //byr
+    try expectFalse(process_byr("1231231"));
+    try expectFalse(process_byr("1000"));
+    try expectFalse(process_byr("3000"));
+    try expect(process_byr("2000"));
+
+
+    //iyr
+    try expectFalse(process_iyr("1231231"));
+    try expectFalse(process_iyr("1000"));
+    try expectFalse(process_iyr("3000"));
+    try expectFalse(process_iyr("2009"));
+    try expectFalse(process_iyr("2021"));
+    try expect(process_iyr("2010"));
+    try expect(process_iyr("2011"));
+    try expect(process_iyr("2019"));
+    try expect(process_iyr("2020"));
 }
