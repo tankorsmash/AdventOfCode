@@ -6,7 +6,7 @@ const day1 = @import("advent2020/day1/solution.zig");
 const day2 = @import("advent2020/day2/solution.zig");
 const day3 = @import("advent2020/day3/solution.zig");
 const day4 = @import("advent2020/day4/solution.zig");
-const day5 = @import("advent2020/day4/solution.zig");
+const day5 = @import("advent2020/day5/solution.zig");
 
 const load_input = @import("./advent2020/../advent2020/shared/load_input.zig");
 
