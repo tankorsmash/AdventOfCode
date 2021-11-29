@@ -40,7 +40,8 @@ pub fn process_iyr(bytes: []const u8) bool {
 
     var value: i32 = parse_int(bytes) catch return false;
 
-    return 2010 <= value <= 2020;
+    return value >= 2010 and value <= 2020;
+    // return 2010 <= value <= 2020;
 }
 
 pub fn process_eyr(bytes: []const u8) bool {
@@ -50,7 +51,8 @@ pub fn process_eyr(bytes: []const u8) bool {
 
     var value: i32 = parse_int(bytes) catch return false;
 
-    return 2020 <= value <= 2030;
+    // return 2020 <= value <= 2030;
+    return value >= 2020 and value <= 2030;
 }
 
 pub fn process_hgt(bytes: []const u8) bool {
@@ -63,7 +65,8 @@ pub fn process_hgt(bytes: []const u8) bool {
             std.log.info("{s} not a valid int", .{potential_height});
             return false;
         };
-        return 150 <= value <= 193;
+        // return 150 <= value <= 193;
+        return value >= 150 and value <= 193;
     }
 
     const in_idx = std.mem.indexOf(u8, bytes, "in");
@@ -73,7 +76,8 @@ pub fn process_hgt(bytes: []const u8) bool {
             std.log.info("{s} not a valid int", .{potential_height});
             return false;
         };
-        return 59 <= value <= 76;
+        // return 59 <= value <= 76;
+        return value >= 59 and value <= 76;
     }
 
     std.log.info("{s} is not a valid height", .{bytes});
