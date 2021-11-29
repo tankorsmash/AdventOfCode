@@ -21,7 +21,7 @@ pub fn solve() anyerror!void {
     var part1_tree_num: u32 = 0;
     var part2_tree_num: u32 = 0;
     const col_width = std.mem.len(all_values.items[0].items);
-    std.log.info("col_width {}", .{col_width});
+    // std.log.info("col_width {}", .{col_width});
 
     var col_idx: u32 = 0;
     var p1_col: u32 = 0;
@@ -73,7 +73,7 @@ pub fn solve() anyerror!void {
         // std.log.info("len {}", .{std.mem.len(bytes)});
     }
 
-    std.log.info("path_trees {any}", .{path_trees});
+    // std.log.info("path_trees {any}", .{path_trees});
     part2_tree_num = path_trees[0] * path_trees[1] * path_trees[2] * path_trees[3] * path_trees[4];
 
     std.log.info("Advent Day {d} Part 1:: {d}", .{ day, part1_tree_num });

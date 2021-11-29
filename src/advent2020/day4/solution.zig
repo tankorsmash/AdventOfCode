@@ -69,7 +69,7 @@ pub fn process_hgt(bytes: []const u8) bool {
     if (cm_idx != null) {
         var potential_height = bytes[0..cm_idx.?];
         var value: i32 = parse_int(potential_height) catch {
-            std.log.info("{s} not a valid int", .{potential_height});
+            // std.log.info("{s} not a valid int", .{potential_height});
             return false;
         };
         // return 150 <= value <= 193;
@@ -80,14 +80,14 @@ pub fn process_hgt(bytes: []const u8) bool {
     if (in_idx != null) {
         var potential_height = bytes[0..in_idx.?];
         var value: i32 = parse_int(potential_height) catch {
-            std.log.info("{s} not a valid int", .{potential_height});
+            // std.log.info("{s} not a valid int", .{potential_height});
             return false;
         };
         // return 59 <= value <= 76;
         return value >= 59 and value <= 76;
     }
 
-    std.log.info("{s} is not a valid height", .{bytes});
+    // std.log.info("{s} is not a valid height", .{bytes});
     return false;
 }
 
@@ -136,7 +136,7 @@ pub fn process_pid(bytes: []const u8) bool {
     _ = bytes;
     const len = std.mem.len(bytes);
     if (len != 9) {
-        std.log.info("length is wrong: {d}", .{len});
+        // std.log.info("length is wrong: {d}", .{len});
         return false;
     }
 
@@ -220,8 +220,8 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
         // }
 
         var field_valid: ?bool = valid_fields.get(field_name);
-        var field_value: ??[]const u8 = value_map.get(field_name);
-        std.log.info("Checking {s}: {b} --  {s}", .{ field_name, field_valid, field_value });
+        // var field_value: ??[]const u8 = value_map.get(field_name);
+        // std.log.info("Checking {s}: {b} --  {s}", .{ field_name, field_valid, field_value });
 
         if (!field_valid.?) {
             is_valid_part2_passport = false;
@@ -294,8 +294,8 @@ pub fn solve() anyerror!void {
     try validator_map.put("pid", process_pid); // (Passport ID)
     try validator_map.put("cid", process_cid); // (Country ID)
 
-    const num_req_fields = std.mem.len(req_fields);
-    std.log.info("There are {d} required fields", .{num_req_fields});
+    // const num_req_fields = std.mem.len(req_fields);
+    // std.log.info("There are {d} required fields", .{num_req_fields});
 
     var part1_valid_passports_found: i32 = 0;
     var part2_valid_passports_found: i32 = 0;
@@ -314,7 +314,7 @@ pub fn solve() anyerror!void {
             var all_entries = try collect_entries(allocator, raw_lines);
             var passport_is_valid = try is_passport_valid(allocator, all_entries);
 
-            std.log.info("Passport valid? {b}", .{passport_is_valid});
+            // std.log.info("Passport valid? {b}", .{passport_is_valid});
 
             if (passport_is_valid) {
                 part2_valid_passports_found += 1;
@@ -332,7 +332,7 @@ pub fn solve() anyerror!void {
     var all_entries = try collect_entries(allocator, raw_lines);
     var passport_is_valid = try is_passport_valid(allocator, all_entries);
 
-    std.log.info("is pp valid? {b}", .{passport_is_valid});
+    // std.log.info("is pp valid? {b}", .{passport_is_valid});
 
     if (passport_is_valid) {
         part2_valid_passports_found += 1;
