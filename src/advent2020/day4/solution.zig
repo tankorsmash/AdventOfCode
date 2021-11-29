@@ -15,7 +15,7 @@ pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
             return 0;
         }
 
-        std.log.err("err {}: Unknown error parsing int: {any}", .{err, bytes});
+        std.log.err("err {}: Unknown error parsing int: {any}", .{ err, bytes });
 
         return 0;
     };
@@ -83,17 +83,21 @@ pub fn process_hgt(bytes: []const u8) bool {
 pub fn process_hcl(bytes: []const u8) bool {
     _ = bytes;
     const hcl_idx = std.mem.indexOfPos(u8, bytes, 0, "#");
-    if (hcl_idx == null) { return false;}
+    if (hcl_idx == null) {
+        return false;
+    }
 
     //exactly 6 bytes
-    if (std.mem.len(bytes[1..]) != 6) { return false; }
+    if (std.mem.len(bytes[1..]) != 6) {
+        return false;
+    }
 
     //a-f or 0.9
     for (bytes[1..]) |char| {
-        const is_char: bool = char >= 'a' and char <= ('a'+5);
-        const is_num: bool = char >= '0' and char <= ('0'+9);
-        std.log.info("char {d} is char? {b} is num? {b}", .{char, is_char, is_num});
-        if (!(is_char or is_num) ) {
+        const is_char: bool = char >= 'a' and char <= ('a' + 5);
+        const is_num: bool = char >= '0' and char <= ('0' + 9);
+        std.log.info("char {d} is char? {b} is num? {b}", .{ char, is_char, is_num });
+        if (!(is_char or is_num)) {
             return false;
         }
         _ = char;
@@ -103,9 +107,11 @@ pub fn process_hcl(bytes: []const u8) bool {
 pub fn process_ecl(bytes: []const u8) bool {
     _ = bytes;
 
-    if (std.mem.len(bytes) != 3) { return false; }
+    if (std.mem.len(bytes) != 3) {
+        return false;
+    }
 
-    const valid_ecls = [_][]const u8 {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
+    const valid_ecls = [_][]const u8{ "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
 
     for (valid_ecls) |potential_color| {
         if (std.mem.eql(u8, potential_color, bytes)) {
@@ -236,10 +242,9 @@ pub fn solve() anyerror!void {
 
                     var validator_fn = get_validator(key).?;
 
-
                     var is_valid = validator_fn(value);
 
-                    std.log.info("Value: {s} is valid?: {b}", .{value, is_valid});
+                    std.log.info("Value: {s} is valid?: {b}", .{ value, is_valid });
 
                     try valid_fields.put(key, is_valid);
                 }
@@ -250,8 +255,11 @@ pub fn solve() anyerror!void {
             var is_valid_part2_passport: bool = true;
             while (it.next()) |entry| {
                 const value = entry.value_ptr.*;
-                std.log.info("entry checking -- k: {s}, v: {b}", .{entry.key_ptr.*, value});
-                if (!value) { is_valid_part2_passport = false; break; }
+                std.log.info("entry checking -- k: {s}, v: {b}", .{ entry.key_ptr.*, value });
+                if (!value) {
+                    is_valid_part2_passport = false;
+                    break;
+                }
             }
             if (is_valid_part2_passport) {
                 part2_valid_passports_found += 1;
