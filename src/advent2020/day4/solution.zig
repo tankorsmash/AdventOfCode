@@ -157,6 +157,46 @@ pub fn get_validator(key: []const u8) ?(fn ([]const u8) bool) {
     return validator_map.get(key);
 }
 
+pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(std.ArrayList(u8))) !bool {
+    _ = entries;
+    var num_fields_found: i32 = 0;
+    var valid_fields = try init_valid_map(allocator);
+    _ = valid_fields;
+
+    for (entries.items) |entry| {
+        std.log.info("processing the entry {s}", .{entry});
+        var split_entries = std.mem.split(u8, entry.items, ":");
+        _ = split_entries;
+
+        var key = split_entries.next().?;
+        // try field_keys_found.append(key);
+        var value = split_entries.next().?;
+        std.log.info(":: Found {s} -- value: {s}", .{ key, value });
+        if (!std.mem.eql(u8, "cid", key)) {
+            num_fields_found += 1;
+        }
+
+        var validator_fn = get_validator(key).?;
+        var is_valid = validator_fn(value);
+        std.log.info("Value: {s} is valid?: {b}", .{ value, is_valid });
+
+        try valid_fields.put(key, is_valid);
+    }
+
+    var it = valid_fields.iterator();
+
+    var is_valid_part2_passport: bool = true;
+    while (it.next()) |entry| {
+        const value = entry.value_ptr.*;
+        std.log.info("entry checking -- k: {s}, v: {b}", .{ entry.key_ptr.*, value });
+        if (!value) {
+            is_valid_part2_passport = false;
+            break;
+        }
+    }
+    return false;
+}
+
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -208,8 +248,8 @@ pub fn solve() anyerror!void {
 
     std.log.info("logging {d}", .{6});
     var num_fields_found: i32 = 0;
-    var field_keys_found = std.ArrayList([]const u8).init(allocator);
-    _ = field_keys_found;
+    // var field_keys_found = std.ArrayList([]const u8).init(allocator);
+    // _ = field_keys_found;
 
     std.log.info("logging {d}", .{7});
     for (all_values.items) |arr_bytes, line_idx| {
@@ -219,8 +259,8 @@ pub fn solve() anyerror!void {
 
         var len_bytes = std.mem.len(bytes);
         if (len_bytes == 0) {
-            var valid_fields = try init_valid_map(allocator);
-            _ = valid_fields;
+            var all_entries = std.ArrayList(std.ArrayList(u8)).init(allocator);
+            _ = all_entries;
             //process old passport
             for (raw_lines.items) |pp_bytes| {
                 std.log.info(":: processing the line {d}:: '{s}'", .{ line_idx, pp_bytes.items });
@@ -228,54 +268,31 @@ pub fn solve() anyerror!void {
                 var entries = std.mem.split(u8, pp_bytes.items, " ");
                 _ = entries;
                 while (entries.next()) |entry| {
-                    std.log.info("processing the entry {s}", .{entry});
-                    var split_entries = std.mem.split(u8, entry, ":");
-                    _ = split_entries;
-
-                    var key = split_entries.next().?;
-                    try field_keys_found.append(key);
-                    var value = split_entries.next().?;
-                    std.log.info(":: Found {s} -- value: {s}", .{ key, value });
-                    if (!std.mem.eql(u8, "cid", key)) {
-                        num_fields_found += 1;
+                    var sub_arr = std.ArrayList(u8).init(allocator);
+                    for (entry) |el| {
+                        try sub_arr.append(el);
                     }
-
-                    var validator_fn = get_validator(key).?;
-
-                    var is_valid = validator_fn(value);
-
-                    std.log.info("Value: {s} is valid?: {b}", .{ value, is_valid });
-
-                    try valid_fields.put(key, is_valid);
+                    try all_entries.append(sub_arr);
                 }
             }
 
-            var it = valid_fields.iterator();
-
-            var is_valid_part2_passport: bool = true;
-            while (it.next()) |entry| {
-                const value = entry.value_ptr.*;
-                std.log.info("entry checking -- k: {s}, v: {b}", .{ entry.key_ptr.*, value });
-                if (!value) {
-                    is_valid_part2_passport = false;
-                    break;
-                }
-            }
-            if (is_valid_part2_passport) {
+            var passport_is_valid = try is_passport_valid(allocator, all_entries);
+            std.log.info("is pp valid? {b}", .{passport_is_valid});
+            if (passport_is_valid) {
                 part2_valid_passports_found += 1;
             }
 
-            std.log.info("field keys found: #{d} {s}", .{ num_fields_found, field_keys_found.items });
-            if (num_fields_found >= 7) {
-                std.log.info("Is valid passport", .{});
-                part1_valid_passports_found += 1;
-            } else {
-                std.log.info("Is not a valid passport", .{});
-            }
+            // std.log.info("field keys found: #{d} {s}", .{ num_fields_found, field_keys_found.items });
+            // if (num_fields_found >= 7) {
+            //     std.log.info("Is valid passport", .{});
+            //     part1_valid_passports_found += 1;
+            // } else {
+            //     std.log.info("Is not a valid passport", .{});
+            // }
 
             //clear old one by just replacing it
             raw_lines = std.ArrayList(std.ArrayList(u8)).init(allocator);
-            field_keys_found = std.ArrayList([]const u8).init(allocator);
+            // field_keys_found = std.ArrayList([]const u8).init(allocator);
             num_fields_found = 0;
             continue;
         }
@@ -285,43 +302,43 @@ pub fn solve() anyerror!void {
     }
 
     //duplicate the checking logic for  the last item, since we skip the last one
-    for (raw_lines.items) |pp_bytes| {
-        std.log.info(":: processing the line LAST:: '{s}'", .{pp_bytes.items});
-
-        var entries = std.mem.split(u8, pp_bytes.items, " ");
-        _ = entries;
-        while (entries.next()) |entry| {
-            std.log.info("processing the entry {s}", .{entry});
-            var split_entries = std.mem.split(u8, entry, ":");
-            _ = split_entries;
-
-            var key = split_entries.next().?;
-            try field_keys_found.append(key);
-            var value = split_entries.next().?;
-            std.log.info(":: Found {s} -- value: {s}", .{ key, value });
-            if (!std.mem.eql(u8, "cid", key)) {
-                num_fields_found += 1;
-
-                var is_valid_field: bool = undefined;
-
-                if (std.mem.eql(u8, key, "byr")) {
-                    is_valid_field = true;
-                }
-
-                if (is_valid_field) {}
-
-                _ = is_valid_field;
-            }
-        }
-    }
-
-    std.log.info("field keys found: #{d} {s}", .{ num_fields_found, field_keys_found.items });
-    if (num_fields_found >= 7) {
-        std.log.info("Is valid passport", .{});
-        part1_valid_passports_found += 1;
-    } else {
-        std.log.info("Is not a valid passport", .{});
-    }
+    // for (raw_lines.items) |pp_bytes| {
+    //     std.log.info(":: processing the line LAST:: '{s}'", .{pp_bytes.items});
+    //
+    //     var entries = std.mem.split(u8, pp_bytes.items, " ");
+    //     _ = entries;
+    //     while (entries.next()) |entry| {
+    //         std.log.info("processing the entry {s}", .{entry});
+    //         var split_entries = std.mem.split(u8, entry, ":");
+    //         _ = split_entries;
+    //
+    //         var key = split_entries.next().?;
+    //         try field_keys_found.append(key);
+    //         var value = split_entries.next().?;
+    //         std.log.info(":: Found {s} -- value: {s}", .{ key, value });
+    //         if (!std.mem.eql(u8, "cid", key)) {
+    //             num_fields_found += 1;
+    //
+    //             var is_valid_field: bool = undefined;
+    //
+    //             if (std.mem.eql(u8, key, "byr")) {
+    //                 is_valid_field = true;
+    //             }
+    //
+    //             if (is_valid_field) {}
+    //
+    //             _ = is_valid_field;
+    //         }
+    //     }
+    // }
+    //
+    // std.log.info("field keys found: #{d} {s}", .{ num_fields_found, field_keys_found.items });
+    // if (num_fields_found >= 7) {
+    //     std.log.info("Is valid passport", .{});
+    //     part1_valid_passports_found += 1;
+    // } else {
+    //     std.log.info("Is not a valid passport", .{});
+    // }
 
     std.log.info("Advent Day {d} Part 1:: {d}", .{ day, part1_valid_passports_found });
     std.log.info("Advent Day {d} Part 2:: {d}", .{ day, part2_valid_passports_found });
