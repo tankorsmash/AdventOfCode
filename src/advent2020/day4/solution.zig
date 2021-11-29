@@ -103,6 +103,8 @@ pub fn process_hcl(bytes: []const u8) bool {
 pub fn process_ecl(bytes: []const u8) bool {
     _ = bytes;
 
+    if (std.mem.len(bytes) != 3) { return false; }
+
     const valid_ecls = [_][]const u8 {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
 
     for (valid_ecls) |potential_color| {
@@ -110,12 +112,16 @@ pub fn process_ecl(bytes: []const u8) bool {
             return true;
         }
     }
+
     return false;
 }
 pub fn process_pid(bytes: []const u8) bool {
     _ = bytes;
     const len = std.mem.len(bytes);
-    if (len != 9) { return false; }
+    if (len != 9) {
+        std.log.info("length is wrong: {d}", .{len});
+        return false;
+    }
 
     _ = parse_int(bytes) catch return false;
     return true;
