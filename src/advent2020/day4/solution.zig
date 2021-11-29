@@ -159,7 +159,7 @@ pub fn get_validator(key: []const u8) ?(fn ([]const u8) bool) {
 
 pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(std.ArrayList(u8))) !bool {
     _ = entries;
-    var num_fields_found: i32 = 0;
+    var num_fields_found: i32 = 0; //for part1,otherwise unused though
     var valid_fields = try init_valid_map(allocator);
     _ = valid_fields;
 
@@ -195,7 +195,7 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
             break;
         }
     }
-    return false;
+    return is_valid_part2_passport;
 }
 
 pub fn collect_entries(allocator: *std.mem.Allocator, raw_lines:std.ArrayList(std.ArrayList(u8))) !std.ArrayList(std.ArrayList(u8)) {
@@ -261,10 +261,6 @@ pub fn solve() anyerror!void {
     var raw_lines: std.ArrayList(std.ArrayList(u8)) = std.ArrayList(std.ArrayList(u8)).init(allocator);
     _ = raw_lines;
 
-    var num_fields_found: i32 = 0;
-    // var field_keys_found = std.ArrayList([]const u8).init(allocator);
-    // _ = field_keys_found;
-
     for (all_values.items) |arr_bytes, line_idx| {
         _ = line_idx;
         var bytes: []u8 = arr_bytes.items;
@@ -274,26 +270,16 @@ pub fn solve() anyerror!void {
         var empty_line : bool = len_bytes == 0;
         if (empty_line) {
             var all_entries = try collect_entries(allocator, raw_lines);
-            _ = all_entries;
             var passport_is_valid = try is_passport_valid(allocator, all_entries);
+
             std.log.info("is pp valid? {b}", .{passport_is_valid});
 
             if (passport_is_valid) {
                 part2_valid_passports_found += 1;
             }
 
-            // std.log.info("field keys found: #{d} {s}", .{ num_fields_found, field_keys_found.items });
-            // if (num_fields_found >= 7) {
-            //     std.log.info("Is valid passport", .{});
-            //     part1_valid_passports_found += 1;
-            // } else {
-            //     std.log.info("Is not a valid passport", .{});
-            // }
-
             //clear old one by just replacing it
             raw_lines = std.ArrayList(std.ArrayList(u8)).init(allocator);
-            // field_keys_found = std.ArrayList([]const u8).init(allocator);
-            num_fields_found = 0;
             continue;
         }
         // std.log.info("length {d}", .{len_bytes});
@@ -301,44 +287,14 @@ pub fn solve() anyerror!void {
         try raw_lines.append(arr_bytes);
     }
 
-    //duplicate the checking logic for  the last item, since we skip the last one
-    // for (raw_lines.items) |pp_bytes| {
-    //     std.log.info(":: processing the line LAST:: '{s}'", .{pp_bytes.items});
-    //
-    //     var entries = std.mem.split(u8, pp_bytes.items, " ");
-    //     _ = entries;
-    //     while (entries.next()) |entry| {
-    //         std.log.info("processing the entry {s}", .{entry});
-    //         var split_entries = std.mem.split(u8, entry, ":");
-    //         _ = split_entries;
-    //
-    //         var key = split_entries.next().?;
-    //         try field_keys_found.append(key);
-    //         var value = split_entries.next().?;
-    //         std.log.info(":: Found {s} -- value: {s}", .{ key, value });
-    //         if (!std.mem.eql(u8, "cid", key)) {
-    //             num_fields_found += 1;
-    //
-    //             var is_valid_field: bool = undefined;
-    //
-    //             if (std.mem.eql(u8, key, "byr")) {
-    //                 is_valid_field = true;
-    //             }
-    //
-    //             if (is_valid_field) {}
-    //
-    //             _ = is_valid_field;
-    //         }
-    //     }
-    // }
-    //
-    // std.log.info("field keys found: #{d} {s}", .{ num_fields_found, field_keys_found.items });
-    // if (num_fields_found >= 7) {
-    //     std.log.info("Is valid passport", .{});
-    //     part1_valid_passports_found += 1;
-    // } else {
-    //     std.log.info("Is not a valid passport", .{});
-    // }
+    var all_entries = try collect_entries(allocator, raw_lines);
+    var passport_is_valid = try is_passport_valid(allocator, all_entries);
+
+    std.log.info("is pp valid? {b}", .{passport_is_valid});
+
+    if (passport_is_valid) {
+        part2_valid_passports_found += 1;
+    }
 
     std.log.info("Advent Day {d} Part 1:: {d}", .{ day, part1_valid_passports_found });
     std.log.info("Advent Day {d} Part 2:: {d}", .{ day, part2_valid_passports_found });
