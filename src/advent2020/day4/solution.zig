@@ -164,7 +164,7 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
     _ = valid_fields;
 
     for (entries.items) |entry| {
-        std.log.info("processing the entry {s}", .{entry});
+        std.log.info("processing the entry {s}", .{entry.items});
         var split_entries = std.mem.split(u8, entry.items, ":");
         _ = split_entries;
 
@@ -187,14 +187,35 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
 
     var is_valid_part2_passport: bool = true;
     while (it.next()) |entry| {
+        const key = entry.key_ptr.*;
         const value = entry.value_ptr.*;
-        std.log.info("entry checking -- k: {s}, v: {b}", .{ entry.key_ptr.*, value });
+        std.log.info("entry checking -- k: {s}, v: {b}", .{ key, value });
         if (!value) {
             is_valid_part2_passport = false;
             break;
         }
     }
     return false;
+}
+
+pub fn collect_entries(allocator: *std.mem.Allocator, raw_lines:std.ArrayList(std.ArrayList(u8))) !std.ArrayList(std.ArrayList(u8)) {
+
+    var all_entries = std.ArrayList(std.ArrayList(u8)).init(allocator);
+    _ = all_entries;
+    //process old passport
+    for (raw_lines.items) |pp_bytes| {
+        var entries = std.mem.split(u8, pp_bytes.items, " ");
+        _ = entries;
+        while (entries.next()) |entry| {
+            var sub_arr = std.ArrayList(u8).init(allocator);
+            for (entry) |el| {
+                try sub_arr.append(el);
+            }
+            try all_entries.append(sub_arr);
+        }
+    }
+
+    return all_entries;
 }
 
 pub fn solve() anyerror!void {
@@ -204,14 +225,11 @@ pub fn solve() anyerror!void {
     const allocator = &arena.allocator;
     const day = 4;
 
-    std.log.info("logging {d}", .{1});
-
     var all_values = load_input.load_input_line_bytes(allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
         return;
     };
 
-    std.log.info("logging {d}", .{2});
     validator_map = std.StringHashMap(fn ([]const u8) bool).init(allocator);
     try validator_map.put("byr", process_byr); // (Birth Year)
     try validator_map.put("iyr", process_iyr); // (Issue Year)
@@ -222,7 +240,6 @@ pub fn solve() anyerror!void {
     try validator_map.put("pid", process_pid); // (Passport ID)
     try validator_map.put("cid", process_cid); // (Country ID)
 
-    std.log.info("logging {d}", .{3});
     var req_fields = [_][]const u8{
         "byr", // (Birth Year)
         "iyr", // (Issue Year)
@@ -235,49 +252,32 @@ pub fn solve() anyerror!void {
     };
     _ = req_fields;
 
-    std.log.info("logging {d}", .{4});
     const num_req_fields = std.mem.len(req_fields);
     std.log.info("There are {d} required fields", .{num_req_fields});
 
     var part1_valid_passports_found: i32 = 0;
     var part2_valid_passports_found: i32 = 0;
 
-    std.log.info("logging {d}", .{5});
     var raw_lines: std.ArrayList(std.ArrayList(u8)) = std.ArrayList(std.ArrayList(u8)).init(allocator);
     _ = raw_lines;
 
-    std.log.info("logging {d}", .{6});
     var num_fields_found: i32 = 0;
     // var field_keys_found = std.ArrayList([]const u8).init(allocator);
     // _ = field_keys_found;
 
-    std.log.info("logging {d}", .{7});
     for (all_values.items) |arr_bytes, line_idx| {
         _ = line_idx;
         var bytes: []u8 = arr_bytes.items;
         _ = bytes;
 
         var len_bytes = std.mem.len(bytes);
-        if (len_bytes == 0) {
-            var all_entries = std.ArrayList(std.ArrayList(u8)).init(allocator);
+        var empty_line : bool = len_bytes == 0;
+        if (empty_line) {
+            var all_entries = try collect_entries(allocator, raw_lines);
             _ = all_entries;
-            //process old passport
-            for (raw_lines.items) |pp_bytes| {
-                std.log.info(":: processing the line {d}:: '{s}'", .{ line_idx, pp_bytes.items });
-
-                var entries = std.mem.split(u8, pp_bytes.items, " ");
-                _ = entries;
-                while (entries.next()) |entry| {
-                    var sub_arr = std.ArrayList(u8).init(allocator);
-                    for (entry) |el| {
-                        try sub_arr.append(el);
-                    }
-                    try all_entries.append(sub_arr);
-                }
-            }
-
             var passport_is_valid = try is_passport_valid(allocator, all_entries);
             std.log.info("is pp valid? {b}", .{passport_is_valid});
+
             if (passport_is_valid) {
                 part2_valid_passports_found += 1;
             }
