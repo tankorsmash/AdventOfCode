@@ -51,23 +51,59 @@ pub fn solve() anyerror!void {
     _ = all_values;
 
     var prev_val = try parse_int(all_values.items[0].items);
-
     var times_incremented : i32 = 0;
 
-    for (all_values.items) |ticket| {
-        _ = ticket;
-        var val = try parse_int(ticket.items);
+    var rolling_vals: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
+    try rolling_vals.append(-1);
+    try rolling_vals.append(-1);
+    try rolling_vals.append(-1);
+    _ = rolling_vals;
+    var rolling_incremented : i32 = 0;
+    _ = rolling_incremented;
+    var prev_sum : i32= 0;
+
+    for (all_values.items) |line, idx| {
+        _ = line;
+        var val = try parse_int(line.items);
         _ = val;
 
         if (val > prev_val) {
             times_incremented += 1;
         }
         prev_val = val;
+
+
+        _ = rolling_vals.items[0];
+        var el1= rolling_vals.items[1];
+        var el2= rolling_vals.items[2];
+
+
+        rolling_vals = std.ArrayList(i32).init(allocator);
+        try rolling_vals.append(el1);
+        try rolling_vals.append(el2);
+        try rolling_vals.append(val);
+
+
+        if (idx >= 3) {
+            var cur_sum: i32 = 0;
+            for (rolling_vals.items) |v| {
+                cur_sum += v;
+            }
+            // std.log.info("cur_sum: {d}, {b}", .{cur_sum, cur_sum > prev_sum});
+            if (cur_sum > prev_sum) {
+                rolling_incremented += 1;
+            }
+            prev_sum = cur_sum;
+        }
+
+
+        // associate letters and their sum
+
     }
 
     //TODO its not 507
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, times_incremented });
-    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, -1 });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, rolling_incremented });
 }
 
 test "ASDA" {
