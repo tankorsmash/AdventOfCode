@@ -133,5 +133,5 @@ pub fn solve() anyerror!void {
 }
 
 test "ASDA" {
-    expect(true);
+    try expect(true);
 }

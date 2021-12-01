@@ -8,6 +8,8 @@ const day3 = @import("advent2020/day3/solution.zig");
 const day4 = @import("advent2020/day4/solution.zig");
 const day5 = @import("advent2020/day5/solution.zig");
 
+const day1_2021 = @import("advent2021/day1/solution.zig");
+
 const load_input = @import("./advent2020/../advent2020/shared/load_input.zig");
 
 pub const Bounds = struct { lower: i32, upper: i32 };
@@ -35,11 +37,13 @@ pub fn split(bounds: Bounds, take_lower: bool) Bounds {
 }
 
 pub fn main() anyerror!void {
-    std.log.info("Day1 Error?: {}", .{day1.solve()});
-    std.log.info("Day2 Error?: {}", .{day2.solve()});
-    std.log.info("Day3 Error?: {}", .{day3.solve()});
-    std.log.info("Day4 Error?: {}", .{day4.solve()});
-    std.log.info("Day5 Error?: {}", .{day5.solve()});
+    std.log.info("2020 Day1 Error?: {}", .{day1.solve()});
+    std.log.info("2020 Day2 Error?: {}", .{day2.solve()});
+    std.log.info("2020 Day3 Error?: {}", .{day3.solve()});
+    std.log.info("2020 Day4 Error?: {}", .{day4.solve()});
+    std.log.info("2020 Day5 Error?: {}", .{day5.solve()});
+
+    std.log.info("2021 Day1 Error?: {}", .{day1_2021.solve()});
 
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
