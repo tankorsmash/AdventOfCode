@@ -34,6 +34,10 @@ pub fn solve() anyerror!void {
     var x_pos : i32 = 0;
     var y_pos : i32 = 0;
 
+    var horiz : i32 = 0;
+    var depth : i32 = 0;
+    var aim : i32 = 0;
+
     for (all_values.items) |line| {
         var split_line = std.mem.split(u8, line.items, " ");
 
@@ -49,8 +53,17 @@ pub fn solve() anyerror!void {
             y_pos -= val;
         }
 
+        if (std.mem.eql(u8, cmd, "forward")) {
+            horiz += val;
+            depth += (aim * val);
+        } else if (std.mem.eql(u8, cmd, "down")) {
+            aim += val;
+        } else if (std.mem.eql(u8, cmd, "up")) {
+            aim -= val;
+        }
+
     }
 
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, x_pos*y_pos });
-    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, rolling_incremented });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, horiz*depth });
 }
