@@ -9,6 +9,7 @@ const day4 = @import("advent2020/day4/solution.zig");
 const day5 = @import("advent2020/day5/solution.zig");
 
 const day1_2021 = @import("advent2021/day1/solution.zig");
+const day2_2021 = @import("advent2021/day2/solution.zig");
 
 const load_input = @import("./advent2020/../advent2020/shared/load_input.zig");
 
@@ -44,6 +45,7 @@ pub fn main() anyerror!void {
     std.log.info("2020 Day5 Error?: {}", .{day5.solve()});
 
     std.log.info("2021 Day1 Error?: {}", .{day1_2021.solve()});
+    std.log.info("2021 Day2 Error?: {}", .{day2_2021.solve()});
 
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
