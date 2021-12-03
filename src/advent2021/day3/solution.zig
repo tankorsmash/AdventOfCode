@@ -88,9 +88,23 @@ pub fn solve() anyerror!void {
     _ = g_bit_3;
     var g_bit_4: u8 = if (sums.items[4] > 0 ) '1' else '0';
     _ = g_bit_4;
+    var g_bit_5: u8 = if (sums.items[5] > 0 ) '1' else '0';
+    _ = g_bit_5;
+    var g_bit_6: u8 = if (sums.items[6] > 0 ) '1' else '0';
+    _ = g_bit_6;
+    var g_bit_7: u8 = if (sums.items[7] > 0 ) '1' else '0';
+    _ = g_bit_7;
+    var g_bit_8: u8 = if (sums.items[8] > 0 ) '1' else '0';
+    _ = g_bit_8;
+    var g_bit_9: u8 = if (sums.items[9] > 0 ) '1' else '0';
+    _ = g_bit_9;
+    var g_bit_10: u8 = if (sums.items[10] > 0 ) '1' else '0';
+    _ = g_bit_10;
+    var g_bit_11: u8 = if (sums.items[11] > 0 ) '1' else '0';
+    _ = g_bit_11;
     std.log.info("sums: {any}", .{sums});
 
-    var gamma_str = [_]u8 { g_bit_0, g_bit_1, g_bit_2, g_bit_3, g_bit_4};
+    var gamma_str = [_]u8 { g_bit_0, g_bit_1, g_bit_2, g_bit_3, g_bit_4, g_bit_5, g_bit_6, g_bit_7, g_bit_8, g_bit_9, g_bit_10, g_bit_11};
     std.log.info("gamma_str: {any}", .{gamma_str});
 
     var gamma: i32 = try std.fmt.parseInt(i32, gamma_str[0..], 2); //how the fuck
@@ -98,10 +112,10 @@ pub fn solve() anyerror!void {
     std.log.info("gamma: {b}", .{gamma});
 
     // var epsilon: i32 = gamma ^ 0b11111;
-    var epsilon: i32 = ~gamma & ((1 << 5) - 1);
+    var epsilon: i32 = ~gamma & ((1 << 12) - 1);
     std.log.info("epsilon: {b}", .{epsilon});
     _ = epsilon;
 
-    std.log.info("poop Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma*epsilon});
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma*epsilon});
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, horiz*depth });
 }
