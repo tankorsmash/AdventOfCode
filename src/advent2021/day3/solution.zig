@@ -19,8 +19,8 @@ pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
     return value;
 }
 
-pub fn parse_bin(bytes: []const u8) std.fmt.ParseIntError!i32 {
-    var value: i32 = std.fmt.parseUnsigned(i32, bytes, 2) catch |err| {
+pub fn parse_bin(bytes: []const u8) std.fmt.ParseIntError!u32 {
+    var value: u32 = std.fmt.parseUnsigned(u32, bytes, 2) catch |err| {
         if (err == error.InvalidCharacter) {
             std.log.err("err: Invalid Character: {any}", .{bytes});
             return 0;
@@ -42,21 +42,10 @@ pub fn get_bit(num: u32, bit_idx: u5) u32 {
     return shifted_one_num >> shift;
 }
 
-pub fn solve() anyerror!void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-
-    const allocator = &arena.allocator;
-    const day = 3;
-
-    var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
-        std.log.err("error loading input for Day {d}! {any}", .{ day, err });
-        return;
-    };
-
+pub fn calc_sums(allocator: *std.mem.Allocator, values: std.ArrayList(std.ArrayList(u8))) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-    for (all_values.items) |line| {
+    for (values.items) |line| {
         _ = line;
         var stringed = try fmt.allocPrint(allocator, "{s}", .{line.items});
         _ = stringed;
@@ -71,12 +60,29 @@ pub fn solve() anyerror!void {
         }
     }
 
+    return sums;
+}
+
+pub fn solve() anyerror!void {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    const allocator = &arena.allocator;
+    const day = 3;
+
+    var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
+        std.log.err("error loading input for Day {d}! {any}", .{ day, err });
+        return;
+    };
+
+    var sums = try calc_sums(allocator, all_values);
     std.log.info("about to parse oxy vals", .{});
     //oxygen
     var oxy_vals = std.ArrayList(u32).init(allocator);
     var co2_vals = std.ArrayList(u32).init(allocator);
     for (all_values.items) |line| {
-        var parsed: i32 = try parse_bin(line.items);
+        var parsed: u32 = try parse_bin(line.items);
+        // std.log.info("parsed: {b} {d}", .{@intCast(u32, parsed), @intCast(u32, parsed)});
         try oxy_vals.append(@intCast(u32, parsed));
         try co2_vals.append(@intCast(u32, parsed));
     }
@@ -154,6 +160,8 @@ pub fn solve() anyerror!void {
         }
     }
 
+    std.log.info("oxy vals: {any}, co2 vals: {any}", .{ oxy_vals.items, co2_vals.items });
+
     var g_bit_0: u8 = if (sums[0] > 0) '1' else '0';
     _ = g_bit_0;
     var g_bit_1: u8 = if (sums[1] > 0) '1' else '0';
@@ -196,6 +204,6 @@ pub fn solve() anyerror!void {
     // var co2_hack: u32 = ~oxy_result & ((1 << 12) - 1); //2397996 TODO is too high
 
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });
-    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result*co2_result });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result * co2_result });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result*co2_hack });
 }
