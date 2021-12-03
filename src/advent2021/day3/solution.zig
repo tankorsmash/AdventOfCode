@@ -19,6 +19,14 @@ pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
     return value;
 }
 
+pub fn get_bit(num: u32, bit_idx: u5) u32 {
+    const shift: u5 = bit_idx;
+    const one: u32 = 1;
+    const shifted_one: u32 = one << shift;
+    const shifted_one_num: u32 = (num & shifted_one);
+    return shifted_one_num >> shift;
+}
+
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -47,6 +55,39 @@ pub fn solve() anyerror!void {
             }
         }
     }
+
+    //oxygen
+    var oxy_vals = std.ArrayList(u32).init(allocator);
+    for (all_values.items) |line| {
+        try oxy_vals.append(@intCast(u32, try parse_int(line.items)));
+    }
+
+    var oxy_result: u32 = undefined;
+    var cur_vals = std.ArrayList(u32).init(allocator);
+    for (sums) |sum, bit_idx| {
+        for (oxy_vals.items) |line| {
+            const bit: u32 = get_bit(line, @intCast(u5, bit_idx));
+            if (sum > 0) {
+                if (bit == 1) {
+                    try cur_vals.append(line);
+                }
+            }
+            if (sum < 0) {
+                if (bit == 0) {
+                    try cur_vals.append(line);
+                }
+            }
+        }
+
+        if (std.mem.len(cur_vals.items) == 0) {
+            oxy_result = cur_vals.items[0];
+            break;
+        } else {
+            oxy_vals = cur_vals;
+            cur_vals = std.ArrayList(u32).init(allocator);
+        }
+    }
+
     var g_bit_0: u8 = if (sums[0] > 0) '1' else '0';
     _ = g_bit_0;
     var g_bit_1: u8 = if (sums[1] > 0) '1' else '0';
