@@ -23,8 +23,6 @@ pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
-
-
     const allocator = &arena.allocator;
     const day = 3;
 
@@ -33,78 +31,49 @@ pub fn solve() anyerror!void {
         return;
     };
 
-    var sums = std.ArrayList(i32).init(allocator);
-    _ = sums;
-
-    //make sums 12 zeroes
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
-    try sums.append(0);
+    var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     for (all_values.items) |line| {
         _ = line;
         var stringed = try fmt.allocPrint(allocator, "{s}", .{line.items});
         _ = stringed;
 
-
         for (stringed) |char, idx| {
             // if (std.mem.eql(u8, char, "0")) {
             if (char == '0') {
-                sums.items[idx] -= 1;
+                sums[idx] -= 1;
             } else {
-                sums.items[idx] += 1;
+                sums[idx] += 1;
             }
         }
-
-
-
-
-        // std.sort.sort(u8, &stringed, {}, comptime std.sort.asc(u8));
-        //
-        // const first_one = std.mem.indexOf(u8, stringed, '1').?;
-        // _ = first_one;
-        //
-        // if (first_one >= 6) {
-        //
-        // }
-
     }
-    var g_bit_0: u8 = if (sums.items[0] > 0 ) '1' else '0';
+    var g_bit_0: u8 = if (sums[0] > 0) '1' else '0';
     _ = g_bit_0;
-    var g_bit_1: u8 = if (sums.items[1] > 0 ) '1' else '0';
+    var g_bit_1: u8 = if (sums[1] > 0) '1' else '0';
     _ = g_bit_1;
-    var g_bit_2: u8 = if (sums.items[2] > 0 ) '1' else '0';
+    var g_bit_2: u8 = if (sums[2] > 0) '1' else '0';
     _ = g_bit_2;
-    var g_bit_3: u8 = if (sums.items[3] > 0 ) '1' else '0';
+    var g_bit_3: u8 = if (sums[3] > 0) '1' else '0';
     _ = g_bit_3;
-    var g_bit_4: u8 = if (sums.items[4] > 0 ) '1' else '0';
+    var g_bit_4: u8 = if (sums[4] > 0) '1' else '0';
     _ = g_bit_4;
-    var g_bit_5: u8 = if (sums.items[5] > 0 ) '1' else '0';
+    var g_bit_5: u8 = if (sums[5] > 0) '1' else '0';
     _ = g_bit_5;
-    var g_bit_6: u8 = if (sums.items[6] > 0 ) '1' else '0';
+    var g_bit_6: u8 = if (sums[6] > 0) '1' else '0';
     _ = g_bit_6;
-    var g_bit_7: u8 = if (sums.items[7] > 0 ) '1' else '0';
+    var g_bit_7: u8 = if (sums[7] > 0) '1' else '0';
     _ = g_bit_7;
-    var g_bit_8: u8 = if (sums.items[8] > 0 ) '1' else '0';
+    var g_bit_8: u8 = if (sums[8] > 0) '1' else '0';
     _ = g_bit_8;
-    var g_bit_9: u8 = if (sums.items[9] > 0 ) '1' else '0';
+    var g_bit_9: u8 = if (sums[9] > 0) '1' else '0';
     _ = g_bit_9;
-    var g_bit_10: u8 = if (sums.items[10] > 0 ) '1' else '0';
+    var g_bit_10: u8 = if (sums[10] > 0) '1' else '0';
     _ = g_bit_10;
-    var g_bit_11: u8 = if (sums.items[11] > 0 ) '1' else '0';
+    var g_bit_11: u8 = if (sums[11] > 0) '1' else '0';
     _ = g_bit_11;
     std.log.info("sums: {any}", .{sums});
 
-    var gamma_str = [_]u8 { g_bit_0, g_bit_1, g_bit_2, g_bit_3, g_bit_4, g_bit_5, g_bit_6, g_bit_7, g_bit_8, g_bit_9, g_bit_10, g_bit_11};
+    var gamma_str = [_]u8{ g_bit_0, g_bit_1, g_bit_2, g_bit_3, g_bit_4, g_bit_5, g_bit_6, g_bit_7, g_bit_8, g_bit_9, g_bit_10, g_bit_11 };
     std.log.info("gamma_str: {any}", .{gamma_str});
 
     var gamma: i32 = try std.fmt.parseInt(i32, gamma_str[0..], 2); //how the fuck
@@ -116,6 +85,6 @@ pub fn solve() anyerror!void {
     std.log.info("epsilon: {b}", .{epsilon});
     _ = epsilon;
 
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma*epsilon});
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, horiz*depth });
 }
