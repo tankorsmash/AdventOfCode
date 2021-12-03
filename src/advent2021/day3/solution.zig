@@ -122,7 +122,7 @@ pub fn solve() anyerror!void {
         var oxy_sums = try calc_sums_i32(oxy_vals.items);
         var sum = oxy_sums[i];
         for (oxy_vals.items) |line| {
-            const bit: u32 = get_bit(line, @intCast(u5, i));
+            const bit: u32 = get_bit(line, @intCast(u5, 11 - i));
 
             const ones_common = sum > 0;
             const tied_common = sum == 0;
@@ -161,7 +161,7 @@ pub fn solve() anyerror!void {
         var co2_sums = try calc_sums_i32(co2_vals.items);
         var sum = co2_sums[i];
         for (co2_vals.items) |line| {
-            const bit: u32 = get_bit(line, @intCast(u5, i));
+            const bit: u32 = get_bit(line, @intCast(u5, 11 - i));
 
             const zero_uncommon = sum > 0;
             const tied_uncommon = sum == 0;
