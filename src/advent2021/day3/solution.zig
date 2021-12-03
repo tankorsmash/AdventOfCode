@@ -66,14 +66,15 @@ pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.Ar
 
     return sums;
 }
+
 pub fn calc_sums_i32(values: []u32) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     std.log.info("first i32 elem: {d}", .{values[0]});
 
     for (values) |line| {
         var i: u5 = 0;
-        while (i < 12)  {
-            const char = get_bit(line, 11-i);
+        while (i < 12) {
+            const char = get_bit(line, 11 - i);
             if (char == 0) {
                 sums[i] -= 1;
             } else {
