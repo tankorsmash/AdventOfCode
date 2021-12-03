@@ -26,7 +26,7 @@ pub fn solve() anyerror!void {
 
 
     const allocator = &arena.allocator;
-    const day = 2;
+    const day = 3;
 
     var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
@@ -88,6 +88,7 @@ pub fn solve() anyerror!void {
     _ = g_bit_3;
     var g_bit_4: u8 = if (sums.items[4] > 0 ) '1' else '0';
     _ = g_bit_4;
+    std.log.info("sums: {any}", .{sums});
 
     var gamma_str = [_]u8 { g_bit_0, g_bit_1, g_bit_2, g_bit_3, g_bit_4};
 
