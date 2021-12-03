@@ -91,13 +91,17 @@ pub fn solve() anyerror!void {
     std.log.info("sums: {any}", .{sums});
 
     var gamma_str = [_]u8 { g_bit_0, g_bit_1, g_bit_2, g_bit_3, g_bit_4};
+    std.log.info("gamma_str: {any}", .{gamma_str});
 
     var gamma: i32 = try std.fmt.parseInt(i32, gamma_str[0..], 2); //how the fuck
     _ = gamma;
+    std.log.info("gamma: {b}", .{gamma});
 
-    var epsilon = 1 ^ gamma;
+    // var epsilon: i32 = gamma ^ 0b11111;
+    var epsilon: i32 = ~gamma & ((1 << 5) - 1);
+    std.log.info("epsilon: {b}", .{epsilon});
     _ = epsilon;
 
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma*epsilon});
+    std.log.info("poop Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma*epsilon});
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, horiz*depth });
 }
