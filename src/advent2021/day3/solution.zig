@@ -42,7 +42,7 @@ pub fn get_bit(num: u32, bit_idx: u5) u32 {
     return shifted_one_num >> shift;
 }
 
-pub fn calc_sums(allocator: *std.mem.Allocator, values: std.ArrayList(std.ArrayList(u8))) ![12]i32 {
+pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.ArrayList(u8))) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     for (values.items) |line| {
@@ -62,6 +62,30 @@ pub fn calc_sums(allocator: *std.mem.Allocator, values: std.ArrayList(std.ArrayL
 
     return sums;
 }
+pub fn calc_sums_i32(allocator: *std.mem.Allocator, values: []u32) ![12]i32 {
+    _ = allocator;
+    var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    for (values) |line| {
+        _ = line;
+        // var stringed = try fmt.allocPrint(allocator, "{s}", .{line});
+        // _ = stringed;
+
+        var i:u5 = 0;
+        while (i < 12) : (i += 1) {
+        // for (stringed) |char, idx| {
+            // if (std.mem.eql(u8, char, "0")) {
+            const char = get_bit(line, i);
+            if (char == 0) {
+                sums[i] -= 1;
+            } else {
+                sums[i] += 1;
+            }
+        }
+    }
+
+    return sums;
+}
 
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -75,7 +99,7 @@ pub fn solve() anyerror!void {
         return;
     };
 
-    var sums = try calc_sums(allocator, all_values);
+    var sums = try calc_sums_raw(allocator, all_values);
     std.log.info("about to parse oxy vals", .{});
     //oxygen
     var oxy_vals = std.ArrayList(u32).init(allocator);
@@ -90,9 +114,12 @@ pub fn solve() anyerror!void {
 
     var oxy_result: u32 = undefined;
     var cur_vals = std.ArrayList(u32).init(allocator);
-    for (sums) |sum, bit_idx| {
+    var i: usize = 0;
+    while (i < 12) : (i += 1) {
+        var oxy_sums = try calc_sums_i32(allocator, oxy_vals.items);
+        var sum = oxy_sums[i];
         for (oxy_vals.items) |line| {
-            const bit: u32 = get_bit(line, @intCast(u5, bit_idx));
+            const bit: u32 = get_bit(line, @intCast(u5, i));
 
             const ones_common = sum > 0;
             const tied_common = sum == 0;
@@ -126,9 +153,12 @@ pub fn solve() anyerror!void {
 
     var co2_result: u32 = undefined;
     var co2_cur_vals = std.ArrayList(u32).init(allocator);
-    for (sums) |sum, bit_idx| {
+    i = 0;
+    while (i < 12) : (i += 1) {
+        var co2_sums = try calc_sums_i32(allocator, co2_vals.items);
+        var sum = co2_sums[i];
         for (co2_vals.items) |line| {
-            const bit: u32 = get_bit(line, @intCast(u5, bit_idx));
+            const bit: u32 = get_bit(line, @intCast(u5, i));
 
             const zero_uncommon = sum > 0;
             const tied_uncommon = sum == 0;
