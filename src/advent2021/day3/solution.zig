@@ -50,6 +50,7 @@ pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.Ar
     for (values.items) |line| {
         _ = line;
         var stringed = try fmt.allocPrint(allocator, "{s}", .{line.items});
+        // std.log.info("stringed: {s}", .{stringed});
         _ = stringed;
 
         for (stringed) |char, idx| {
@@ -71,13 +72,15 @@ pub fn calc_sums_i32(values: []u32) ![12]i32 {
 
     for (values) |line| {
         var i: u5 = 0;
-        while (i < 12) : (i += 1) {
-            const char = get_bit(line, i);
+        while (i < 12)  {
+            const char = get_bit(line, 11-i);
             if (char == 0) {
                 sums[i] -= 1;
             } else {
                 sums[i] += 1;
             }
+
+            i += 1;
         }
     }
 
