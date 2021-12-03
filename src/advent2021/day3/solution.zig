@@ -59,22 +59,16 @@ pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.Ar
             }
         }
     }
+    std.log.info("sums bin: {any}", .{sums});
 
     return sums;
 }
-pub fn calc_sums_i32(allocator: *std.mem.Allocator, values: []u32) ![12]i32 {
-    _ = allocator;
+pub fn calc_sums_i32(values: []u32) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     for (values) |line| {
-        _ = line;
-        // var stringed = try fmt.allocPrint(allocator, "{s}", .{line});
-        // _ = stringed;
-
-        var i:u5 = 0;
+        var i: u5 = 0;
         while (i < 12) : (i += 1) {
-        // for (stringed) |char, idx| {
-            // if (std.mem.eql(u8, char, "0")) {
             const char = get_bit(line, i);
             if (char == 0) {
                 sums[i] -= 1;
@@ -83,6 +77,8 @@ pub fn calc_sums_i32(allocator: *std.mem.Allocator, values: []u32) ![12]i32 {
             }
         }
     }
+
+    std.log.info("sums i32: {any}", .{sums});
 
     return sums;
 }
@@ -116,7 +112,7 @@ pub fn solve() anyerror!void {
     var cur_vals = std.ArrayList(u32).init(allocator);
     var i: usize = 0;
     while (i < 12) : (i += 1) {
-        var oxy_sums = try calc_sums_i32(allocator, oxy_vals.items);
+        var oxy_sums = try calc_sums_i32(oxy_vals.items);
         var sum = oxy_sums[i];
         for (oxy_vals.items) |line| {
             const bit: u32 = get_bit(line, @intCast(u5, i));
@@ -155,7 +151,7 @@ pub fn solve() anyerror!void {
     var co2_cur_vals = std.ArrayList(u32).init(allocator);
     i = 0;
     while (i < 12) : (i += 1) {
-        var co2_sums = try calc_sums_i32(allocator, co2_vals.items);
+        var co2_sums = try calc_sums_i32(co2_vals.items);
         var sum = co2_sums[i];
         for (co2_vals.items) |line| {
             const bit: u32 = get_bit(line, @intCast(u5, i));
