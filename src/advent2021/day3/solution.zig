@@ -19,6 +19,21 @@ pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
     return value;
 }
 
+pub fn parse_bin(bytes: []const u8) std.fmt.ParseIntError!i32 {
+    var value: i32 = std.fmt.parseUnsigned(i32, bytes, 2) catch |err| {
+        if (err == error.InvalidCharacter) {
+            std.log.err("err: Invalid Character: {any}", .{bytes});
+            return 0;
+        }
+
+        std.log.err("err {}: Unknown error parsing binary int: {any}", .{ err, bytes });
+
+        return 0;
+    };
+
+    return value;
+}
+
 pub fn get_bit(num: u32, bit_idx: u5) u32 {
     const shift: u5 = bit_idx;
     const one: u32 = 1;
@@ -56,35 +71,86 @@ pub fn solve() anyerror!void {
         }
     }
 
+    std.log.info("about to parse oxy vals", .{});
     //oxygen
     var oxy_vals = std.ArrayList(u32).init(allocator);
+    var co2_vals = std.ArrayList(u32).init(allocator);
     for (all_values.items) |line| {
-        try oxy_vals.append(@intCast(u32, try parse_int(line.items)));
+        var parsed: i32 = try parse_bin(line.items);
+        try oxy_vals.append(@intCast(u32, parsed));
+        try co2_vals.append(@intCast(u32, parsed));
     }
+    std.log.info("done to parse oxy vals", .{});
 
     var oxy_result: u32 = undefined;
     var cur_vals = std.ArrayList(u32).init(allocator);
     for (sums) |sum, bit_idx| {
         for (oxy_vals.items) |line| {
             const bit: u32 = get_bit(line, @intCast(u5, bit_idx));
-            if (sum > 0) {
+
+            const ones_common = sum > 0;
+            const tied_common = sum == 0;
+            const zero_common = sum < 0;
+            if (ones_common) {
                 if (bit == 1) {
                     try cur_vals.append(line);
                 }
             }
-            if (sum < 0) {
+            if (tied_common) {
+                if (bit == 1) {
+                    try cur_vals.append(line);
+                }
+            }
+            if (zero_common) {
                 if (bit == 0) {
                     try cur_vals.append(line);
                 }
             }
         }
 
-        if (std.mem.len(cur_vals.items) == 0) {
+        if (std.mem.len(cur_vals.items) == 1) {
             oxy_result = cur_vals.items[0];
+            std.log.info("hit oxy end: {d}", .{oxy_result});
             break;
         } else {
             oxy_vals = cur_vals;
             cur_vals = std.ArrayList(u32).init(allocator);
+        }
+    }
+
+    var co2_result: u32 = undefined;
+    var co2_cur_vals = std.ArrayList(u32).init(allocator);
+    for (sums) |sum, bit_idx| {
+        for (co2_vals.items) |line| {
+            const bit: u32 = get_bit(line, @intCast(u5, bit_idx));
+
+            const zero_uncommon = sum > 0;
+            const tied_uncommon = sum == 0;
+            const one_uncommon = sum < 0;
+            if (zero_uncommon) {
+                if (bit == 0) {
+                    try co2_cur_vals.append(line);
+                }
+            }
+            if (tied_uncommon) {
+                if (bit == 0) {
+                    try co2_cur_vals.append(line);
+                }
+            }
+            if (one_uncommon) {
+                if (bit == 1) {
+                    try co2_cur_vals.append(line);
+                }
+            }
+        }
+
+        if (std.mem.len(co2_cur_vals.items) == 1) {
+            co2_result = co2_cur_vals.items[0];
+            std.log.info("hit co2 end: {d}", .{co2_result});
+            break;
+        } else {
+            co2_vals = co2_cur_vals;
+            co2_cur_vals = std.ArrayList(u32).init(allocator);
         }
     }
 
@@ -126,6 +192,10 @@ pub fn solve() anyerror!void {
     std.log.info("epsilon: {b}", .{epsilon});
     _ = epsilon;
 
+    std.log.info("oxy_Result: {b}", .{oxy_result});
+    // var co2_hack: u32 = ~oxy_result & ((1 << 12) - 1); //2397996 TODO is too high
+
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });
-    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, horiz*depth });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result*co2_result });
+    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result*co2_hack });
 }
