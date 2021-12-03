@@ -45,6 +45,8 @@ pub fn get_bit(num: u32, bit_idx: u5) u32 {
 pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.ArrayList(u8))) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
+    std.log.info("first raw elem: {any}", .{values.items[0]});
+
     for (values.items) |line| {
         _ = line;
         var stringed = try fmt.allocPrint(allocator, "{s}", .{line.items});
@@ -65,6 +67,7 @@ pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.Ar
 }
 pub fn calc_sums_i32(values: []u32) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    std.log.info("first i32 elem: {d}", .{values[0]});
 
     for (values) |line| {
         var i: u5 = 0;
