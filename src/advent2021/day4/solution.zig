@@ -235,17 +235,24 @@ pub fn solve() anyerror!void {
     std.log.info("num boards {d}", .{std.mem.len(boards.items)});
     std.log.info("board 1 {any}", .{boards.items[0]});
 
+    var solved_board : ?i32 = null;
+
     for (nums.items) |num, num_idx| {
+        if (solved_board != null) {
+            std.log.info("part 1: {d}", .{solved_board.?});
+            break;
+        }
         _ = num;
         _ = num_idx;
-        std.log.info("checking num {d} -- num_idx {d}", .{num, num_idx});
+        // std.log.info("checking num {d} -- num_idx {d}", .{num, num_idx});
+
 
         if (num_idx % 5 == 0 and num_idx != 0) {
             for (boards.items) |board, board_idx| {
                 _ = board_idx;
 
-                std.log.info("checking board_idx {d}", .{board_idx});
-                var solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
+                // std.log.info("checking board_idx {d}", .{board_idx});
+                solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
                 if (solved_board != null) {
                     std.log.info("found answer: {d}", .{solved_board.?});
                     break;
@@ -258,7 +265,7 @@ pub fn solve() anyerror!void {
     // var split_boards = std.mem.split(u8, all_values.items[2..], "\n");
     // _ = split_boards;
 
-    // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, solved_board.? });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result * co2_result });
 
     std.log.info("done", .{});
