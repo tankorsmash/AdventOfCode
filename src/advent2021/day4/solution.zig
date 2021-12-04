@@ -102,25 +102,30 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
     _ = board;
     _ = nums;
 
+    std.log.info("1", .{});
+
     var i: i32 = 0;
     var marked_elems = std.ArrayList(bool).init(allocator);
     while (i < 25) : (i += 1) {
         try marked_elems.append(false);
     }
+    std.log.info("2", .{});
 
     for (nums) |num| {
         var num_arr = [1]i32{num};
         var num_idx = std.mem.indexOf(i32, board.items, num_arr[0..]);
         while (num_idx != null) {
             marked_elems.items[num_idx.?] = true;
-            num_idx = std.mem.indexOf(i32, board.items[num_idx.?..], num_arr[0..]);
+            num_idx = std.mem.indexOf(i32, board.items[num_idx.?+1..], num_arr[0..]);
         }
     }
+    std.log.info("3", .{});
 
     //if none of these edges are marked, skip checking the rest
     var row : i32 = 0;
     var col : i32 = 0;
 
+    std.log.info("4", .{});
     var found_edge = false;
     while (col < 5) : (col += 1) {
         row = 0;
@@ -136,10 +141,12 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
 
             if (found_match) {
                 std.log.info("found match for board {any}", .{board.items});
+                break;
             }
         }
     }
 
+    std.log.info("5", .{});
     row = 0;
     while (row < 5) : (row += 1) {
         col = 0;
@@ -155,9 +162,12 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
 
             if (found_match) {
                 std.log.info("found match for board {any}", .{board.items});
+                break;
             }
         }
     }
+
+    std.log.info("5", .{});
     if (!found_edge) {
         return null;
     }
@@ -217,10 +227,13 @@ pub fn solve() anyerror!void {
     for (nums.items) |num, num_idx| {
         _ = num;
         _ = num_idx;
+        std.log.info("checking num {d} -- num_idx {d}", .{num, num_idx});
 
         if (num_idx % 5 == 0 and num_idx != 0) {
             for (boards.items) |board, board_idx| {
                 _ = board_idx;
+
+                std.log.info("checking board_idx {d}", .{board_idx});
                 var solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
                 if (solved_board != null) {
                     std.log.info("found answer: {d}", .{solved_board.?});
