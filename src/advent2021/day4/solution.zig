@@ -7,7 +7,7 @@ const load_input = @import("./../../advent2020/shared/load_input.zig");
 pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
     var value: i32 = std.fmt.parseUnsigned(i32, bytes, 10) catch |err| {
         if (err == error.InvalidCharacter) {
-            std.log.err("err: Invalid Character: {any}", .{bytes});
+            std.log.err("err: Invalid Character: '{s}' -- '{d}'", .{bytes, bytes});
             return 0;
         }
 
@@ -119,9 +119,33 @@ pub fn solve() anyerror!void {
     }
 
     std.log.info("nums: {any}", .{nums});
+
+    var boards = std.ArrayList(std.ArrayList(i32)).init(allocator);
+
+    var board_building = std.ArrayList(i32).init(allocator);
     for (all_values.items[2..]) |line| {
         _ = line;
+        if (std.mem.eql(u8, line.items, "") ) {
+            try boards.append(board_building);
+            board_building = std.ArrayList(i32).init(allocator);
+            continue;
+        }
+
+
+        var line_splitter = std.mem.split(u8, line.items, " ");
+        while (line_splitter.next()) |num_str| {
+            std.log.info("num_str: {s}", .{num_str});
+            if (std.mem.eql(u8, num_str, " ")) { continue; }
+            if (std.mem.eql(u8, num_str, "")) { continue; }
+            try board_building.append(try parse_int(num_str));
+        }
     }
+
+    std.log.info("num boards {d}", .{std.mem.len(boards.items)});
+    std.log.info("board 1 {any}", .{boards.items[0]});
+
+    // var split_boards = std.mem.split(u8, all_values.items[2..], "\n");
+    // _ = split_boards;
 
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });
