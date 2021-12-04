@@ -7,7 +7,7 @@ const load_input = @import("./../../advent2020/shared/load_input.zig");
 pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
     var value: i32 = std.fmt.parseUnsigned(i32, bytes, 10) catch |err| {
         if (err == error.InvalidCharacter) {
-            std.log.err("err: Invalid Character: '{s}' -- '{d}'", .{bytes, bytes});
+            std.log.err("err: Invalid Character: '{s}' -- '{d}'", .{ bytes, bytes });
             return 0;
         }
 
@@ -91,20 +91,20 @@ pub fn calc_sums_i32(values: []u32) ![12]i32 {
 }
 
 pub fn lookup(x: i32, y: i32) i32 {
-    const rows:i32 = 5;
+    const rows: i32 = 5;
     const cols: i32 = 5;
     _ = cols;
 
     return rows * y + x;
 }
 
-pub fn solve_board(allocator : *std.mem.Allocator, board: std.ArrayList(i32) , nums: []i32) !?i32 {
+pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), nums: []i32) !?i32 {
     _ = board;
     _ = nums;
 
-    var i:i32 = 0;
+    var i: i32 = 0;
     var marked_elems = std.ArrayList(i32).init(allocator);
-    while (i<25) : (i+= 1) {
+    while (i < 25) : (i += 1) {
         try marked_elems.append(@intCast(i32, 0));
     }
 
@@ -139,18 +139,21 @@ pub fn solve() anyerror!void {
     var board_building = std.ArrayList(i32).init(allocator);
     for (all_values.items[2..]) |line| {
         _ = line;
-        if (std.mem.eql(u8, line.items, "") ) {
+        if (std.mem.eql(u8, line.items, "")) {
             try boards.append(board_building);
             board_building = std.ArrayList(i32).init(allocator);
             continue;
         }
 
-
         var line_splitter = std.mem.split(u8, line.items, " ");
         while (line_splitter.next()) |num_str| {
             std.log.info("num_str: {s}", .{num_str});
-            if (std.mem.eql(u8, num_str, " ")) { continue; }
-            if (std.mem.eql(u8, num_str, "")) { continue; }
+            if (std.mem.eql(u8, num_str, " ")) {
+                continue;
+            }
+            if (std.mem.eql(u8, num_str, "")) {
+                continue;
+            }
             try board_building.append(try parse_int(num_str));
         }
     }
@@ -158,12 +161,12 @@ pub fn solve() anyerror!void {
     std.log.info("num boards {d}", .{std.mem.len(boards.items)});
     std.log.info("board 1 {any}", .{boards.items[0]});
 
-    for (nums.items) |num, num_idx | {
+    for (nums.items) |num, num_idx| {
         _ = num;
         _ = num_idx;
 
         if (num_idx % 5 == 0 and num_idx != 0) {
-            for (boards.items) | board, board_idx| {
+            for (boards.items) |board, board_idx| {
                 _ = board_idx;
                 var solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
                 if (solved_board != null) {
@@ -175,10 +178,8 @@ pub fn solve() anyerror!void {
     }
     //mark boards by grouping nums into groups of 5 nums
 
-
     // var split_boards = std.mem.split(u8, all_values.items[2..], "\n");
     // _ = split_boards;
-
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result * co2_result });
