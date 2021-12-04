@@ -103,12 +103,36 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
     _ = nums;
 
     var i: i32 = 0;
-    var marked_elems = std.ArrayList(i32).init(allocator);
+    var marked_elems = std.ArrayList(bool).init(allocator);
     while (i < 25) : (i += 1) {
-        try marked_elems.append(@intCast(i32, 0));
+        try marked_elems.append(false);
     }
 
-    return 0;
+    for (nums) |num| {
+        var num_arr = [1]i32{num};
+        var num_idx = std.mem.indexOf(i32, board.items, num_arr[0..]);
+        while (num_idx != null) {
+            marked_elems.items[num_idx.?] = true;
+            num_idx = std.mem.indexOf(i32, board.items[num_idx.?..], num_arr[0..]);
+        }
+    }
+
+    //if none of these edges are marked, skip checking the rest
+    var row : i32 = 0;
+    var col : i32 = 0;
+
+    var found_edge = false;
+    while (col < 5) : (col += 1) {
+        if (marked_elems.items[@intCast(usize, lookup(row, col))]) {
+            found_edge = true;
+            break;
+        }
+    }
+    if (!found_edge) {
+        return null;
+    }
+
+    return null;
 }
 
 pub fn solve() anyerror!void {
