@@ -45,7 +45,7 @@ pub fn get_bit(num: u32, bit_idx: u5) u32 {
 pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.ArrayList(u8))) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-    std.log.info("first raw elem: {any}", .{values.items[0]});
+    // std.log.info("first raw elem: {any}", .{values.items[0]});
 
     for (values.items) |line| {
         _ = line;
@@ -62,14 +62,14 @@ pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.Ar
             }
         }
     }
-    std.log.info("sums bin: {any}", .{sums});
+    // std.log.info("sums bin: {any}", .{sums});
 
     return sums;
 }
 
 pub fn calc_sums_i32(values: []u32) ![12]i32 {
     var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    std.log.info("first i32 elem: {d}", .{values[0]});
+    // std.log.info("first i32 elem: {d}", .{values[0]});
 
     for (values) |line| {
         var i: u5 = 0;
@@ -85,7 +85,7 @@ pub fn calc_sums_i32(values: []u32) ![12]i32 {
         }
     }
 
-    std.log.info("sums i32: {any}", .{sums});
+    // std.log.info("sums i32: {any}", .{sums});
 
     return sums;
 }
@@ -103,7 +103,7 @@ pub fn solve() anyerror!void {
     };
 
     var sums = try calc_sums_raw(allocator, all_values);
-    std.log.info("about to parse oxy vals", .{});
+    // std.log.info("about to parse oxy vals", .{});
     //oxygen
     var oxy_vals = std.ArrayList(u32).init(allocator);
     var co2_vals = std.ArrayList(u32).init(allocator);
@@ -113,7 +113,7 @@ pub fn solve() anyerror!void {
         try oxy_vals.append(@intCast(u32, parsed));
         try co2_vals.append(@intCast(u32, parsed));
     }
-    std.log.info("done to parse oxy vals", .{});
+    // std.log.info("done to parse oxy vals", .{});
 
     var oxy_result: u32 = undefined;
     var cur_vals = std.ArrayList(u32).init(allocator);
@@ -146,7 +146,7 @@ pub fn solve() anyerror!void {
 
         if (std.mem.len(cur_vals.items) == 1) {
             oxy_result = cur_vals.items[0];
-            std.log.info("hit oxy end: {d}", .{oxy_result});
+            // std.log.info("hit oxy end: {d}", .{oxy_result});
             break;
         } else {
             oxy_vals = cur_vals;
@@ -185,7 +185,7 @@ pub fn solve() anyerror!void {
 
         if (std.mem.len(co2_cur_vals.items) == 1) {
             co2_result = co2_cur_vals.items[0];
-            std.log.info("hit co2 end: {d}", .{co2_result});
+            // std.log.info("hit co2 end: {d}", .{co2_result});
             break;
         } else {
             co2_vals = co2_cur_vals;
@@ -193,7 +193,7 @@ pub fn solve() anyerror!void {
         }
     }
 
-    std.log.info("oxy vals: {any}, co2 vals: {any}", .{ oxy_vals.items, co2_vals.items });
+    // std.log.info("oxy vals: {any}, co2 vals: {any}", .{ oxy_vals.items, co2_vals.items });
 
     var g_bit_0: u8 = if (sums[0] > 0) '1' else '0';
     _ = g_bit_0;
@@ -219,21 +219,21 @@ pub fn solve() anyerror!void {
     _ = g_bit_10;
     var g_bit_11: u8 = if (sums[11] > 0) '1' else '0';
     _ = g_bit_11;
-    std.log.info("sums: {any}", .{sums});
+    // std.log.info("sums: {any}", .{sums});
 
     var gamma_str = [_]u8{ g_bit_0, g_bit_1, g_bit_2, g_bit_3, g_bit_4, g_bit_5, g_bit_6, g_bit_7, g_bit_8, g_bit_9, g_bit_10, g_bit_11 };
-    std.log.info("gamma_str: {any}", .{gamma_str});
+    // std.log.info("gamma_str: {any}", .{gamma_str});
 
     var gamma: i32 = try std.fmt.parseInt(i32, gamma_str[0..], 2); //how the fuck
     _ = gamma;
-    std.log.info("gamma: {b}", .{gamma});
+    // std.log.info("gamma: {b}", .{gamma});
 
     // var epsilon: i32 = gamma ^ 0b11111;
     var epsilon: i32 = ~gamma & ((1 << 12) - 1);
-    std.log.info("epsilon: {b}", .{epsilon});
+    // std.log.info("epsilon: {b}", .{epsilon});
     _ = epsilon;
 
-    std.log.info("oxy_Result: {b}", .{oxy_result});
+    // std.log.info("oxy_Result: {b}", .{oxy_result});
     // var co2_hack: u32 = ~oxy_result & ((1 << 12) - 1); //2397996 TODO is too high
 
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });

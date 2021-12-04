@@ -90,6 +90,14 @@ pub fn calc_sums_i32(values: []u32) ![12]i32 {
     return sums;
 }
 
+pub fn lookup(x: i32, y: i32) i32 {
+    const rows:i32 = 5;
+    const cols: i32 = 5;
+    _ = cols;
+
+    return rows * y + x;
+}
+
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
