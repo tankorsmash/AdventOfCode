@@ -177,7 +177,7 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
             }
 
             if (found_match) {
-                std.log.info("found match for board {any}", .{board.items});
+                // std.log.info("found match for board {any}", .{board.items});
                 return score_board(allocator, board, nums, marked_elems);
             }
         }
@@ -210,7 +210,6 @@ pub fn solve() anyerror!void {
         try nums.append(try std.fmt.parseInt(i32, splitted, 10));
     }
 
-    std.log.info("nums: {any}", .{nums});
 
     var boards = std.ArrayList(std.ArrayList(i32)).init(allocator);
 
@@ -235,15 +234,15 @@ pub fn solve() anyerror!void {
             try board_building.append(try parse_int(num_str));
         }
     }
+    try boards.append(board_building);
 
     std.log.info("num boards {d}", .{std.mem.len(boards.items)});
-    std.log.info("board 1 {any}", .{boards.items[0]});
 
     var solved_board: ?i32 = null;
 
     for (nums.items) |num, num_idx| {
+        //dont loop again once we have an answer
         if (solved_board != null) {
-            std.log.info("part 1: {d}", .{solved_board.?});
             break;
         }
         _ = num;
@@ -256,7 +255,7 @@ pub fn solve() anyerror!void {
             // std.log.info("checking board_idx {d}", .{board_idx});
             solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
             if (solved_board != null) {
-                std.log.info("found answer: {d}", .{solved_board.?});
+                // std.log.info("found answer: {d}", .{solved_board.?});
                 break;
             }
         }
