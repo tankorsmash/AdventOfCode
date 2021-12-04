@@ -98,18 +98,33 @@ pub fn lookup(x: i32, y: i32) i32 {
     return rows * y + x;
 }
 
+pub fn score_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), nums: []i32, marked_elems:std.ArrayList(bool)) i32 {
+    _ = allocator;
+    _ = board;
+    _ = nums;
+    _ = marked_elems;
+
+    const last_num: i32 = nums[std.mem.len(nums)-1];
+
+    var sum: i32 = 0;
+    for (marked_elems.items) |marked_elem, marked_idx| {
+        if (marked_elem) {
+            sum += board.items[marked_idx];
+        }
+    }
+
+    return last_num * sum;
+}
+
 pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), nums: []i32) !?i32 {
     _ = board;
     _ = nums;
-
-    std.log.info("1", .{});
 
     var i: i32 = 0;
     var marked_elems = std.ArrayList(bool).init(allocator);
     while (i < 25) : (i += 1) {
         try marked_elems.append(false);
     }
-    std.log.info("2", .{});
 
     for (nums) |num| {
         var num_arr = [1]i32{num};
@@ -119,13 +134,11 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
             num_idx = std.mem.indexOf(i32, board.items[num_idx.?+1..], num_arr[0..]);
         }
     }
-    std.log.info("3", .{});
 
     //if none of these edges are marked, skip checking the rest
     var row : i32 = 0;
     var col : i32 = 0;
 
-    std.log.info("4", .{});
     var found_edge = false;
     while (col < 5) : (col += 1) {
         row = 0;
@@ -141,12 +154,11 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
 
             if (found_match) {
                 std.log.info("found match for board {any}", .{board.items});
-                break;
+                return score_board(allocator, board, nums, marked_elems);
             }
         }
     }
 
-    std.log.info("5", .{});
     row = 0;
     while (row < 5) : (row += 1) {
         col = 0;
@@ -162,12 +174,11 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
 
             if (found_match) {
                 std.log.info("found match for board {any}", .{board.items});
-                break;
+                return score_board(allocator, board, nums, marked_elems);
             }
         }
     }
 
-    std.log.info("5", .{});
     if (!found_edge) {
         return null;
     }
