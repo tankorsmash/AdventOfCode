@@ -19,77 +19,6 @@ pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
     return value;
 }
 
-pub fn parse_bin(bytes: []const u8) std.fmt.ParseIntError!u32 {
-    var value: u32 = std.fmt.parseUnsigned(u32, bytes, 2) catch |err| {
-        if (err == error.InvalidCharacter) {
-            std.log.err("err: Invalid Character: {any}", .{bytes});
-            return 0;
-        }
-
-        std.log.err("err {}: Unknown error parsing binary int: {any}", .{ err, bytes });
-
-        return 0;
-    };
-
-    return value;
-}
-
-pub fn get_bit(num: u32, bit_idx: u5) u32 {
-    const shift: u5 = bit_idx;
-    const one: u32 = 1;
-    const shifted_one: u32 = one << shift;
-    const shifted_one_num: u32 = (num & shifted_one);
-    return shifted_one_num >> shift;
-}
-
-pub fn calc_sums_raw(allocator: *std.mem.Allocator, values: std.ArrayList(std.ArrayList(u8))) ![12]i32 {
-    var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-    std.log.info("first raw elem: {any}", .{values.items[0]});
-
-    for (values.items) |line| {
-        _ = line;
-        var stringed = try fmt.allocPrint(allocator, "{s}", .{line.items});
-        // std.log.info("stringed: {s}", .{stringed});
-        _ = stringed;
-
-        for (stringed) |char, idx| {
-            // if (std.mem.eql(u8, char, "0")) {
-            if (char == '0') {
-                sums[idx] -= 1;
-            } else {
-                sums[idx] += 1;
-            }
-        }
-    }
-    std.log.info("sums bin: {any}", .{sums});
-
-    return sums;
-}
-
-pub fn calc_sums_i32(values: []u32) ![12]i32 {
-    var sums = [12]i32{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    std.log.info("first i32 elem: {d}", .{values[0]});
-
-    for (values) |line| {
-        var i: u5 = 0;
-        while (i < 12) {
-            const char = get_bit(line, 11 - i);
-            if (char == 0) {
-                sums[i] -= 1;
-            } else {
-                sums[i] += 1;
-            }
-
-            i += 1;
-        }
-    }
-
-    std.log.info("sums i32: {any}", .{sums});
-
-    return sums;
-}
-
 pub fn lookup(x: i32, y: i32) i32 {
     const rows: i32 = 5;
     const cols: i32 = 5;
@@ -155,7 +84,6 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
             }
 
             if (found_match) {
-                // std.log.info("found match for board {any}", .{board.items});
                 return score_board(allocator, board, nums, marked_elems);
             }
         }
@@ -177,7 +105,6 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
             }
 
             if (found_match) {
-                // std.log.info("found match for board {any}", .{board.items});
                 return score_board(allocator, board, nums, marked_elems);
             }
         }
@@ -248,24 +175,14 @@ pub fn solve() anyerror!void {
     }
 
     for (nums.items) |num, num_idx| {
-        //dont loop again once we have an answer
-        // if (solved_board != null) {
-        //     break;
-        // }
-        _ = num;
-        _ = num_idx;
-        // std.log.info("checking num {d} -- num_idx {d}", .{num, num_idx});
-
         for (boards.items) |board, board_idx| {
             _ = board_idx;
 
-            //dont resolve solved boards
+            //dont re-solve solved boards
             if (solved_boards.items[board_idx] != null) { continue; }
 
-            // std.log.info("checking board_idx {d}", .{board_idx});
             solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
             if (solved_board != null) {
-                // std.log.info("found answer: {d}", .{solved_board.?});
                 if (part1_solved_board == null) {
                     part1_solved_board = solved_board.?;
                 }
@@ -277,10 +194,6 @@ pub fn solve() anyerror!void {
         }
     }
     //mark boards by grouping nums into groups of 5 nums
-
-    // var split_boards = std.mem.split(u8, all_values.items[2..], "\n");
-    // _ = split_boards;
-
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_solved_board.? });
     std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board});
 
