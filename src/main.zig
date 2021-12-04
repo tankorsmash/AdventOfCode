@@ -53,11 +53,6 @@ pub fn main() anyerror!void {
     std.log.info("{d} Day3 Error?: {}", .{year, day3_2021.solve()});
     std.log.info("{d} Day4 Error?: {}", .{year, day4_2021.solve()});
 
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-
-    const allocator = &arena.allocator;
-    _ = try load_input.load_input_line_bytes(allocator, 1);
 }
 
 test "basic test" {
