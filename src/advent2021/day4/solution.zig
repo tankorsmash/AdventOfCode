@@ -98,6 +98,19 @@ pub fn lookup(x: i32, y: i32) i32 {
     return rows * y + x;
 }
 
+pub fn solve_board(allocator : *std.mem.Allocator, board: std.ArrayList(i32) , nums: std.ArrayList(i32)) ?i32 {
+    _ = board;
+    _ = nums;
+
+    var i:i32 = 0;
+    var marked_elems = std.ArrayList(i32).init(allocator);
+    while (i<25) : (i+= 1) {
+        try marked_elems.append(0);
+    }
+
+    return 0;
+}
+
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -122,6 +135,7 @@ pub fn solve() anyerror!void {
 
     var boards = std.ArrayList(std.ArrayList(i32)).init(allocator);
 
+    //collect boards into flat arrays
     var board_building = std.ArrayList(i32).init(allocator);
     for (all_values.items[2..]) |line| {
         _ = line;
@@ -143,6 +157,8 @@ pub fn solve() anyerror!void {
 
     std.log.info("num boards {d}", .{std.mem.len(boards.items)});
     std.log.info("board 1 {any}", .{boards.items[0]});
+
+    //mark boards by grouping nums into groups of 5
 
     // var split_boards = std.mem.split(u8, all_values.items[2..], "\n");
     // _ = split_boards;
