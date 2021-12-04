@@ -108,7 +108,7 @@ pub fn score_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
 
     var sum: i32 = 0;
     for (marked_elems.items) |marked_elem, marked_idx| {
-        if (marked_elem) {
+        if (!marked_elem) {
             sum += board.items[marked_idx];
         }
     }
