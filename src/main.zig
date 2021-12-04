@@ -11,6 +11,7 @@ const day5 = @import("advent2020/day5/solution.zig");
 const day1_2021 = @import("advent2021/day1/solution.zig");
 const day2_2021 = @import("advent2021/day2/solution.zig");
 const day3_2021 = @import("advent2021/day3/solution.zig");
+const day4_2021 = @import("advent2021/day4/solution.zig");
 
 const load_input = @import("./advent2020/../advent2020/shared/load_input.zig");
 
@@ -39,15 +40,18 @@ pub fn split(bounds: Bounds, take_lower: bool) Bounds {
 }
 
 pub fn main() anyerror!void {
-    std.log.info("2020 Day1 Error?: {}", .{day1.solve()});
-    std.log.info("2020 Day2 Error?: {}", .{day2.solve()});
-    std.log.info("2020 Day3 Error?: {}", .{day3.solve()});
-    std.log.info("2020 Day4 Error?: {}", .{day4.solve()});
-    std.log.info("2020 Day5 Error?: {}", .{day5.solve()});
+    var year : i32 = 2020;
+    std.log.info("{d} Day1 Error?: {}", .{year, day1.solve()});
+    std.log.info("{d} Day2 Error?: {}", .{year, day2.solve()});
+    std.log.info("{d} Day3 Error?: {}", .{year, day3.solve()});
+    std.log.info("{d} Day4 Error?: {}", .{year, day4.solve()});
+    std.log.info("{d} Day5 Error?: {}", .{year, day5.solve()});
 
-    std.log.info("2021 Day1 Error?: {}", .{day1_2021.solve()});
-    std.log.info("2021 Day2 Error?: {}", .{day2_2021.solve()});
-    std.log.info("2021 Day3 Error?: {}", .{day3_2021.solve()});
+    year = 2021;
+    std.log.info("{d} Day1 Error?: {}", .{year, day1_2021.solve()});
+    std.log.info("{d} Day2 Error?: {}", .{year, day2_2021.solve()});
+    std.log.info("{d} Day3 Error?: {}", .{year, day3_2021.solve()});
+    std.log.info("{d} Day4 Error?: {}", .{year, day4_2021.solve()});
 
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
