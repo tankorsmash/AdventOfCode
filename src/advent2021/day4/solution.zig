@@ -110,7 +110,16 @@ pub fn solve() anyerror!void {
         return;
     };
 
-    for (all_values.items) |line| {
+    var split_nums = std.mem.split(u8, all_values.items[0].items, ",");
+    _ = split_nums;
+
+    var nums = std.ArrayList(i32).init(allocator);
+    while (split_nums.next()) |splitted| {
+        try nums.append(try std.fmt.parseInt(i32, splitted, 10));
+    }
+
+    std.log.info("nums: {any}", .{nums});
+    for (all_values.items[2..]) |line| {
         _ = line;
     }
 
