@@ -123,17 +123,39 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
 
     var found_edge = false;
     while (col < 5) : (col += 1) {
+        row = 0;
         if (marked_elems.items[@intCast(usize, lookup(row, col))]) {
-            found_edge = true;
-            break;
+            var found_match = false;
+            while (row < 5) : (row += 1) {
+                if (marked_elems.items[@intCast(usize, lookup(row, col))] == false) {
+                    break;
+                }
+
+                if (row == 4) { found_match = true; }
+            }
+
+            if (found_match) {
+                std.log.info("found match for board {any}", .{board.items});
+            }
         }
     }
 
-    row = 0; col = 0;
+    row = 0;
     while (row < 5) : (row += 1) {
+        col = 0;
         if (marked_elems.items[@intCast(usize, lookup(row, col))]) {
-            found_edge = true;
-            break;
+            var found_match = false;
+            while (col < 5) : (col += 1) {
+                if (marked_elems.items[@intCast(usize, lookup(row, col))] == false) {
+                    break;
+                }
+
+                if (col == 4) { found_match = true; }
+            }
+
+            if (found_match) {
+                std.log.info("found match for board {any}", .{board.items});
+            }
         }
     }
     if (!found_edge) {
@@ -179,7 +201,6 @@ pub fn solve() anyerror!void {
 
         var line_splitter = std.mem.split(u8, line.items, " ");
         while (line_splitter.next()) |num_str| {
-            std.log.info("num_str: {s}", .{num_str});
             if (std.mem.eql(u8, num_str, " ")) {
                 continue;
             }
@@ -215,4 +236,6 @@ pub fn solve() anyerror!void {
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, gamma * epsilon });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result * co2_result });
+
+    std.log.info("done", .{});
 }
