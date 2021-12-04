@@ -98,14 +98,14 @@ pub fn lookup(x: i32, y: i32) i32 {
     return rows * y + x;
 }
 
-pub fn solve_board(allocator : *std.mem.Allocator, board: std.ArrayList(i32) , nums: std.ArrayList(i32)) ?i32 {
+pub fn solve_board(allocator : *std.mem.Allocator, board: std.ArrayList(i32) , nums: []i32) !?i32 {
     _ = board;
     _ = nums;
 
     var i:i32 = 0;
     var marked_elems = std.ArrayList(i32).init(allocator);
     while (i<25) : (i+= 1) {
-        try marked_elems.append(0);
+        try marked_elems.append(@intCast(i32, 0));
     }
 
     return 0;
@@ -158,7 +158,23 @@ pub fn solve() anyerror!void {
     std.log.info("num boards {d}", .{std.mem.len(boards.items)});
     std.log.info("board 1 {any}", .{boards.items[0]});
 
-    //mark boards by grouping nums into groups of 5
+    for (nums.items) |num, num_idx | {
+        _ = num;
+        _ = num_idx;
+
+        if (num_idx % 5 == 0 and num_idx != 0) {
+            for (boards.items) | board, board_idx| {
+                _ = board_idx;
+                var solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
+                if (solved_board != null) {
+                    std.log.info("found answer: {d}", .{solved_board.?});
+                    break;
+                }
+            }
+        }
+    }
+    //mark boards by grouping nums into groups of 5 nums
+
 
     // var split_boards = std.mem.split(u8, all_values.items[2..], "\n");
     // _ = split_boards;
