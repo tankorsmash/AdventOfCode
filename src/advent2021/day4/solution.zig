@@ -247,7 +247,6 @@ pub fn solve() anyerror!void {
         // std.log.info("checking num {d} -- num_idx {d}", .{num, num_idx});
 
 
-        if (num_idx % 5 == 0 and num_idx != 0) {
             for (boards.items) |board, board_idx| {
                 _ = board_idx;
 
@@ -258,7 +257,6 @@ pub fn solve() anyerror!void {
                     break;
                 }
             }
-        }
     }
     //mark boards by grouping nums into groups of 5 nums
 
