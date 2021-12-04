@@ -98,13 +98,13 @@ pub fn lookup(x: i32, y: i32) i32 {
     return rows * y + x;
 }
 
-pub fn score_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), nums: []i32, marked_elems:std.ArrayList(bool)) i32 {
+pub fn score_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), nums: []i32, marked_elems: std.ArrayList(bool)) i32 {
     _ = allocator;
     _ = board;
     _ = nums;
     _ = marked_elems;
 
-    const last_num: i32 = nums[std.mem.len(nums)-1];
+    const last_num: i32 = nums[std.mem.len(nums) - 1];
 
     var sum: i32 = 0;
     for (marked_elems.items) |marked_elem, marked_idx| {
@@ -131,13 +131,13 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
         var num_idx = std.mem.indexOf(i32, board.items, num_arr[0..]);
         while (num_idx != null) {
             marked_elems.items[num_idx.?] = true;
-            num_idx = std.mem.indexOf(i32, board.items[num_idx.?+1..], num_arr[0..]);
+            num_idx = std.mem.indexOf(i32, board.items[num_idx.? + 1 ..], num_arr[0..]);
         }
     }
 
     //if none of these edges are marked, skip checking the rest
-    var row : i32 = 0;
-    var col : i32 = 0;
+    var row: i32 = 0;
+    var col: i32 = 0;
 
     var found_edge = false;
     while (col < 5) : (col += 1) {
@@ -149,7 +149,9 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
                     break;
                 }
 
-                if (row == 4) { found_match = true; }
+                if (row == 4) {
+                    found_match = true;
+                }
             }
 
             if (found_match) {
@@ -169,7 +171,9 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
                     break;
                 }
 
-                if (col == 4) { found_match = true; }
+                if (col == 4) {
+                    found_match = true;
+                }
             }
 
             if (found_match) {
@@ -235,7 +239,7 @@ pub fn solve() anyerror!void {
     std.log.info("num boards {d}", .{std.mem.len(boards.items)});
     std.log.info("board 1 {any}", .{boards.items[0]});
 
-    var solved_board : ?i32 = null;
+    var solved_board: ?i32 = null;
 
     for (nums.items) |num, num_idx| {
         if (solved_board != null) {
@@ -246,17 +250,16 @@ pub fn solve() anyerror!void {
         _ = num_idx;
         // std.log.info("checking num {d} -- num_idx {d}", .{num, num_idx});
 
+        for (boards.items) |board, board_idx| {
+            _ = board_idx;
 
-            for (boards.items) |board, board_idx| {
-                _ = board_idx;
-
-                // std.log.info("checking board_idx {d}", .{board_idx});
-                solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
-                if (solved_board != null) {
-                    std.log.info("found answer: {d}", .{solved_board.?});
-                    break;
-                }
+            // std.log.info("checking board_idx {d}", .{board_idx});
+            solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
+            if (solved_board != null) {
+                std.log.info("found answer: {d}", .{solved_board.?});
+                break;
             }
+        }
     }
     //mark boards by grouping nums into groups of 5 nums
 
