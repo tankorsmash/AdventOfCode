@@ -155,7 +155,7 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
             }
 
             if (found_match) {
-                std.log.info("found match for board {any}", .{board.items});
+                // std.log.info("found match for board {any}", .{board.items});
                 return score_board(allocator, board, nums, marked_elems);
             }
         }
@@ -239,12 +239,19 @@ pub fn solve() anyerror!void {
     std.log.info("num boards {d}", .{std.mem.len(boards.items)});
 
     var solved_board: ?i32 = null;
+    var part1_solved_board : ?i32 = null;
+    var part2_solved_board : ?i32 = null;
+
+    var solved_boards = std.ArrayList(?i32).init(allocator);
+    for (boards.items) |_| {
+        try solved_boards.append(null);
+    }
 
     for (nums.items) |num, num_idx| {
         //dont loop again once we have an answer
-        if (solved_board != null) {
-            break;
-        }
+        // if (solved_board != null) {
+        //     break;
+        // }
         _ = num;
         _ = num_idx;
         // std.log.info("checking num {d} -- num_idx {d}", .{num, num_idx});
@@ -252,11 +259,20 @@ pub fn solve() anyerror!void {
         for (boards.items) |board, board_idx| {
             _ = board_idx;
 
+            //dont resolve solved boards
+            if (solved_boards.items[board_idx] != null) { continue; }
+
             // std.log.info("checking board_idx {d}", .{board_idx});
             solved_board = try solve_board(allocator, board, nums.items[0..num_idx]);
             if (solved_board != null) {
                 // std.log.info("found answer: {d}", .{solved_board.?});
-                break;
+                if (part1_solved_board == null) {
+                    part1_solved_board = solved_board.?;
+                }
+                part2_solved_board = solved_board.?;
+                std.log.info("part2_solved_board idx: {d} answer: {d}", .{board_idx, part2_solved_board});
+
+                solved_boards.items[board_idx] = num;
             }
         }
     }
@@ -265,8 +281,8 @@ pub fn solve() anyerror!void {
     // var split_boards = std.mem.split(u8, all_values.items[2..], "\n");
     // _ = split_boards;
 
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, solved_board.? });
-    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, oxy_result * co2_result });
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_solved_board.? });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board});
 
     std.log.info("done", .{});
 }
