@@ -128,6 +128,14 @@ pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), num
             break;
         }
     }
+
+    row = 0; col = 0;
+    while (row < 5) : (row += 1) {
+        if (marked_elems.items[@intCast(usize, lookup(row, col))]) {
+            found_edge = true;
+            break;
+        }
+    }
     if (!found_edge) {
         return null;
     }
