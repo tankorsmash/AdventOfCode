@@ -27,94 +27,14 @@ pub fn lookup(x: i32, y: i32) i32 {
     return rows * y + x;
 }
 
-pub fn score_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), nums: []i32, marked_elems: std.ArrayList(bool)) i32 {
-    _ = allocator;
-    _ = board;
-    _ = nums;
-    _ = marked_elems;
+pub const LocalMaxes = struct { x: i32, y: i32 };
 
-    const last_num: i32 = nums[std.mem.len(nums) - 1];
+pub fn get_max_x_y_for_line(line: std.ArrayList(u8)) LocalMaxes {
+    var split_line = std.mem.split(u8, line.items, " -> ");
+    var start_split = split_line.next().?;
+    _ = start_split;
 
-    var sum: i32 = 0;
-    for (marked_elems.items) |marked_elem, marked_idx| {
-        if (!marked_elem) {
-            sum += board.items[marked_idx];
-        }
-    }
-
-    return last_num * sum;
-}
-
-pub fn solve_board(allocator: *std.mem.Allocator, board: std.ArrayList(i32), nums: []i32) !?i32 {
-    _ = board;
-    _ = nums;
-
-    var i: i32 = 0;
-    var marked_elems = std.ArrayList(bool).init(allocator);
-    while (i < 25) : (i += 1) {
-        try marked_elems.append(false);
-    }
-
-    for (nums) |num| {
-        var num_arr = [1]i32{num};
-        var num_idx = std.mem.indexOf(i32, board.items, num_arr[0..]);
-        while (num_idx != null) {
-            marked_elems.items[num_idx.?] = true;
-            num_idx = std.mem.indexOf(i32, board.items[num_idx.? + 1 ..], num_arr[0..]);
-        }
-    }
-
-    //if none of these edges are marked, skip checking the rest
-    var row: i32 = 0;
-    var col: i32 = 0;
-
-    var found_edge = false;
-    while (col < 5) : (col += 1) {
-        row = 0;
-        if (marked_elems.items[@intCast(usize, lookup(row, col))]) {
-            var found_match = false;
-            while (row < 5) : (row += 1) {
-                if (marked_elems.items[@intCast(usize, lookup(row, col))] == false) {
-                    break;
-                }
-
-                if (row == 4) {
-                    found_match = true;
-                }
-            }
-
-            if (found_match) {
-                return score_board(allocator, board, nums, marked_elems);
-            }
-        }
-    }
-
-    row = 0;
-    while (row < 5) : (row += 1) {
-        col = 0;
-        if (marked_elems.items[@intCast(usize, lookup(row, col))]) {
-            var found_match = false;
-            while (col < 5) : (col += 1) {
-                if (marked_elems.items[@intCast(usize, lookup(row, col))] == false) {
-                    break;
-                }
-
-                if (col == 4) {
-                    found_match = true;
-                }
-            }
-
-            if (found_match) {
-                return score_board(allocator, board, nums, marked_elems);
-            }
-        }
-    }
-
-    if (!found_edge) {
-        return null;
-    }
-
-    return null;
+    return LocalMaxes{ .x = 0, .y = 0 };
 }
 
 pub fn solve() anyerror!void {
@@ -129,8 +49,16 @@ pub fn solve() anyerror!void {
         return;
     };
 
+    var max_x: u32 = 0;
+    _ = max_x;
+    var max_y: u32 = 0;
+    _ = max_y;
+
     for (all_values.items) |line| {
         _ = line;
+
+        var local_maxes = get_max_x_y_for_line(line);
+        _ = local_maxes;
     }
 
     //mark boards by grouping nums into groups of 5 nums
