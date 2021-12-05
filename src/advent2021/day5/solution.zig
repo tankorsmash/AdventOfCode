@@ -47,11 +47,24 @@ pub const LocalMaxes = struct {
     min_y: u32,
     max_y: u32,
 
-    pub fn is_horizontal(self: *LocalMaxes) void {
-        return self.min_x == self.max_x;
+    pub fn is_horizontal(this: *LocalMaxes) void {
+        return this.min_x == this.max_x;
     }
-    pub fn is_vertical(self: *LocalMaxes) void {
-        return self.min_y == self.max_y;
+    pub fn is_vertical(this: *LocalMaxes) void {
+        return this.min_y == this.max_y;
+    }
+
+    pub fn get_points(this: *LocalMaxes, allocator: *std.Allocator) anyerror!std.ArrayList([2]u32) {
+        var result = std.ArrayList([2]u32).init(allocator);
+        var x: u32 = this.min_x;
+        var y: u32 = this.min_y;
+        while (x <= this.max_x) : (x += 1) {
+            while (y <= this.max_y) : (y += 1) {
+                try result.append([2]u32{ x, y });
+            }
+        }
+
+        return result;
     }
 };
 
