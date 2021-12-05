@@ -41,7 +41,19 @@ pub fn lookup(x: i32, y: i32) i32 {
     return rows * y + x;
 }
 
-pub const LocalMaxes = struct { min_x: u32, max_x: u32, min_y: u32, max_y: u32 };
+pub const LocalMaxes = struct {
+    min_x: u32,
+    max_x: u32,
+    min_y: u32,
+    max_y: u32,
+
+    pub fn is_horizontal(self: *LocalMaxes) void {
+        return self.min_x == self.max_x;
+    }
+    pub fn is_vertical(self: *LocalMaxes) void {
+        return self.min_y == self.max_y;
+    }
+};
 
 pub fn get_max_x_y_for_line(line: std.ArrayList(u8)) anyerror!LocalMaxes {
     var split_line = std.mem.split(u8, line.items, " -> ");
@@ -93,7 +105,7 @@ pub fn solve() anyerror!void {
         max_y = std.math.max(max_y, local_maxes.max_y);
     }
 
-    std.log.info("max x: {d}, max_y: {d}", .{max_x, max_y});
+    std.log.info("max x: {d}, max_y: {d}", .{ max_x, max_y });
 
     //mark boards by grouping nums into groups of 5 nums
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_solved_board.? });
