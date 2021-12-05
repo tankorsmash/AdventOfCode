@@ -187,7 +187,7 @@ pub fn solve() anyerror!void {
                     part1_solved_board = solved_board.?;
                 }
                 part2_solved_board = solved_board.?;
-                std.log.info("part2_solved_board idx: {d} answer: {d}", .{board_idx, part2_solved_board});
+                // std.log.info("part2_solved_board idx: {d} answer: {d}", .{board_idx, part2_solved_board});
 
                 solved_boards.items[board_idx] = num;
             }

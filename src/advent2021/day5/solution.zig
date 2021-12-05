@@ -150,8 +150,16 @@ pub fn solve() anyerror!void {
         }
     }
 
+    var danger_spots: u32 = 0;
+    for (map.items) |hits| {
+        if (hits < 2) { continue; }
+
+        danger_spots += 1;
+
+    }
+
     //mark boards by grouping nums into groups of 5 nums
-    // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_solved_board.? });
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, danger_spots });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board});
 
     std.log.info("done", .{});
