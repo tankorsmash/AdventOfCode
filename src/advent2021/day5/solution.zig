@@ -34,8 +34,10 @@ pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
 }
 
 pub fn lookup(x: u32, y: u32) u32 {
-    const rows: u32 = 990;
-    const cols: u32 = 990;
+    const rows: u32 = 990+1;
+    const cols: u32 = 990+1;
+    // const rows: u32 = 9+1;
+    // const cols: u32 = 9+1;
     _ = cols;
 
     return rows * y + x;
@@ -59,10 +61,16 @@ pub const LocalMaxes = struct {
         var x: u32 = this.min_x;
         var y: u32 = this.min_y;
         while (x <= this.max_x) : (x += 1) {
+            y = this.min_y;
             while (y <= this.max_y) : (y += 1) {
                 try result.append([2]u32{ x, y });
             }
         }
+
+        // std.log.info("line start {any}", .{this});
+        // for (result.items) |coord| {
+        //     std.log.info("line: -> {d}, {d}", .{coord[0], coord[1]});
+        // }
 
         return result;
     }
@@ -156,6 +164,7 @@ pub fn solve() anyerror!void {
     var danger_spots: u32 = 0;
     for (map.items) |hits| {
         if (hits < 2) { continue; }
+        // std.log.info("map hits: {d}", .{hits});
 
         danger_spots += 1;
 
