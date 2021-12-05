@@ -36,8 +36,8 @@ pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
 pub fn lookup(x: u32, y: u32) u32 {
     // const rows: u32 = 990 + 1;
     // const cols: u32 = 990 + 1;
-    const rows: u32 = 9;
-    const cols: u32 = 9;
+    const rows: u32 = 9+1;
+    const cols: u32 = 9+1;
     _ = cols;
 
     return rows * y + x;
@@ -83,12 +83,12 @@ pub const LocalMaxes = struct {
             }
         }
 
-        if (!this.is_flat()) {
+        // if (!this.is_flat()) {
             std.log.info("line start (flat? {b}) {any}", .{ this.is_flat(), this });
             for (result.items) |coord| {
                 std.log.info("line: -> {d}, {d}", .{ coord[0], coord[1] });
             }
-        }
+        // }
 
         return result;
     }
