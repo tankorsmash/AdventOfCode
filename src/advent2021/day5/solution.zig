@@ -33,9 +33,9 @@ pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
     return value;
 }
 
-pub fn lookup(x: i32, y: i32) i32 {
-    const rows: i32 = 990;
-    const cols: i32 = 990;
+pub fn lookup(x: u32, y: u32) u32 {
+    const rows: u32 = 990;
+    const cols: u32 = 990;
     _ = cols;
 
     return rows * y + x;
@@ -47,14 +47,14 @@ pub const LocalMaxes = struct {
     min_y: u32,
     max_y: u32,
 
-    pub fn is_horizontal(this: *LocalMaxes) void {
+    pub fn is_horizontal(this: *LocalMaxes) bool {
         return this.min_x == this.max_x;
     }
-    pub fn is_vertical(this: *LocalMaxes) void {
+    pub fn is_vertical(this: *LocalMaxes) bool {
         return this.min_y == this.max_y;
     }
 
-    pub fn get_points(this: *LocalMaxes, allocator: *std.Allocator) anyerror!std.ArrayList([2]u32) {
+    pub fn get_points(this: *LocalMaxes, allocator: *std.mem.Allocator) anyerror!std.ArrayList([2]u32) {
         var result = std.ArrayList([2]u32).init(allocator);
         var x: u32 = this.min_x;
         var y: u32 = this.min_y;
@@ -110,15 +110,45 @@ pub fn solve() anyerror!void {
     var max_y: u32 = 0;
     _ = max_y;
 
+    var map = std.ArrayList(u32).init(allocator);
+
+    //build map
+    {
+        var x: u32 = 0;
+        while (x < (990 * 990)) : (x += 1) {
+            try map.append(0);
+        }
+    }
+
     for (all_values.items) |line| {
         _ = line;
 
         var local_maxes = try get_max_x_y_for_line(line);
+        //TODO make sure we only want to include the vertical lines, because this would change the initial map and the lookup
+        // if (local_maxes.is_horizontal() or local_maxes.is_vertical() ) {
         max_x = std.math.max(max_x, local_maxes.max_x);
         max_y = std.math.max(max_y, local_maxes.max_y);
+        // }
     }
 
     std.log.info("max x: {d}, max_y: {d}", .{ max_x, max_y });
+
+    for (all_values.items) |line| {
+        _ = line;
+
+        var local_maxes = try get_max_x_y_for_line(line);
+        //skip if not hor/vrt
+        if (!(local_maxes.is_horizontal() or local_maxes.is_vertical())) {
+            continue;
+        }
+
+        var points = try local_maxes.get_points(allocator);
+        for (points.items) |point| {
+            const x = point[0];
+            const y = point[0];
+            map.items[lookup(x, y)] += 1;
+        }
+    }
 
     //mark boards by grouping nums into groups of 5 nums
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_solved_board.? });
