@@ -34,10 +34,10 @@ pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
 }
 
 pub fn lookup(x: u32, y: u32) u32 {
-    const rows: u32 = 990+1;
-    const cols: u32 = 990+1;
-    // const rows: u32 = 9+1;
-    // const cols: u32 = 9+1;
+    // const rows: u32 = 990 + 1;
+    // const cols: u32 = 990 + 1;
+    const rows: u32 = 9;
+    const cols: u32 = 9;
     _ = cols;
 
     return rows * y + x;
@@ -56,21 +56,39 @@ pub const LocalMaxes = struct {
         return this.min_y == this.max_y;
     }
 
+    pub fn is_flat(this: *LocalMaxes) bool {
+        return this.is_horizontal() or this.is_vertical();
+    }
+    pub fn is_diagonal(this: *LocalMaxes) bool {
+        return !this.is_flat();
+    }
+
     pub fn get_points(this: *LocalMaxes, allocator: *std.mem.Allocator) anyerror!std.ArrayList([2]u32) {
         var result = std.ArrayList([2]u32).init(allocator);
         var x: u32 = this.min_x;
         var y: u32 = this.min_y;
-        while (x <= this.max_x) : (x += 1) {
-            y = this.min_y;
-            while (y <= this.max_y) : (y += 1) {
+
+        if (this.is_flat()) {
+            while (x <= this.max_x) : (x += 1) {
+                y = this.min_y;
+                while (y <= this.max_y) : (y += 1) {
+                    try result.append([2]u32{ x, y });
+                }
+            }
+        } else {
+            while (x <= this.max_x and y <= this.max_y) : (x += 1) {
                 try result.append([2]u32{ x, y });
+
+                y += 1;
             }
         }
 
-        // std.log.info("line start {any}", .{this});
-        // for (result.items) |coord| {
-        //     std.log.info("line: -> {d}, {d}", .{coord[0], coord[1]});
-        // }
+        if (!this.is_flat()) {
+            std.log.info("line start (flat? {b}) {any}", .{this.is_flat(), this});
+            for (result.items) |coord| {
+                std.log.info("line: -> {d}, {d}", .{ coord[0], coord[1] });
+            }
+        }
 
         return result;
     }
@@ -122,7 +140,8 @@ pub fn solve() anyerror!void {
 
     //build map
     var xxx: u32 = 0;
-    while (xxx < ((990+1) * (990+1))) : (xxx += 1) {
+    // while (xxx < ((990 + 1) * (990 + 1))) : (xxx += 1) {
+    while (xxx < ((10) * (10))) : (xxx += 1) {
         // std.log.info("appending", .{});
         try map.append(0);
     }
@@ -134,10 +153,11 @@ pub fn solve() anyerror!void {
         var local_maxes = try get_max_x_y_for_line(line);
         //TODO make sure we only want to include the vertical lines, because this would change the initial map and the lookup
         // both have the same answer though, so it doesnt matter for now
-        if (local_maxes.is_horizontal() or local_maxes.is_vertical() ) {
-            max_x = std.math.max(max_x, local_maxes.max_x);
-            max_y = std.math.max(max_y, local_maxes.max_y);
-        }
+        // if (local_maxes.is_horizontal() or local_maxes.is_vertical() ) {
+        // if (local_maxes.is_flat()) {
+        max_x = std.math.max(max_x, local_maxes.max_x);
+        max_y = std.math.max(max_y, local_maxes.max_y);
+        // }
     }
 
     std.log.info("max x: {d}, max_y: {d}", .{ max_x, max_y });
@@ -147,32 +167,33 @@ pub fn solve() anyerror!void {
 
         var local_maxes = try get_max_x_y_for_line(line);
         //skip if not hor/vrt
-        if (!(local_maxes.is_horizontal() or local_maxes.is_vertical())) {
-            continue;
-        }
+        // if (!(local_maxes.is_horizontal() or local_maxes.is_vertical())) {
+        //     continue;
+        // }
 
         var points = try local_maxes.get_points(allocator);
         for (points.items) |point| {
             const x = point[0];
             const y = point[1];
-            const idx  = lookup(x, y);
-            // std.log.info("idx: {d}", .{idx});
+            const idx = lookup(x, y);
+            std.log.info("idx: {d}, x: {d}, y: {d}", .{idx, x, y});
             map.items[idx] += 1;
         }
     }
 
     var danger_spots: u32 = 0;
-    for (map.items) |hits| {
-        if (hits < 2) { continue; }
-        // std.log.info("map hits: {d}", .{hits});
+    for (map.items) |hits, idx| {
+        std.log.info("map hits (@{d}): {d}", .{idx, hits});
+        if (hits < 2) {
+            continue;
+        }
 
         danger_spots += 1;
-
     }
 
     //mark boards by grouping nums into groups of 5 nums
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, danger_spots }); // not 1949
-    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board});
+    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board}); //956248
 
     std.log.info("done", .{});
 }
