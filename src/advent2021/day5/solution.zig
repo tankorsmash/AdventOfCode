@@ -18,23 +18,54 @@ pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
 
     return value;
 }
+pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
+    var value: u32 = std.fmt.parseUnsigned(u32, bytes, 10) catch |err| {
+        if (err == error.InvalidCharacter) {
+            std.log.err("err: Invalid Character: '{s}' -- '{d}'", .{ bytes, bytes });
+            return 0;
+        }
+
+        std.log.err("err {}: Unknown error parsing int: {any}", .{ err, bytes });
+
+        return 0;
+    };
+
+    return value;
+}
 
 pub fn lookup(x: i32, y: i32) i32 {
-    const rows: i32 = 5;
-    const cols: i32 = 5;
+    const rows: i32 = 990;
+    const cols: i32 = 990;
     _ = cols;
 
     return rows * y + x;
 }
 
-pub const LocalMaxes = struct { x: i32, y: i32 };
+pub const LocalMaxes = struct { min_x: u32, max_x: u32, min_y: u32, max_y: u32 };
 
-pub fn get_max_x_y_for_line(line: std.ArrayList(u8)) LocalMaxes {
+pub fn get_max_x_y_for_line(line: std.ArrayList(u8)) anyerror!LocalMaxes {
     var split_line = std.mem.split(u8, line.items, " -> ");
     var start_split = split_line.next().?;
-    _ = start_split;
+    var end_split = split_line.next().?;
 
-    return LocalMaxes{ .x = 0, .y = 0 };
+    var start_splitter = std.mem.split(u8, start_split, ",");
+    var raw_start_x = start_splitter.next().?;
+    _ = raw_start_x;
+    var raw_start_y = start_splitter.next().?;
+    _ = raw_start_y;
+
+    var end_splitter = std.mem.split(u8, end_split, ",");
+    var raw_end_x = end_splitter.next().?;
+    _ = raw_end_x;
+    var raw_end_y = end_splitter.next().?;
+    _ = raw_end_y;
+
+    return LocalMaxes{
+        .min_x = std.math.min(try parse_u32(raw_start_x), try parse_u32(raw_end_x)),
+        .max_x = std.math.max(try parse_u32(raw_start_x), try parse_u32(raw_end_x)),
+        .min_y = std.math.min(try parse_u32(raw_start_y), try parse_u32(raw_end_y)),
+        .max_y = std.math.max(try parse_u32(raw_start_y), try parse_u32(raw_end_y)),
+    };
 }
 
 pub fn solve() anyerror!void {
@@ -57,9 +88,12 @@ pub fn solve() anyerror!void {
     for (all_values.items) |line| {
         _ = line;
 
-        var local_maxes = get_max_x_y_for_line(line);
-        _ = local_maxes;
+        var local_maxes = try get_max_x_y_for_line(line);
+        max_x = std.math.max(max_x, local_maxes.max_x);
+        max_y = std.math.max(max_y, local_maxes.max_y);
     }
+
+    std.log.info("max x: {d}, max_y: {d}", .{max_x, max_y});
 
     //mark boards by grouping nums into groups of 5 nums
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_solved_board.? });
