@@ -2,16 +2,16 @@ const std = @import("std");
 const expect = std.testing.expect;
 const expectEqual = std.testing.expectEqual;
 
-const day1 = @import("advent2020/day1/solution.zig");
-const day2 = @import("advent2020/day2/solution.zig");
-const day3 = @import("advent2020/day3/solution.zig");
-const day4 = @import("advent2020/day4/solution.zig");
-const day5 = @import("advent2020/day5/solution.zig");
-
-const day1_2021 = @import("advent2021/day1/solution.zig");
-const day2_2021 = @import("advent2021/day2/solution.zig");
-const day3_2021 = @import("advent2021/day3/solution.zig");
-const day4_2021 = @import("advent2021/day4/solution.zig");
+// const day1 = @import("advent2020/day1/solution.zig");
+// const day2 = @import("advent2020/day2/solution.zig");
+// const day3 = @import("advent2020/day3/solution.zig");
+// const day4 = @import("advent2020/day4/solution.zig");
+// const day5 = @import("advent2020/day5/solution.zig");
+//
+// const day1_2021 = @import("advent2021/day1/solution.zig");
+// const day2_2021 = @import("advent2021/day2/solution.zig");
+// const day3_2021 = @import("advent2021/day3/solution.zig");
+// const day4_2021 = @import("advent2021/day4/solution.zig");
 const day5_2021 = @import("advent2021/day5/solution.zig");
 
 const load_input = @import("./advent2020/../advent2020/shared/load_input.zig");
@@ -42,17 +42,17 @@ pub fn split(bounds: Bounds, take_lower: bool) Bounds {
 
 pub fn main() anyerror!void {
     var year : i32 = 2020;
-    std.log.info("{d} Day1 Error?: {}", .{year, day1.solve()});
-    std.log.info("{d} Day2 Error?: {}", .{year, day2.solve()});
-    std.log.info("{d} Day3 Error?: {}", .{year, day3.solve()});
-    std.log.info("{d} Day4 Error?: {}", .{year, day4.solve()});
-    std.log.info("{d} Day5 Error?: {}", .{year, day5.solve()});
-
+    // std.log.info("{d} Day1 Error?: {}", .{year, day1.solve()});
+    // std.log.info("{d} Day2 Error?: {}", .{year, day2.solve()});
+    // std.log.info("{d} Day3 Error?: {}", .{year, day3.solve()});
+    // std.log.info("{d} Day4 Error?: {}", .{year, day4.solve()});
+    // std.log.info("{d} Day5 Error?: {}", .{year, day5.solve()});
+    //
     year = 2021;
-    std.log.info("{d} Day1 Error?: {}", .{year, day1_2021.solve()});
-    std.log.info("{d} Day2 Error?: {}", .{year, day2_2021.solve()});
-    std.log.info("{d} Day3 Error?: {}", .{year, day3_2021.solve()});
-    std.log.info("{d} Day4 Error?: {}", .{year, day4_2021.solve()});
+    // std.log.info("{d} Day1 Error?: {}", .{year, day1_2021.solve()});
+    // std.log.info("{d} Day2 Error?: {}", .{year, day2_2021.solve()});
+    // std.log.info("{d} Day3 Error?: {}", .{year, day3_2021.solve()});
+    // std.log.info("{d} Day4 Error?: {}", .{year, day4_2021.solve()});
     std.log.info("{d} Day5 Error?: {}", .{year, day5_2021.solve()});
 
 }
