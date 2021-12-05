@@ -34,16 +34,21 @@ pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
 }
 
 pub fn lookup(x: u32, y: u32) u32 {
-    // const rows: u32 = 990 + 1;
-    // const cols: u32 = 990 + 1;
-    const rows: u32 = 9+1;
-    const cols: u32 = 9+1;
+    const rows: u32 = 990 + 1;
+    const cols: u32 = 990 + 1;
+    // const rows: u32 = 9 + 1;
+    // const cols: u32 = 9 + 1;
     _ = cols;
 
     return rows * y + x;
 }
 
 pub const LocalMaxes = struct {
+    start_x: u32,
+    end_x: u32,
+    start_y: u32,
+    end_y: u32,
+
     min_x: u32,
     max_x: u32,
     min_y: u32,
@@ -76,18 +81,29 @@ pub const LocalMaxes = struct {
                 }
             }
         } else {
-            while (x <= this.max_x and y <= this.max_y) : (x += 1) {
+            x = this.start_x;
+            y = this.start_y;
+            while (x != this.end_x and y != this.end_y) {
                 try result.append([2]u32{ x, y });
 
-                y += 1;
+                if (this.start_x < this.end_x) {
+                    x += 1;
+                } else {
+                    x -= 1;
+                }
+                if (this.start_y < this.end_y) {
+                    y += 1;
+                } else {
+                    y -= 1;
+                }
             }
         }
 
         // if (!this.is_flat()) {
-            std.log.info("line start (flat? {b}) {any}", .{ this.is_flat(), this });
-            for (result.items) |coord| {
-                std.log.info("line: -> {d}, {d}", .{ coord[0], coord[1] });
-            }
+        std.log.info("line start (flat? {b}) {any}", .{ this.is_flat(), this });
+        // for (result.items) |coord| {
+            // std.log.info("line: -> {d}, {d}", .{ coord[0], coord[1] });
+        // }
         // }
 
         return result;
@@ -112,6 +128,10 @@ pub fn get_max_x_y_for_line(line: std.ArrayList(u8)) anyerror!LocalMaxes {
     _ = raw_end_y;
 
     return LocalMaxes{
+        .start_x = try parse_u32(raw_start_x),
+        .end_x = try parse_u32(raw_end_x),
+        .start_y = try parse_u32(raw_start_y),
+        .end_y = try parse_u32(raw_end_y),
         .min_x = std.math.min(try parse_u32(raw_start_x), try parse_u32(raw_end_x)),
         .max_x = std.math.max(try parse_u32(raw_start_x), try parse_u32(raw_end_x)),
         .min_y = std.math.min(try parse_u32(raw_start_y), try parse_u32(raw_end_y)),
@@ -140,8 +160,8 @@ pub fn solve() anyerror!void {
 
     //build map
     var xxx: u32 = 0;
-    // while (xxx < ((990 + 1) * (990 + 1))) : (xxx += 1) {
-    while (xxx < ((10) * (10))) : (xxx += 1) {
+    while (xxx < ((990 + 1) * (990 + 1))) : (xxx += 1) {
+    // while (xxx < ((10) * (10))) : (xxx += 1) {
         // std.log.info("appending", .{});
         try map.append(0);
     }
@@ -193,16 +213,16 @@ pub fn solve() anyerror!void {
         danger_spots += 1;
     }
 
-    for (map.items) |_, idx| {
-        if ((idx % 10 == 0) and idx != 0) {
-            var row = map.items[idx-10..idx];
-            std.log.info("{any}", .{row});
-        }
-    }
+    // for (map.items) |_, idx| {
+    //     if ((idx % 10 == 0) and idx != 0) {
+    //         var row = map.items[idx - 10 .. idx];
+    //         std.log.info("{any}", .{row});
+    //     }
+    // }
 
     //mark boards by grouping nums into groups of 5 nums
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, danger_spots }); // not 1949
-    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board}); //956248
+    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board}); //not 956248, not 19915 (too low)
 
     std.log.info("done", .{});
 }
