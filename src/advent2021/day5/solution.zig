@@ -113,22 +113,23 @@ pub fn solve() anyerror!void {
     var map = std.ArrayList(u32).init(allocator);
 
     //build map
-    {
-        var x: u32 = 0;
-        while (x < (990 * 990)) : (x += 1) {
-            try map.append(0);
-        }
+    var xxx: u32 = 0;
+    while (xxx < ((990+1) * (990+1))) : (xxx += 1) {
+        // std.log.info("appending", .{});
+        try map.append(0);
     }
+    std.log.info("map is length of {d}", .{std.mem.len(map.items)});
 
     for (all_values.items) |line| {
         _ = line;
 
         var local_maxes = try get_max_x_y_for_line(line);
         //TODO make sure we only want to include the vertical lines, because this would change the initial map and the lookup
-        // if (local_maxes.is_horizontal() or local_maxes.is_vertical() ) {
-        max_x = std.math.max(max_x, local_maxes.max_x);
-        max_y = std.math.max(max_y, local_maxes.max_y);
-        // }
+        // both have the same answer though, so it doesnt matter for now
+        if (local_maxes.is_horizontal() or local_maxes.is_vertical() ) {
+            max_x = std.math.max(max_x, local_maxes.max_x);
+            max_y = std.math.max(max_y, local_maxes.max_y);
+        }
     }
 
     std.log.info("max x: {d}, max_y: {d}", .{ max_x, max_y });
@@ -145,8 +146,10 @@ pub fn solve() anyerror!void {
         var points = try local_maxes.get_points(allocator);
         for (points.items) |point| {
             const x = point[0];
-            const y = point[0];
-            map.items[lookup(x, y)] += 1;
+            const y = point[1];
+            const idx  = lookup(x, y);
+            // std.log.info("idx: {d}", .{idx});
+            map.items[idx] += 1;
         }
     }
 
@@ -159,7 +162,7 @@ pub fn solve() anyerror!void {
     }
 
     //mark boards by grouping nums into groups of 5 nums
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, danger_spots });
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, danger_spots }); // not 1949
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board});
 
     std.log.info("done", .{});
