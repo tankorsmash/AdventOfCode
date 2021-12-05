@@ -83,27 +83,47 @@ pub const LocalMaxes = struct {
         } else {
             x = this.start_x;
             y = this.start_y;
-            while (x != this.end_x and y != this.end_y) {
+            while (true) {
                 try result.append([2]u32{ x, y });
 
                 if (this.start_x < this.end_x) {
                     x += 1;
+                    if (x > this.end_x) {
+                        // std.log.info("breaking greater than end x", .{}) ;
+                        break;
+                    }
                 } else {
+                    if (x == 0) { break;  }
                     x -= 1;
+                    if (x < this.end_x) {
+                        // std.log.info("breaking less than end x", .{}) ;
+                        break;
+                    }
                 }
                 if (this.start_y < this.end_y) {
                     y += 1;
+                    if (y > this.end_y) {
+                        // std.log.info("breaking greater than end y", .{}) ;
+                        break;
+                    }
                 } else {
+                    if (y == 0) { break;  }
                     y -= 1;
+                    if (y < this.end_y) {
+                        // std.log.info("breaking less than end y", .{}) ;
+                        break;
+                    }
                 }
             }
         }
 
         // if (!this.is_flat()) {
-        std.log.info("line start (flat? {b}) {any}", .{ this.is_flat(), this });
+
+        // std.log.info("line start (flat? {b}) {any}", .{ this.is_flat(), this });
         // for (result.items) |coord| {
-            // std.log.info("line: -> {d}, {d}", .{ coord[0], coord[1] });
+        //     std.log.info("line: -> {d}, {d}", .{ coord[0], coord[1] });
         // }
+
         // }
 
         return result;
@@ -161,7 +181,7 @@ pub fn solve() anyerror!void {
     //build map
     var xxx: u32 = 0;
     while (xxx < ((990 + 1) * (990 + 1))) : (xxx += 1) {
-    // while (xxx < ((10) * (10))) : (xxx += 1) {
+        // while (xxx < ((10) * (10))) : (xxx += 1) {
         // std.log.info("appending", .{});
         try map.append(0);
     }
@@ -213,9 +233,13 @@ pub fn solve() anyerror!void {
         danger_spots += 1;
     }
 
-    // for (map.items) |_, idx| {
+    // const end_slice: u32 = (max_x + 1) * (max_y + 1);
+    // for (map.items[0..end_slice]) |_, idx| {
     //     if ((idx % 10 == 0) and idx != 0) {
     //         var row = map.items[idx - 10 .. idx];
+    //         _ = row;
+    //         // if ((idx % 991 == 0) and idx != 0) {
+    //         //     var row = map.items[idx - 991 .. idx];
     //         std.log.info("{any}", .{row});
     //     }
     // }
