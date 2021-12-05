@@ -84,7 +84,7 @@ pub const LocalMaxes = struct {
         }
 
         if (!this.is_flat()) {
-            std.log.info("line start (flat? {b}) {any}", .{this.is_flat(), this});
+            std.log.info("line start (flat? {b}) {any}", .{ this.is_flat(), this });
             for (result.items) |coord| {
                 std.log.info("line: -> {d}, {d}", .{ coord[0], coord[1] });
             }
@@ -176,14 +176,14 @@ pub fn solve() anyerror!void {
             const x = point[0];
             const y = point[1];
             const idx = lookup(x, y);
-            std.log.info("idx: {d}, x: {d}, y: {d}", .{idx, x, y});
+            std.log.info("idx: {d}, x: {d}, y: {d}", .{ idx, x, y });
             map.items[idx] += 1;
         }
     }
 
     var danger_spots: u32 = 0;
     for (map.items) |hits, idx| {
-        std.log.info("map hits (@{d}): {d}", .{idx, hits});
+        std.log.info("map hits (@{d}): {d}", .{ idx, hits });
         if (hits < 2) {
             continue;
         }
