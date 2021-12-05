@@ -176,19 +176,28 @@ pub fn solve() anyerror!void {
             const x = point[0];
             const y = point[1];
             const idx = lookup(x, y);
-            std.log.info("idx: {d}, x: {d}, y: {d}", .{ idx, x, y });
+            // std.log.info("idx: {d}, x: {d}, y: {d}", .{ idx, x, y });
             map.items[idx] += 1;
         }
     }
 
     var danger_spots: u32 = 0;
     for (map.items) |hits, idx| {
-        std.log.info("map hits (@{d}): {d}", .{ idx, hits });
+        _ = hits;
+        _ = idx;
+        // std.log.info("map hits (@{d}): {d}", .{ idx, hits });
         if (hits < 2) {
             continue;
         }
 
         danger_spots += 1;
+    }
+
+    for (map.items) |_, idx| {
+        if ((idx % 10 == 0) and idx != 0) {
+            var row = map.items[idx-10..idx];
+            std.log.info("{any}", .{row});
+        }
     }
 
     //mark boards by grouping nums into groups of 5 nums
