@@ -18,8 +18,8 @@ pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
 
     return value;
 }
-pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
-    var value: u32 = std.fmt.parseUnsigned(u32, bytes, 10) catch |err| {
+pub fn parse_i32(bytes: []const u8) std.fmt.ParseIntError!i32 {
+    var value: i32 = std.fmt.parseUnsigned(i32, bytes, 10) catch |err| {
         if (err == error.InvalidCharacter) {
             std.log.err("err: Invalid Character: '{s}' -- '{d}'", .{ bytes, bytes });
             return 0;
@@ -33,26 +33,26 @@ pub fn parse_u32(bytes: []const u8) std.fmt.ParseIntError!u32 {
     return value;
 }
 
-pub fn lookup(x: u32, y: u32) u32 {
-    const rows: u32 = 990 + 1;
-    const cols: u32 = 990 + 1;
-    // const rows: u32 = 9 + 1;
-    // const cols: u32 = 9 + 1;
+pub fn lookup(x: i32, y: i32) i32 {
+    const rows: i32 = 990 + 1;
+    const cols: i32 = 990 + 1;
+    // const rows: i32 = 9 + 1;
+    // const cols: i32 = 9 + 1;
     _ = cols;
 
     return rows * y + x;
 }
 
 pub const LocalMaxes = struct {
-    start_x: u32,
-    end_x: u32,
-    start_y: u32,
-    end_y: u32,
+    start_x: i32,
+    end_x: i32,
+    start_y: i32,
+    end_y: i32,
 
-    min_x: u32,
-    max_x: u32,
-    min_y: u32,
-    max_y: u32,
+    min_x: i32,
+    max_x: i32,
+    min_y: i32,
+    max_y: i32,
 
     pub fn is_horizontal(this: *LocalMaxes) bool {
         return this.min_x == this.max_x;
@@ -68,23 +68,23 @@ pub const LocalMaxes = struct {
         return !this.is_flat();
     }
 
-    pub fn get_points(this: *LocalMaxes, allocator: *std.mem.Allocator) anyerror!std.ArrayList([2]u32) {
-        var result = std.ArrayList([2]u32).init(allocator);
-        var x: u32 = this.min_x;
-        var y: u32 = this.min_y;
+    pub fn get_points(this: *LocalMaxes, allocator: *std.mem.Allocator) anyerror!std.ArrayList([2]i32) {
+        var result = std.ArrayList([2]i32).init(allocator);
+        var x: i32 = this.min_x;
+        var y: i32 = this.min_y;
 
         if (this.is_flat()) {
             while (x <= this.max_x) : (x += 1) {
                 y = this.min_y;
                 while (y <= this.max_y) : (y += 1) {
-                    try result.append([2]u32{ x, y });
+                    try result.append([2]i32{ x, y });
                 }
             }
         } else {
             x = this.start_x;
             y = this.start_y;
             while (true) {
-                try result.append([2]u32{ x, y });
+                try result.append([2]i32{ x, y });
 
                 if (this.start_x < this.end_x) {
                     x += 1;
@@ -148,14 +148,14 @@ pub fn get_max_x_y_for_line(line: std.ArrayList(u8)) anyerror!LocalMaxes {
     _ = raw_end_y;
 
     return LocalMaxes{
-        .start_x = try parse_u32(raw_start_x),
-        .end_x = try parse_u32(raw_end_x),
-        .start_y = try parse_u32(raw_start_y),
-        .end_y = try parse_u32(raw_end_y),
-        .min_x = std.math.min(try parse_u32(raw_start_x), try parse_u32(raw_end_x)),
-        .max_x = std.math.max(try parse_u32(raw_start_x), try parse_u32(raw_end_x)),
-        .min_y = std.math.min(try parse_u32(raw_start_y), try parse_u32(raw_end_y)),
-        .max_y = std.math.max(try parse_u32(raw_start_y), try parse_u32(raw_end_y)),
+        .start_x = try parse_i32(raw_start_x),
+        .end_x = try parse_i32(raw_end_x),
+        .start_y = try parse_i32(raw_start_y),
+        .end_y = try parse_i32(raw_end_y),
+        .min_x = std.math.min(try parse_i32(raw_start_x), try parse_i32(raw_end_x)),
+        .max_x = std.math.max(try parse_i32(raw_start_x), try parse_i32(raw_end_x)),
+        .min_y = std.math.min(try parse_i32(raw_start_y), try parse_i32(raw_end_y)),
+        .max_y = std.math.max(try parse_i32(raw_start_y), try parse_i32(raw_end_y)),
     };
 }
 
@@ -171,20 +171,58 @@ pub fn solve() anyerror!void {
         return;
     };
 
-    var fishes = std.ArrayList(u32).init(allocator);
+    var fishes_lifespans = std.ArrayList(i32).init(allocator);
 
     for (all_values.items) |line| {
         var split = std.mem.split(u8, line.items, ",");
 
         while (split.next()) |fish| {
-            try fishes.append(try parse_u32(fish));
+            try fishes_lifespans.append(try parse_i32(fish));
         }
     }
 
-    std.log.info("len fish {d}", .{std.mem.len(fishes.items)});
+
+    var fishes = std.ArrayList(i32).init(allocator);
+    for (fishes_lifespans.items) |lifespan| {
+        try fishes.append(lifespan);
+    }
+
+    std.log.info("len fish lifespans {d}", .{std.mem.len(fishes_lifespans.items)});
+    std.log.info("len fishes {d}", .{std.mem.len(fishes.items)});
+
+    var cur_day: i32 = 0;
+    const max_days: i32 = 80;
+
+    while (cur_day < max_days) {
+        var min_day_delta = std.mem.min(i32, fishes.items) + 1; //since 0 is still a valid day
+
+        var new_fishes = std.ArrayList(i32).init(allocator);
+        var added_fishes = std.ArrayList(i32).init(allocator);
+
+        for (fishes.items) |fish, fish_idx| {
+            var new_fish = fish - min_day_delta;
+            if (new_fish == -1) {
+                new_fish = fishes_lifespans.items[fish_idx];
+
+                try added_fishes.append(new_fish+2);
+            }
+            try new_fishes.append(new_fish);
+        }
+
+        for (added_fishes.items) |added_fish| {
+            try fishes_lifespans.append(added_fish);
+            try new_fishes.append(added_fish);
+        }
+
+        fishes = new_fishes;
+
+        cur_day += min_day_delta;
+    }
+
+    //get smallest number to define the smallest loop
 
     //mark boards by grouping nums into groups of 5 nums
-    // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, danger_spots });
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, std.mem.len(fishes_lifespans.items) });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_solved_board});
 
     std.log.info("done", .{});
