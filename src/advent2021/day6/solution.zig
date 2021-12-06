@@ -242,13 +242,12 @@ pub fn solve() anyerror!void {
                 try all_new_fishes.append(new_fish);
             }
         }
-        info("current pre day {d}", .{current_day});
+        fishes = all_new_fishes;
+        // for (all_new_fishes.items) |new_fish| {
+        //     try fishes.append(new_fish);
+        // }
 
-        for (all_new_fishes.items) |new_fish| {
-            try fishes.append(new_fish);
-        }
-
-        info("current dayt {d}", .{current_day});
+        info("current day {d}, len fishes {d}", .{current_day, std.mem.len(fishes.items)});
     }
 
 
