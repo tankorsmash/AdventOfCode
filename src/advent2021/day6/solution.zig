@@ -171,9 +171,17 @@ pub fn solve() anyerror!void {
         return;
     };
 
+    var fishes = std.ArrayList(u32).init(allocator);
+
     for (all_values.items) |line| {
-        _ = line;
+        var split = std.mem.split(u8, line.items, ",");
+
+        while (split.next()) |fish| {
+            try fishes.append(try parse_u32(fish));
+        }
     }
+
+    std.log.info("len fish {d}", .{std.mem.len(fishes.items)});
 
     //mark boards by grouping nums into groups of 5 nums
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, danger_spots });
