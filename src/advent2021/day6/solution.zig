@@ -1,6 +1,7 @@
 const std = @import("std");
 const File = std.fs.File;
 const fmt = std.fmt;
+const info = std.log.info;
 
 const load_input = @import("./../../advent2020/shared/load_input.zig");
 
@@ -172,40 +173,55 @@ pub fn solve() anyerror!void {
     };
 
     var fishes_lifespans = std.ArrayList(i32).init(allocator);
+    var fishes = std.ArrayList(i32).init(allocator);
 
     for (all_values.items) |line| {
         var split = std.mem.split(u8, line.items, ",");
 
         while (split.next()) |fish| {
-            try fishes_lifespans.append(try parse_i32(fish));
+            try fishes.append(try parse_i32(fish));
         }
     }
 
 
-    var fishes = std.ArrayList(i32).init(allocator);
-    for (fishes_lifespans.items) |lifespan| {
-        try fishes.append(lifespan);
+    for (fishes.items) |lifespan| {
+        _ = lifespan;
+        try fishes_lifespans.append(6);
     }
 
     std.log.info("len fish lifespans {d}", .{std.mem.len(fishes_lifespans.items)});
     std.log.info("len fishes {d}", .{std.mem.len(fishes.items)});
 
     var cur_day: i32 = 0;
-    const max_days: i32 = 80;
+    const max_days: i32 = 18;
+
+    info("fishes day {d}:: {any}", .{cur_day, fishes.items});
 
     while (cur_day < max_days) {
-        var min_day_delta = std.mem.min(i32, fishes.items) + 1; //since 0 is still a valid day
+        // var min_day_delta = std.mem.min(i32, fishes.items) + 1; //since 0 is still a valid day
+        // if (min_day_delta + cur_day > max_days) { min_day_delta = max_days - cur_day;}
+        var min_day_delta:i32 = 1;
 
         var new_fishes = std.ArrayList(i32).init(allocator);
         var added_fishes = std.ArrayList(i32).init(allocator);
 
+        // info("min_day_delta {d}", .{min_day_delta});
         for (fishes.items) |fish, fish_idx| {
             var new_fish = fish - min_day_delta;
-            if (new_fish == -1) {
-                new_fish = fishes_lifespans.items[fish_idx];
+            // info("new_fish {d}", .{new_fish});
 
-                try added_fishes.append(new_fish+2);
+            //if the fish has died
+            if (new_fish == -1) {
+                //reset its lifespan
+                new_fish = fishes_lifespans.items[fish_idx];
+                //if the lifespan was 8, reduce it down to 6
+                if (new_fish == 8) {
+                    fishes_lifespans.items[fish_idx] = 6;
+                }
+                //queue to spawn a new one
+                try added_fishes.append(8);
             }
+
             try new_fishes.append(new_fish);
         }
 
@@ -216,8 +232,11 @@ pub fn solve() anyerror!void {
 
         fishes = new_fishes;
 
+
         cur_day += min_day_delta;
+        info("fishes day {d}:: {any}", .{cur_day, fishes.items});
     }
+    info("cur_day {d}", .{cur_day});
 
     //get smallest number to define the smallest loop
 
