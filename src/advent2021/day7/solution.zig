@@ -92,20 +92,23 @@ pub fn solve() anyerror!void {
     info("min {d} max {d}", .{min_crab_pos, max_crab_pos});
 
     var dest:i32 = 0;
-    var smallest_total_fuel: i32 =  999999999;
+    var part1_smallest_total_fuel: i32 =  999999999;
+    var part2_smallest_total_fuel: i32 =  999999999;
     while (dest <= max_crab_pos) : (dest += 1)  {
-        var total_fuel:i32 = 0;
+        var part1_total_fuel:i32 = 0;
+        var part2_total_fuel:i32 = 0;
         for (crabs.items) | crab_pos | {
             var d:i32 = try std.math.absInt(crab_pos - dest);
-            total_fuel += @divExact((d * (d+1)), @intCast(i32, 2));
+            part1_total_fuel += d;
+
+            part2_total_fuel += @divExact((d * (d+1)), @intCast(i32, 2));
         }
-        smallest_total_fuel = std.math.min(smallest_total_fuel, total_fuel);
+        part1_smallest_total_fuel = std.math.min(part1_smallest_total_fuel, part1_total_fuel);
+        part2_smallest_total_fuel = std.math.min(part2_smallest_total_fuel, part2_total_fuel);
     }
 
-    // std.sort.sort(CrabCount, crab_count.items, true, sort_crabs_by_count);
-
-    // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, smallest_total_fuel });
-    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, smallest_total_fuel});
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_smallest_total_fuel});
 
     std.log.info("done", .{});
 }
