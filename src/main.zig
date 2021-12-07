@@ -13,7 +13,8 @@ const expectEqual = std.testing.expectEqual;
 // const day3_2021 = @import("advent2021/day3/solution.zig");
 // const day4_2021 = @import("advent2021/day4/solution.zig");
 // const day5_2021 = @import("advent2021/day5/solution.zig");
-const day6_2021 = @import("advent2021/day6/solution.zig");
+// const day6_2021 = @import("advent2021/day6/solution.zig");
+const day7_2021 = @import("advent2021/day7/solution.zig");
 
 const load_input = @import("./advent2020/../advent2020/shared/load_input.zig");
 
@@ -55,7 +56,8 @@ pub fn main() anyerror!void {
     // std.log.info("{d} Day3 Error?: {}", .{year, day3_2021.solve()});
     // std.log.info("{d} Day4 Error?: {}", .{year, day4_2021.solve()});
     // std.log.info("{d} Day5 Error?: {}", .{year, day5_2021.solve()});
-    std.log.info("{d} Day6 Error?: {}", .{year, day6_2021.solve()});
+    // std.log.info("{d} Day6 Error?: {}", .{year, day6_2021.solve()});
+    std.log.info("{d} Day7 Error?: {}", .{year, day7_2021.solve()});
 
 }
 
