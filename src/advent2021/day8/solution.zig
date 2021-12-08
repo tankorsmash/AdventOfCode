@@ -307,6 +307,7 @@ pub fn solve() anyerror!void {
                 }
                 var num_matches: i32 = 0;
                 //loop through abcde's segment letters
+                // info("len5.items {any}", .{len5});
                 for (len5.items) |top_char| {
                     //skip checking own series
 
@@ -335,6 +336,7 @@ pub fn solve() anyerror!void {
                 }
                 ddd.digit_3_found = true;
                 _ = ddd.unknown_5_lens.orderedRemove(top_idx);
+                break;
                 // info("unknowns are now {any}", .{ddd.unknown_5_lens.items});
             }
         }
