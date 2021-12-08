@@ -153,6 +153,7 @@ pub fn solve() anyerror!void {
 
     var unique_digits_found: u32 = 0;
 
+    var running_total : i32 = 0;
     for (all_values.items) |line| {
         var section_split = std.mem.split(u8, line.items, " | ");
 
@@ -498,6 +499,7 @@ pub fn solve() anyerror!void {
         }
         var parsed: i32 = try parse_i32(nums.items);
         info("parsed {d}", .{parsed});
+        running_total += parsed;
 
 
         // info("digit_1_found {b}", .{ddd.digit_1_found});
@@ -553,7 +555,7 @@ pub fn solve() anyerror!void {
     }
 
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, unique_digits_found });
-    // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_smallest_total_fuel });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, running_total });
 
     std.log.info("done", .{});
 }
