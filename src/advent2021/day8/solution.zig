@@ -50,6 +50,17 @@ pub fn sort_crabs_by_count(desc: bool, left: CrabCount, right: CrabCount) bool {
     return left.count < right.count;
 }
 
+const num_segments_1 : i32= 2; //unique
+const num_segments_2 : i32= 5; //   ooo
+const num_segments_3 : i32= 5; //   ooo
+const num_segments_4 : i32= 4; //unique
+const num_segments_5 : i32= 5; //   ooo
+const num_segments_6 : i32= 6; //---
+const num_segments_7 : i32= 3; //unique
+const num_segments_8 : i32= 7; //unique
+const num_segments_9 : i32= 6; //---
+const num_segments_0 : i32= 6; //---
+
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -63,6 +74,7 @@ pub fn solve() anyerror!void {
     };
 
     var crabs = std.ArrayList(i32).init(allocator);
+    _ = crabs;
 
     for (all_values.items) |line| {
         _ = line;
