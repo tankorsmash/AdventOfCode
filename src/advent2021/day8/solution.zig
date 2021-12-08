@@ -292,7 +292,6 @@ pub fn solve() anyerror!void {
         std.debug.assert(segment_a != null);
         info("segment_a: {u}", .{segment_a});
 
-
         //numbers 2, 3, and 5 all share 3 segments.
         // 2 and 5 contain two segments the other doesn't have
         // 3 shares one with 5 and one with 2
@@ -321,11 +320,11 @@ pub fn solve() anyerror!void {
             }
 
             // if (std.mem.indexOf(i32, total_num_matches.items, @intCast(i32, 3)) != null) {
-            const needle =  [1]i32 {3};
+            const needle = [1]i32{3};
             if (std.mem.indexOf(i32, total_num_matches.items, needle[0..]) != null) {
-                info("{d} is a 2 or 5, because {any}", .{top_idx, total_num_matches.items});
+                info("{d} is a 2 or 5, because {any}", .{ top_idx, total_num_matches.items });
             } else {
-                info("{d} is a 3, because {any}", .{top_idx, total_num_matches.items});
+                info("{d} is a 3, because {any}", .{ top_idx, total_num_matches.items });
 
                 //copy into digit 3, and remove it
                 for (ddd.unknown_5_lens.items[top_idx].items[0..5]) |c, c_idx| {
@@ -348,7 +347,9 @@ pub fn solve() anyerror!void {
                     break;
                 }
             }
-            if (!found_match) { segment_b = char_4; }
+            if (!found_match) {
+                segment_b = char_4;
+            }
         }
         std.debug.assert(segment_b != null);
         ddd.segment_b = segment_b.?;
@@ -357,7 +358,7 @@ pub fn solve() anyerror!void {
         //number 2 is the remaining unknown_5_lens that doesn't contain
         // segment B
         var len5 = ddd.unknown_5_lens.items[0];
-        const needle =  [1]u8 {ddd.segment_b};
+        const needle = [1]u8{ddd.segment_b};
         var contains_seg_b = std.mem.indexOf(u8, len5.items, needle[0..]);
         if (contains_seg_b != null) {
             //copy into digit 5, and remove it
@@ -389,6 +390,31 @@ pub fn solve() anyerror!void {
             _ = ddd.unknown_5_lens.orderedRemove(0);
         }
 
+        //the segment in 1 that isn't in an unknown_6_lens, is number 6
+        std.debug.assert(ddd.digit_1_found);
+        for (ddd.unknown_6_lens.items) |bot_len6, bot_idx| {
+            var num_matches: i32 = 0;
+            for (ddd.digit_1) |char_1| {
+                for (bot_len6.items) |len6_char| {
+                    if (len6_char == char_1) {
+                        num_matches += 1;
+                    }
+                }
+            }
+            if (num_matches != 2) {
+                info("len6 {any} is number 6, {d}", .{ bot_len6.items, num_matches });
+
+                //copy into digit 6, and remove it
+                for (ddd.unknown_6_lens.items[0].items[0..6]) |c, c_idx| {
+                    ddd.digit_6[c_idx] = c;
+                }
+                ddd.digit_6_found = true;
+                _ = ddd.unknown_6_lens.orderedRemove(bot_idx);
+
+                break;
+            }
+        }
+
         // info("digit_1_found {b}", .{ddd.digit_1_found});
         // info("digit_2_found {b}", .{ddd.digit_2_found});
         // info("digit_3_found {b}", .{ddd.digit_3_found});
@@ -407,8 +433,6 @@ pub fn solve() anyerror!void {
         // info("segment_e -> {u}", .{ddd.segment_e});
         // info("segment_f -> {u}", .{ddd.segment_f});
         // info("segment_g -> {u}", .{ddd.segment_g});
-
-
 
         // //segment E is what isn't shared by 8 and 9
         // std.debug.assert(ddd.digit_8_found and ddd.digit_9_found);
