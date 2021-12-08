@@ -83,8 +83,8 @@ pub const Display = struct {
     digit_0: [num_segments_0]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
     digit_0_found: bool = false,
 
-    unknown_5_lens : std.ArrayList(std.ArrayList(u8)),
-    unknown_6_lens : std.ArrayList(std.ArrayList(u8)),
+    unknown_5_lens: std.ArrayList(std.ArrayList(u8)),
+    unknown_6_lens: std.ArrayList(std.ArrayList(u8)),
     // unknown_6_lens : [3][6]u8 = [3][6]u8{
     //     [6]u8{ 0, 0, 0, 0, 0, 0 },
     //     [6]u8{ 0, 0, 0, 0, 0, 0 },
@@ -141,8 +141,8 @@ pub fn solve() anyerror!void {
         }
 
         var ddd = Display{
-            .unknown_5_lens= std.ArrayList(std.ArrayList(u8)).init(allocator),
-            .unknown_6_lens= std.ArrayList(std.ArrayList(u8)).init(allocator),
+            .unknown_5_lens = std.ArrayList(std.ArrayList(u8)).init(allocator),
+            .unknown_6_lens = std.ArrayList(std.ArrayList(u8)).init(allocator),
         };
         _ = ddd;
 
@@ -191,10 +191,38 @@ pub fn solve() anyerror!void {
                     break;
                 }
             }
-            if (!found_match) { segment_a = char_7; }
+            if (!found_match) {
+                segment_a = char_7;
+            }
         }
         std.debug.assert(segment_a != null);
         info("segment_a: {u}", .{segment_a});
+
+        //numbers 2, 3, and 5 all share 3 segments.
+        // 2 and 5 contain two segments the other doesn't have
+        // 3 shares one with 5 and one with 2
+        for (ddd.unknown_5_lens.items) |len5, top_idx| {
+            //loop through abcde's segment letters
+            for (len5.items) |top_seg| {
+                //loop through all the other abcde's that exist
+                for (ddd.unknown_5_lens.items) |bot_len5, bot_idx| {
+                    var matches: i32 = 0;
+                    //skip checking own series
+                    if (top_idx == bot_idx) {
+                        continue;
+                    }
+
+                    //count the number of matching abcde's in the bot_seg
+                    for (bot_len5.items) |bot_seg| {
+                        // info("top_seg {u} bot_seg {u}", .{top_seg, bot_seg});
+                        if (bot_seg == top_seg) {
+                            matches += 1;
+                        }
+                    }
+                    info("top_idx #{d}'s {u} found {d} matches with #{d}", .{ top_idx, top_seg, matches, bot_idx });
+                }
+            }
+        }
 
         // //segment E is what isn't shared by 8 and 9
         // std.debug.assert(ddd.digit_8_found and ddd.digit_9_found);
