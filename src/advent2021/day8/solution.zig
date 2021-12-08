@@ -50,16 +50,29 @@ pub fn sort_crabs_by_count(desc: bool, left: CrabCount, right: CrabCount) bool {
     return left.count < right.count;
 }
 
-const num_segments_1 : i32= 2; //unique
-const num_segments_2 : i32= 5; //   ooo
-const num_segments_3 : i32= 5; //   ooo
-const num_segments_4 : i32= 4; //unique
-const num_segments_5 : i32= 5; //   ooo
-const num_segments_6 : i32= 6; //---
-const num_segments_7 : i32= 3; //unique
-const num_segments_8 : i32= 7; //unique
-const num_segments_9 : i32= 6; //---
-const num_segments_0 : i32= 6; //---
+const num_segments_1: i32 = 2; //unique
+const num_segments_2: i32 = 5; //   ooo
+const num_segments_3: i32 = 5; //   ooo
+const num_segments_4: i32 = 4; //unique
+const num_segments_5: i32 = 5; //   ooo
+const num_segments_6: i32 = 6; //---
+const num_segments_7: i32 = 3; //unique
+const num_segments_8: i32 = 7; //unique
+const num_segments_9: i32 = 6; //---
+const num_segments_0: i32 = 6; //---
+
+pub const Display = struct {
+    segment_1: [num_segments_1]u8 = [_]u8{ 0, 0 },
+    segment_2: [num_segments_2]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    segment_3: [num_segments_3]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    segment_4: [num_segments_4]u8 = [_]u8{ 0, 0, 0, 0 },
+    segment_5: [num_segments_5]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    segment_6: [num_segments_6]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    segment_7: [num_segments_7]u8 = [_]u8{ 0, 0, 0 },
+    segment_8: [num_segments_8]u8 = [_]u8{ 0, 0, 0, 0, 0, 0, 0 },
+    segment_9: [num_segments_9]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    segment_0: [num_segments_0]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 }
+};
 
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -82,6 +95,7 @@ pub fn solve() anyerror!void {
         var displays = std.ArrayList(std.ArrayList(u8)).init(allocator);
         var outputs = std.ArrayList(std.ArrayList(u8)).init(allocator);
 
+        //parse displays
         var displays_split = std.mem.split(u8, section_split.next().?, " ");
         while (displays_split.next()) |display| {
             var single_display = std.ArrayList(u8).init(allocator);
@@ -91,6 +105,7 @@ pub fn solve() anyerror!void {
             try displays.append(single_display);
         }
 
+        //parse output
         var output_split = std.mem.split(u8, section_split.next().?, " ");
         while (output_split.next()) |output| {
             var single_output = std.ArrayList(u8).init(allocator);
@@ -99,7 +114,28 @@ pub fn solve() anyerror!void {
             }
             try outputs.append(single_output);
         }
+
+        var ddd = Display{};
+        _ = ddd;
+
+        //pick out the unique digits (1, 4, 7, 8)
+        for (displays.items) |display| {
+            var length: usize = std.mem.len(display.items);
+
+            info("display len {d}", .{length});
+
+            switch (length) {
+                num_segments_1 => { ddd.segment_1 = display.items[0..num_segments_1].*; },
+                num_segments_4 => { ddd.segment_4 = display.items[0..num_segments_4].*; },
+                num_segments_7 => { ddd.segment_7 = display.items[0..num_segments_7].*; },
+                num_segments_8 => { ddd.segment_8 = display.items[0..num_segments_8].*; },
+                else => {}
+
+            }
+            info("ddd {any}", .{ddd});
+        }
     }
+
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_smallest_total_fuel });
