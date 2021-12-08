@@ -202,25 +202,25 @@ pub fn solve() anyerror!void {
         // 2 and 5 contain two segments the other doesn't have
         // 3 shares one with 5 and one with 2
         for (ddd.unknown_5_lens.items) |len5, top_idx| {
-            //loop through abcde's segment letters
-            for (len5.items) |top_seg| {
-                //loop through all the other abcde's that exist
-                for (ddd.unknown_5_lens.items) |bot_len5, bot_idx| {
-                    var matches: i32 = 0;
+            //loop through all the other abcde's that exist
+            for (ddd.unknown_5_lens.items) |bot_len5, bot_idx| {
+                if (top_idx == bot_idx) {
+                    continue;
+                }
+                var num_matches: i32 = 0;
+                //loop through abcde's segment letters
+                for (len5.items) |top_char| {
                     //skip checking own series
-                    if (top_idx == bot_idx) {
-                        continue;
-                    }
 
-                    //count the number of matching abcde's in the bot_seg
-                    for (bot_len5.items) |bot_seg| {
-                        // info("top_seg {u} bot_seg {u}", .{top_seg, bot_seg});
-                        if (bot_seg == top_seg) {
-                            matches += 1;
+                    //count the number of matching abcde's in the bot_char
+                    for (bot_len5.items) |bot_char| {
+                        // info("top_char {u} bot_char {u}", .{top_char, bot_char});
+                        if (bot_char == top_char) {
+                            num_matches += 1;
                         }
                     }
-                    info("top_idx #{d}'s {u} found {d} matches with #{d}", .{ top_idx, top_seg, matches, bot_idx });
                 }
+                info("top_idx #{d}'s found {d} num_matches with #{d}", .{ top_idx, num_matches, bot_idx });
             }
         }
 
