@@ -66,7 +66,7 @@ pub fn solve() anyerror!void {
     defer arena.deinit();
 
     const allocator = &arena.allocator;
-    const day = 7;
+    const day = 8;
 
     var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
@@ -77,7 +77,28 @@ pub fn solve() anyerror!void {
     _ = crabs;
 
     for (all_values.items) |line| {
-        _ = line;
+        var section_split = std.mem.split(u8, line.items, " | ");
+
+        var displays = std.ArrayList(std.ArrayList(u8)).init(allocator);
+        var outputs = std.ArrayList(std.ArrayList(u8)).init(allocator);
+
+        var displays_split = std.mem.split(u8, section_split.next().?, " ");
+        while (displays_split.next()) |display| {
+            var single_display = std.ArrayList(u8).init(allocator);
+            for (display) |d| {
+                try single_display.append(d);
+            }
+            try displays.append(single_display);
+        }
+
+        var output_split = std.mem.split(u8, section_split.next().?, " ");
+        while (output_split.next()) |output| {
+            var single_output = std.ArrayList(u8).init(allocator);
+            for (output) |d| {
+                try single_output.append(d);
+            }
+            try outputs.append(single_output);
+        }
     }
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
