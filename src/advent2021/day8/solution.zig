@@ -402,10 +402,10 @@ pub fn solve() anyerror!void {
                 }
             }
             if (num_matches != 2) {
-                info("len6 {any} is number 6, {d}", .{ bot_len6.items, num_matches });
+                // info("len6 {any} is number 6, {d}", .{ bot_len6.items, num_matches });
 
                 //copy into digit 6, and remove it
-                for (ddd.unknown_6_lens.items[0].items[0..6]) |c, c_idx| {
+                for (ddd.unknown_6_lens.items[bot_idx].items[0..6]) |c, c_idx| {
                     ddd.digit_6[c_idx] = c;
                 }
                 ddd.digit_6_found = true;
@@ -415,16 +415,48 @@ pub fn solve() anyerror!void {
             }
         }
 
-        // info("digit_1_found {b}", .{ddd.digit_1_found});
-        // info("digit_2_found {b}", .{ddd.digit_2_found});
-        // info("digit_3_found {b}", .{ddd.digit_3_found});
-        // info("digit_4_found {b}", .{ddd.digit_4_found});
-        // info("digit_5_found {b}", .{ddd.digit_5_found});
-        // info("digit_6_found {b}", .{ddd.digit_6_found});
-        // info("digit_7_found {b}", .{ddd.digit_7_found});
-        // info("digit_8_found {b}", .{ddd.digit_8_found});
-        // info("digit_9_found {b}", .{ddd.digit_9_found});
-        // info("digit_0_found {b}", .{ddd.digit_0_found});
+        //5 is in 9 but not 0
+        std.debug.assert(ddd.digit_5_found);
+        for (ddd.unknown_6_lens.items) |bot_len6, bot_idx| {
+            var num_matches: i32 = 0;
+            for (ddd.digit_5) |char_5| {
+                for (bot_len6.items) |len6_char| {
+                    if (len6_char == char_5) {
+                        num_matches += 1;
+                    }
+                }
+            }
+            if (num_matches != 5) {
+                // info("len6 {any} is number 6, {d}", .{ bot_len6.items, num_matches });
+
+                //copy into digit 0, and remove it
+                for (ddd.unknown_6_lens.items[bot_idx].items[0..6]) |c, c_idx| {
+                    ddd.digit_0[c_idx] = c;
+                }
+                ddd.digit_0_found = true;
+                _ = ddd.unknown_6_lens.orderedRemove(bot_idx);
+
+                //copy into digit 9, and remove it
+                for (ddd.unknown_6_lens.items[0].items[0..6]) |c, c_idx| {
+                    ddd.digit_9[c_idx] = c;
+                }
+                ddd.digit_9_found = true;
+                _ = ddd.unknown_6_lens.orderedRemove(0);
+
+                break;
+            }
+        }
+
+        info("digit_1_found {b}", .{ddd.digit_1_found});
+        info("digit_2_found {b}", .{ddd.digit_2_found});
+        info("digit_3_found {b}", .{ddd.digit_3_found});
+        info("digit_4_found {b}", .{ddd.digit_4_found});
+        info("digit_5_found {b}", .{ddd.digit_5_found});
+        info("digit_6_found {b}", .{ddd.digit_6_found});
+        info("digit_7_found {b}", .{ddd.digit_7_found});
+        info("digit_8_found {b}", .{ddd.digit_8_found});
+        info("digit_9_found {b}", .{ddd.digit_9_found});
+        info("digit_0_found {b}", .{ddd.digit_0_found});
 
         // info("segment_a -> {u}", .{ddd.segment_a});
         // info("segment_b -> {u}", .{ddd.segment_b});
