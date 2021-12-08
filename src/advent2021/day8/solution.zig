@@ -190,33 +190,34 @@ pub fn solve() anyerror!void {
 
         //pick out the unique digits (1, 4, 7, 8) and put into Display
         for (displays.items) |display, d_idx| {
+            _ = d_idx;
             var length: usize = std.mem.len(display.items);
-            info("eval d_idx {d}", .{d_idx});
+            // info("eval d_idx {d}", .{d_idx});
 
             switch (length) {
                 num_segments_1 => {
                     ddd.digit_1 = display.items[0..num_segments_1].*;
                     ddd.digit_1_found = true;
                     // unique_digits_found += 1;
-                    info("found unique {u}", .{display.items});
+                    // info("found unique {u}", .{display.items});
                 },
                 num_segments_4 => {
                     ddd.digit_4 = display.items[0..num_segments_4].*;
                     ddd.digit_4_found = true;
                     // unique_digits_found += 1;
-                    info("found unique {u}", .{display.items});
+                    // info("found unique {u}", .{display.items});
                 },
                 num_segments_7 => {
                     ddd.digit_7 = display.items[0..num_segments_7].*;
                     ddd.digit_7_found = true;
                     // unique_digits_found += 1;
-                    info("found unique {u}", .{display.items});
+                    // info("found unique {u}", .{display.items});
                 },
                 num_segments_8 => {
                     ddd.digit_8 = display.items[0..num_segments_8].*;
                     ddd.digit_8_found = true;
                     // unique_digits_found += 1;
-                    info("found unique {u}", .{display.items});
+                    // info("found unique {u}", .{display.items});
                 },
 
                 5 => {
@@ -230,34 +231,35 @@ pub fn solve() anyerror!void {
             // info("ddd {any}", .{ddd});
         }
         //pick out the unique digits (1, 4, 7, 8) and put into output
-        for (outputs.items) |output, d_idx| {
+        for (outputs.items) |output, o_idx| {
+            _ = o_idx;
             var length: usize = std.mem.len(output.items);
-            info("eval d_idx {d}", .{d_idx});
+            // info("eval o_idx {d}", .{o_idx});
 
             switch (length) {
                 num_segments_1 => {
                     ooo.digit_1 = output.items[0..num_segments_1].*;
                     ooo.digit_1_found = true;
                     unique_digits_found += 1;
-                    info("found unique {u}", .{output.items});
+                    // info("found unique {u}", .{output.items});
                 },
                 num_segments_4 => {
                     ooo.digit_4 = output.items[0..num_segments_4].*;
                     ooo.digit_4_found = true;
                     unique_digits_found += 1;
-                    info("found unique {u}", .{output.items});
+                    // info("found unique {u}", .{output.items});
                 },
                 num_segments_7 => {
                     ooo.digit_7 = output.items[0..num_segments_7].*;
                     ooo.digit_7_found = true;
                     unique_digits_found += 1;
-                    info("found unique {u}", .{output.items});
+                    // info("found unique {u}", .{output.items});
                 },
                 num_segments_8 => {
                     ooo.digit_8 = output.items[0..num_segments_8].*;
                     ooo.digit_8_found = true;
                     unique_digits_found += 1;
-                    info("found unique {u}", .{output.items});
+                    // info("found unique {u}", .{output.items});
                 },
 
                 5 => {
