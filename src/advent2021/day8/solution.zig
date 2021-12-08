@@ -292,6 +292,7 @@ pub fn solve() anyerror!void {
         std.debug.assert(segment_a != null);
         info("segment_a: {u}", .{segment_a});
 
+
         //numbers 2, 3, and 5 all share 3 segments.
         // 2 and 5 contain two segments the other doesn't have
         // 3 shares one with 5 and one with 2
@@ -319,14 +320,40 @@ pub fn solve() anyerror!void {
                 // info("top_idx #{d}'s found {d} num_matches with #{d}", .{ top_idx, num_matches, bot_idx });
             }
 
-            // // if (std.mem.indexOf(i32, total_num_matches.items, @intCast(i32, 3)) != null) {
-            // const needle =  [1]i32 {3};
-            // if (std.mem.indexOf(i32, total_num_matches.items, needle[0..]) != null) {
-            //     info("{d} is a 2 or 5, because {any}", .{top_idx, total_num_matches.items});
-            // } else {
-            //     info("{d} is a 3, because {any}", .{top_idx, total_num_matches.items});
-            // }
+            // if (std.mem.indexOf(i32, total_num_matches.items, @intCast(i32, 3)) != null) {
+            const needle =  [1]i32 {3};
+            if (std.mem.indexOf(i32, total_num_matches.items, needle[0..]) != null) {
+                info("{d} is a 2 or 5, because {any}", .{top_idx, total_num_matches.items});
+            } else {
+                info("{d} is a 3, because {any}", .{top_idx, total_num_matches.items});
+
+                //copy into digit 3, and remove it
+                for (ddd.unknown_5_lens.items[top_idx].items[0..5]) |c, c_idx| {
+                    ddd.digit_3[c_idx] = c;
+                }
+                ddd.digit_3_found = true;
+                _ = ddd.unknown_5_lens.orderedRemove(top_idx);
+                info("unknowns are now {any}", .{ddd.unknown_5_lens.items});
+            }
         }
+
+        //the segment in 4 that isn't in 3, is segment B
+        std.debug.assert(ddd.digit_4_found and ddd.digit_3_found);
+        var segment_b: ?u8 = null;
+        for (ddd.digit_4) |char_4| {
+            var found_match = false;
+            for (ddd.digit_3) |char_3| {
+                if (char_3 == char_4) {
+                    found_match = true;
+                    break;
+                }
+            }
+            if (!found_match) { segment_b = char_4; }
+        }
+        std.debug.assert(segment_b != null);
+        ddd.segment_b = segment_b.?;
+        info("segment_b: {u}", .{segment_b});
+
 
         // //segment E is what isn't shared by 8 and 9
         // std.debug.assert(ddd.digit_8_found and ddd.digit_9_found);
