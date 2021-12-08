@@ -98,6 +98,43 @@ pub const Display = struct {
     segment_f: u8 = 0,
     segment_g: u8 = 0,
 };
+pub const Output = struct {
+    digit_1: [num_segments_1]u8 = [_]u8{ 0, 0 },
+    digit_1_found: bool = false,
+    digit_2: [num_segments_2]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_2_found: bool = false,
+    digit_3: [num_segments_3]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_3_found: bool = false,
+    digit_4: [num_segments_4]u8 = [_]u8{ 0, 0, 0, 0 },
+    digit_4_found: bool = false,
+    digit_5: [num_segments_5]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_5_found: bool = false,
+    digit_6: [num_segments_6]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_6_found: bool = false,
+    digit_7: [num_segments_7]u8 = [_]u8{ 0, 0, 0 },
+    digit_7_found: bool = false,
+    digit_8: [num_segments_8]u8 = [_]u8{ 0, 0, 0, 0, 0, 0, 0 },
+    digit_8_found: bool = false,
+    digit_9: [num_segments_9]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_9_found: bool = false,
+    digit_0: [num_segments_0]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_0_found: bool = false,
+
+    unknown_5_lens: std.ArrayList(std.ArrayList(u8)),
+    unknown_6_lens: std.ArrayList(std.ArrayList(u8)),
+    // unknown_6_lens : [3][6]u8 = [3][6]u8{
+    //     [6]u8{ 0, 0, 0, 0, 0, 0 },
+    //     [6]u8{ 0, 0, 0, 0, 0, 0 },
+    //     [6]u8{ 0, 0, 0, 0, 0, 0 },},
+
+    segment_a: u8 = 0,
+    segment_b: u8 = 0,
+    segment_c: u8 = 0,
+    segment_d: u8 = 0,
+    segment_e: u8 = 0,
+    segment_f: u8 = 0,
+    segment_g: u8 = 0,
+};
 
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -113,6 +150,8 @@ pub fn solve() anyerror!void {
 
     var crabs = std.ArrayList(i32).init(allocator);
     _ = crabs;
+
+    var unique_digits_found: u32 = 0;
 
     for (all_values.items) |line| {
         var section_split = std.mem.split(u8, line.items, " | ");
@@ -144,28 +183,40 @@ pub fn solve() anyerror!void {
             .unknown_5_lens = std.ArrayList(std.ArrayList(u8)).init(allocator),
             .unknown_6_lens = std.ArrayList(std.ArrayList(u8)).init(allocator),
         };
-        _ = ddd;
+        var ooo = Output{
+            .unknown_5_lens = std.ArrayList(std.ArrayList(u8)).init(allocator),
+            .unknown_6_lens = std.ArrayList(std.ArrayList(u8)).init(allocator),
+        };
 
         //pick out the unique digits (1, 4, 7, 8) and put into Display
-        for (displays.items) |display| {
+        for (displays.items) |display, d_idx| {
             var length: usize = std.mem.len(display.items);
+            info("eval d_idx {d}", .{d_idx});
 
             switch (length) {
                 num_segments_1 => {
                     ddd.digit_1 = display.items[0..num_segments_1].*;
                     ddd.digit_1_found = true;
+                    // unique_digits_found += 1;
+                    info("found unique {u}", .{display.items});
                 },
                 num_segments_4 => {
                     ddd.digit_4 = display.items[0..num_segments_4].*;
                     ddd.digit_4_found = true;
+                    // unique_digits_found += 1;
+                    info("found unique {u}", .{display.items});
                 },
                 num_segments_7 => {
                     ddd.digit_7 = display.items[0..num_segments_7].*;
                     ddd.digit_7_found = true;
+                    // unique_digits_found += 1;
+                    info("found unique {u}", .{display.items});
                 },
                 num_segments_8 => {
                     ddd.digit_8 = display.items[0..num_segments_8].*;
                     ddd.digit_8_found = true;
+                    // unique_digits_found += 1;
+                    info("found unique {u}", .{display.items});
                 },
 
                 5 => {
@@ -177,6 +228,47 @@ pub fn solve() anyerror!void {
                 else => {},
             }
             // info("ddd {any}", .{ddd});
+        }
+        //pick out the unique digits (1, 4, 7, 8) and put into output
+        for (outputs.items) |output, d_idx| {
+            var length: usize = std.mem.len(output.items);
+            info("eval d_idx {d}", .{d_idx});
+
+            switch (length) {
+                num_segments_1 => {
+                    ooo.digit_1 = output.items[0..num_segments_1].*;
+                    ooo.digit_1_found = true;
+                    unique_digits_found += 1;
+                    info("found unique {u}", .{output.items});
+                },
+                num_segments_4 => {
+                    ooo.digit_4 = output.items[0..num_segments_4].*;
+                    ooo.digit_4_found = true;
+                    unique_digits_found += 1;
+                    info("found unique {u}", .{output.items});
+                },
+                num_segments_7 => {
+                    ooo.digit_7 = output.items[0..num_segments_7].*;
+                    ooo.digit_7_found = true;
+                    unique_digits_found += 1;
+                    info("found unique {u}", .{output.items});
+                },
+                num_segments_8 => {
+                    ooo.digit_8 = output.items[0..num_segments_8].*;
+                    ooo.digit_8_found = true;
+                    unique_digits_found += 1;
+                    info("found unique {u}", .{output.items});
+                },
+
+                5 => {
+                    try ooo.unknown_5_lens.append(output);
+                },
+                6 => {
+                    try ooo.unknown_6_lens.append(output);
+                },
+                else => {},
+            }
+            // info("ooo {any}", .{ooo});
         }
 
         //figure out known segments
@@ -202,6 +294,7 @@ pub fn solve() anyerror!void {
         // 2 and 5 contain two segments the other doesn't have
         // 3 shares one with 5 and one with 2
         for (ddd.unknown_5_lens.items) |len5, top_idx| {
+            var total_num_matches = std.ArrayList(i32).init(allocator);
             //loop through all the other abcde's that exist
             for (ddd.unknown_5_lens.items) |bot_len5, bot_idx| {
                 if (top_idx == bot_idx) {
@@ -220,8 +313,17 @@ pub fn solve() anyerror!void {
                         }
                     }
                 }
-                info("top_idx #{d}'s found {d} num_matches with #{d}", .{ top_idx, num_matches, bot_idx });
+                try total_num_matches.append(num_matches);
+                // info("top_idx #{d}'s found {d} num_matches with #{d}", .{ top_idx, num_matches, bot_idx });
             }
+
+            // // if (std.mem.indexOf(i32, total_num_matches.items, @intCast(i32, 3)) != null) {
+            // const needle =  [1]i32 {3};
+            // if (std.mem.indexOf(i32, total_num_matches.items, needle[0..]) != null) {
+            //     info("{d} is a 2 or 5, because {any}", .{top_idx, total_num_matches.items});
+            // } else {
+            //     info("{d} is a 3, because {any}", .{top_idx, total_num_matches.items});
+            // }
         }
 
         // //segment E is what isn't shared by 8 and 9
@@ -257,7 +359,7 @@ pub fn solve() anyerror!void {
 
     }
 
-    // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, unique_digits_found });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_smallest_total_fuel });
 
     std.log.info("done", .{});
