@@ -166,6 +166,7 @@ pub fn solve() anyerror!void {
             for (display) |d| {
                 try single_display.append(d);
             }
+            _ = std.sort.sort(u8, single_display.items, {}, comptime std.sort.asc(u8));
             try displays.append(single_display);
         }
 
@@ -176,6 +177,7 @@ pub fn solve() anyerror!void {
             for (output) |d| {
                 try single_output.append(d);
             }
+            _ = std.sort.sort(u8, single_output.items, {}, comptime std.sort.asc(u8));
             try outputs.append(single_output);
         }
 
@@ -446,6 +448,57 @@ pub fn solve() anyerror!void {
                 break;
             }
         }
+
+        var nums = std.ArrayList(u8).init(allocator);
+        for (outputs.items) |out_chars, out_idx| {
+            _ = out_idx;
+            _ = nums;
+
+            if (std.mem.len(ddd.digit_1) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_1[0..], out_chars.items[0..])) {
+                info("found 1", .{});
+                try nums.append('1');
+            }
+            if (std.mem.len(ddd.digit_2) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_2[0..], out_chars.items[0..])) {
+                info("found 2", .{});
+                try nums.append('2');
+            }
+            if (std.mem.len(ddd.digit_3) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_3[0..], out_chars.items[0..])) {
+                info("found 3", .{});
+                try nums.append('3');
+            }
+            if (std.mem.len(ddd.digit_4) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_4[0..], out_chars.items[0..])) {
+                info("found 4", .{});
+                try nums.append('4');
+            }
+            if (std.mem.len(ddd.digit_5) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_5[0..], out_chars.items[0..])) {
+                info("found 5", .{});
+                try nums.append('5');
+            }
+            if (std.mem.len(ddd.digit_6) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_6[0..], out_chars.items[0..])) {
+                info("found 6", .{});
+                try nums.append('6');
+            }
+            if (std.mem.len(ddd.digit_7) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_7[0..], out_chars.items[0..])) {
+                info("found 7", .{});
+                try nums.append('7');
+            }
+            if (std.mem.len(ddd.digit_8) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_8[0..], out_chars.items[0..])) {
+                info("found 8", .{});
+                try nums.append('8');
+            }
+            if (std.mem.len(ddd.digit_9) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_9[0..], out_chars.items[0..])) {
+                info("found 9", .{});
+                try nums.append('9');
+            }
+            if (std.mem.len(ddd.digit_0) == std.mem.len(out_chars.items) and std.mem.eql(u8, ddd.digit_0[0..], out_chars.items[0..])) {
+                info("found 0", .{});
+                try nums.append('0');
+            }
+
+        }
+        var parsed: i32 = try parse_i32(nums.items);
+        info("parsed {d}", .{parsed});
+
 
         // info("digit_1_found {b}", .{ddd.digit_1_found});
         // info("digit_2_found {b}", .{ddd.digit_2_found});
