@@ -63,15 +63,25 @@ const num_segments_0: i32 = 6; //---
 
 pub const Display = struct {
     digit_1: [num_segments_1]u8 = [_]u8{ 0, 0 },
+    digit_1_found: bool = false,
     digit_2: [num_segments_2]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_2_found: bool = false,
     digit_3: [num_segments_3]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_3_found: bool = false,
     digit_4: [num_segments_4]u8 = [_]u8{ 0, 0, 0, 0 },
+    digit_4_found: bool = false,
     digit_5: [num_segments_5]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_5_found: bool = false,
     digit_6: [num_segments_6]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_6_found: bool = false,
     digit_7: [num_segments_7]u8 = [_]u8{ 0, 0, 0 },
+    digit_7_found: bool = false,
     digit_8: [num_segments_8]u8 = [_]u8{ 0, 0, 0, 0, 0, 0, 0 },
+    digit_8_found: bool = false,
     digit_9: [num_segments_9]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_9_found: bool = false,
     digit_0: [num_segments_0]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_0_found: bool = false,
 
     unknown_5_lens : std.ArrayList(std.ArrayList(u8)),
     unknown_6_lens : std.ArrayList(std.ArrayList(u8)),
@@ -143,15 +153,19 @@ pub fn solve() anyerror!void {
             switch (length) {
                 num_segments_1 => {
                     ddd.digit_1 = display.items[0..num_segments_1].*;
+                    ddd.digit_1_found = true;
                 },
                 num_segments_4 => {
                     ddd.digit_4 = display.items[0..num_segments_4].*;
+                    ddd.digit_4_found = true;
                 },
                 num_segments_7 => {
                     ddd.digit_7 = display.items[0..num_segments_7].*;
+                    ddd.digit_7_found = true;
                 },
                 num_segments_8 => {
                     ddd.digit_8 = display.items[0..num_segments_8].*;
+                    ddd.digit_8_found = true;
                 },
 
                 5 => {
@@ -167,6 +181,7 @@ pub fn solve() anyerror!void {
 
         //figure out known segments
         // aaa is whatever one isn't shared by 7 and 1
+        std.debug.assert(ddd.digit_7_found and ddd.digit_1_found);
         var segment_a: ?u8 = null;
         for (ddd.digit_7) |char_7| {
             var found_match = false;
@@ -183,6 +198,7 @@ pub fn solve() anyerror!void {
         info("segment_a: {u}", .{segment_a});
 
         //segment E is what isn't shared by 8 and 9
+        std.debug.assert(ddd.digit_8_found and ddd.digit_9_found);
         var segment_e: ?u8 = null;
         for (ddd.digit_8) |char_8| {
             var found_match = false;
@@ -197,6 +213,22 @@ pub fn solve() anyerror!void {
         std.debug.assert(segment_e != null);
 
         info("segment_e: {u}", .{segment_e});
+
+        //segment C is what isn't shared by 8 and 6
+        var segment_c: ?u8 = null;
+        for (ddd.digit_8) |char_8| {
+            var found_match = false;
+            for (ddd.digit_6) |char_6| {
+                if (char_6 == char_8) {
+                    found_match = true;
+                    break;
+                }
+            }
+            if (!found_match) { segment_c = char_8; }
+        }
+        std.debug.assert(segment_c != null);
+
+        info("segment_c: {u}", .{segment_c});
     }
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
