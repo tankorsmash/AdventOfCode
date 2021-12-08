@@ -194,41 +194,39 @@ pub fn solve() anyerror!void {
             if (!found_match) { segment_a = char_7; }
         }
         std.debug.assert(segment_a != null);
-
         info("segment_a: {u}", .{segment_a});
 
-        //segment E is what isn't shared by 8 and 9
-        std.debug.assert(ddd.digit_8_found and ddd.digit_9_found);
-        var segment_e: ?u8 = null;
-        for (ddd.digit_8) |char_8| {
-            var found_match = false;
-            for (ddd.digit_9) |char_9| {
-                if (char_9 == char_8) {
-                    found_match = true;
-                    break;
-                }
-            }
-            if (!found_match) { segment_e = char_8; }
-        }
-        std.debug.assert(segment_e != null);
+        // //segment E is what isn't shared by 8 and 9
+        // std.debug.assert(ddd.digit_8_found and ddd.digit_9_found);
+        // var segment_e: ?u8 = null;
+        // for (ddd.digit_8) |char_8| {
+        //     var found_match = false;
+        //     for (ddd.digit_9) |char_9| {
+        //         if (char_9 == char_8) {
+        //             found_match = true;
+        //             break;
+        //         }
+        //     }
+        //     if (!found_match) { segment_e = char_8; }
+        // }
+        // std.debug.assert(segment_e != null);
+        // info("segment_e: {u}", .{segment_e});
 
-        info("segment_e: {u}", .{segment_e});
+        // //segment C is what isn't shared by 8 and 6
+        // var segment_c: ?u8 = null;
+        // for (ddd.digit_8) |char_8| {
+        //     var found_match = false;
+        //     for (ddd.digit_6) |char_6| {
+        //         if (char_6 == char_8) {
+        //             found_match = true;
+        //             break;
+        //         }
+        //     }
+        //     if (!found_match) { segment_c = char_8; }
+        // }
+        // std.debug.assert(segment_c != null);
+        // info("segment_c: {u}", .{segment_c});
 
-        //segment C is what isn't shared by 8 and 6
-        var segment_c: ?u8 = null;
-        for (ddd.digit_8) |char_8| {
-            var found_match = false;
-            for (ddd.digit_6) |char_6| {
-                if (char_6 == char_8) {
-                    found_match = true;
-                    break;
-                }
-            }
-            if (!found_match) { segment_c = char_8; }
-        }
-        std.debug.assert(segment_c != null);
-
-        info("segment_c: {u}", .{segment_c});
     }
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
