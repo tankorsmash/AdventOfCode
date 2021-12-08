@@ -73,6 +73,13 @@ pub const Display = struct {
     digit_9: [num_segments_9]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
     digit_0: [num_segments_0]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
 
+    unknown_5_lens : std.ArrayList(std.ArrayList(u8)),
+    unknown_6_lens : std.ArrayList(std.ArrayList(u8)),
+    // unknown_6_lens : [3][6]u8 = [3][6]u8{
+    //     [6]u8{ 0, 0, 0, 0, 0, 0 },
+    //     [6]u8{ 0, 0, 0, 0, 0, 0 },
+    //     [6]u8{ 0, 0, 0, 0, 0, 0 },},
+
     segment_a: u8 = 0,
     segment_b: u8 = 0,
     segment_c: u8 = 0,
@@ -123,7 +130,10 @@ pub fn solve() anyerror!void {
             try outputs.append(single_output);
         }
 
-        var ddd = Display{};
+        var ddd = Display{
+            .unknown_5_lens= std.ArrayList(std.ArrayList(u8)).init(allocator),
+            .unknown_6_lens= std.ArrayList(std.ArrayList(u8)).init(allocator),
+        };
         _ = ddd;
 
         //pick out the unique digits (1, 4, 7, 8) and put into Display
@@ -142,6 +152,13 @@ pub fn solve() anyerror!void {
                 },
                 num_segments_8 => {
                     ddd.digit_8 = display.items[0..num_segments_8].*;
+                },
+
+                5 => {
+                    try ddd.unknown_5_lens.append(display);
+                },
+                6 => {
+                    try ddd.unknown_6_lens.append(display);
                 },
                 else => {},
             }
