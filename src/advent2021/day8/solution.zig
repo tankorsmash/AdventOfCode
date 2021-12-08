@@ -333,7 +333,7 @@ pub fn solve() anyerror!void {
                 }
                 ddd.digit_3_found = true;
                 _ = ddd.unknown_5_lens.orderedRemove(top_idx);
-                info("unknowns are now {any}", .{ddd.unknown_5_lens.items});
+                // info("unknowns are now {any}", .{ddd.unknown_5_lens.items});
             }
         }
 
@@ -353,6 +353,42 @@ pub fn solve() anyerror!void {
         std.debug.assert(segment_b != null);
         ddd.segment_b = segment_b.?;
         info("segment_b: {u}", .{segment_b});
+
+        //number 2 is the remaining unknown_5_lens that doesn't contain
+        // segment B
+        var len5 = ddd.unknown_5_lens.items[0];
+        const needle =  [1]u8 {ddd.segment_b};
+        var contains_seg_b = std.mem.indexOf(u8, len5.items, needle[0..]);
+        if (contains_seg_b != null) {
+            //copy into digit 5, and remove it
+            for (ddd.unknown_5_lens.items[0].items[0..5]) |c, c_idx| {
+                ddd.digit_5[c_idx] = c;
+            }
+            ddd.digit_5_found = true;
+            _ = ddd.unknown_5_lens.orderedRemove(0);
+
+            //copy into digit 5, and remove it
+            for (ddd.unknown_5_lens.items[0].items[0..5]) |c, c_idx| {
+                ddd.digit_2[c_idx] = c;
+            }
+            ddd.digit_2_found = true;
+            _ = ddd.unknown_5_lens.orderedRemove(0);
+        } else {
+            //copy into digit 5, and remove it
+            for (ddd.unknown_5_lens.items[0].items[0..5]) |c, c_idx| {
+                ddd.digit_2[c_idx] = c;
+            }
+            ddd.digit_2_found = true;
+            _ = ddd.unknown_5_lens.orderedRemove(0);
+
+            //copy into digit 5, and remove it
+            for (ddd.unknown_5_lens.items[0].items[0..5]) |c, c_idx| {
+                ddd.digit_5[c_idx] = c;
+            }
+            ddd.digit_5_found = true;
+            _ = ddd.unknown_5_lens.orderedRemove(0);
+        }
+
 
 
         // //segment E is what isn't shared by 8 and 9
