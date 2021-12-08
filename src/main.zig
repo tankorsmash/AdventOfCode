@@ -14,33 +14,8 @@ const expectEqual = std.testing.expectEqual;
 // const day4_2021 = @import("advent2021/day4/solution.zig");
 // const day5_2021 = @import("advent2021/day5/solution.zig");
 // const day6_2021 = @import("advent2021/day6/solution.zig");
-const day7_2021 = @import("advent2021/day7/solution.zig");
-
-const load_input = @import("./advent2020/../advent2020/shared/load_input.zig");
-
-pub const Bounds = struct { lower: i32, upper: i32 };
-
-pub fn split(bounds: Bounds, take_lower: bool) Bounds {
-    // pub fn split(num: i32, take_lower:bool) i32{
-    _ = bounds;
-    _ = take_lower;
-    var result = Bounds{ .lower = bounds.lower, .upper = bounds.upper };
-
-    const range = (bounds.upper - bounds.lower) + 1;
-    const half_range = @divExact(range, 2);
-    // std.debug.print("range: {d}\n", .{range});
-    // std.debug.print("range/2: {d}\n", .{half_range});
-
-    if (take_lower) {
-        // result.upper /= @intCast(i32, 2);
-        result.upper = result.upper - half_range;
-    } else {
-        // result.lower /= @intCast(i32, 2);
-        result.lower = result.lower + half_range;
-    }
-
-    return result;
-}
+// const day7_2021 = @import("advent2021/day7/solution.zig");
+const day8_2021 = @import("advent2021/day8/solution.zig");
 
 pub fn main() anyerror!void {
     var year : i32 = 2020;
@@ -57,7 +32,8 @@ pub fn main() anyerror!void {
     // std.log.info("{d} Day4 Error?: {}", .{year, day4_2021.solve()});
     // std.log.info("{d} Day5 Error?: {}", .{year, day5_2021.solve()});
     // std.log.info("{d} Day6 Error?: {}", .{year, day6_2021.solve()});
-    std.log.info("{d} Day7 Error?: {}", .{year, day7_2021.solve()});
+    // std.log.info("{d} Day7 Error?: {}", .{year, day7_2021.solve()});
+    std.log.info("{d} Day8 Error?: {}", .{year, day8_2021.solve()});
 
 }
 
@@ -70,32 +46,4 @@ test "basic test" {
     try expect(value > 1);
     try expect(value < 1000);
     // try expect(1 < value < 1000);
-}
-
-
-test "split higher" {
-    const starting_val = Bounds{ .lower = 0, .upper = 127 };
-    try expectEqual(@intCast(i32, 64), split(starting_val, false).lower);
-    try expectEqual(@intCast(i32, 127), split(starting_val, false).upper);
-}
-test "split lower" {
-    const starting_val = Bounds{ .lower = 0, .upper = 127 };
-    try expectEqual((Bounds{ .lower = 0, .upper = 63 }).lower, split(starting_val, true).lower);
-    try expectEqual((Bounds{ .lower = 0, .upper = 63 }).upper, split(starting_val, true).upper);
-}
-
-test "split higher smaller" {
-    const starting_val = Bounds{ .lower = 64, .upper = 127 };
-    try expectEqual(@intCast(i32, 96), split(starting_val, false).lower);
-    try expectEqual(@intCast(i32, 127), split(starting_val, false).upper);
-}
-test "split lower smaller lower" {
-    const starting_val = Bounds{ .lower = 0, .upper = 63 };
-    try expectEqual(@intCast(i32, 0), split(starting_val, true).lower);
-    try expectEqual(@intCast(i32, 31), split(starting_val, true).upper);
-}
-test "split lower smaller upper" {
-    const starting_val = Bounds{ .lower = 0, .upper = 63 };
-    try expectEqual(@intCast(i32, 32), split(starting_val, false).lower);
-    try expectEqual(@intCast(i32, 63), split(starting_val, false).upper);
 }
