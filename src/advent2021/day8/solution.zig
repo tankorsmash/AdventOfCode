@@ -447,16 +447,16 @@ pub fn solve() anyerror!void {
             }
         }
 
-        info("digit_1_found {b}", .{ddd.digit_1_found});
-        info("digit_2_found {b}", .{ddd.digit_2_found});
-        info("digit_3_found {b}", .{ddd.digit_3_found});
-        info("digit_4_found {b}", .{ddd.digit_4_found});
-        info("digit_5_found {b}", .{ddd.digit_5_found});
-        info("digit_6_found {b}", .{ddd.digit_6_found});
-        info("digit_7_found {b}", .{ddd.digit_7_found});
-        info("digit_8_found {b}", .{ddd.digit_8_found});
-        info("digit_9_found {b}", .{ddd.digit_9_found});
-        info("digit_0_found {b}", .{ddd.digit_0_found});
+        // info("digit_1_found {b}", .{ddd.digit_1_found});
+        // info("digit_2_found {b}", .{ddd.digit_2_found});
+        // info("digit_3_found {b}", .{ddd.digit_3_found});
+        // info("digit_4_found {b}", .{ddd.digit_4_found});
+        // info("digit_5_found {b}", .{ddd.digit_5_found});
+        // info("digit_6_found {b}", .{ddd.digit_6_found});
+        // info("digit_7_found {b}", .{ddd.digit_7_found});
+        // info("digit_8_found {b}", .{ddd.digit_8_found});
+        // info("digit_9_found {b}", .{ddd.digit_9_found});
+        // info("digit_0_found {b}", .{ddd.digit_0_found});
 
         // info("segment_a -> {u}", .{ddd.segment_a});
         // info("segment_b -> {u}", .{ddd.segment_b});
