@@ -130,8 +130,6 @@ pub fn solve() anyerror!void {
         for (displays.items) |display| {
             var length: usize = std.mem.len(display.items);
 
-            info("display len {d}", .{length});
-
             switch (length) {
                 num_segments_1 => {
                     ddd.digit_1 = display.items[0..num_segments_1].*;
@@ -147,11 +145,25 @@ pub fn solve() anyerror!void {
                 },
                 else => {},
             }
-            info("ddd {any}", .{ddd});
+            // info("ddd {any}", .{ddd});
         }
 
         //figure out known segments
         // aaa is whatever one isn't shared by 7 and 1
+        var segment_a: ?u8 = null;
+        for (ddd.digit_7) |char_7| {
+            var found_match = false;
+            for (ddd.digit_1) |char_1| {
+                if (char_1 == char_7) {
+                    found_match = true;
+                    break;
+                }
+            }
+            if (!found_match) { segment_a = char_7; }
+        }
+        std.debug.assert(segment_a != null);
+
+        info("segment_a: {u}", .{segment_a});
     }
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
