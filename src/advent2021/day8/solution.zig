@@ -62,16 +62,24 @@ const num_segments_9: i32 = 6; //---
 const num_segments_0: i32 = 6; //---
 
 pub const Display = struct {
-    segment_1: [num_segments_1]u8 = [_]u8{ 0, 0 },
-    segment_2: [num_segments_2]u8 = [_]u8{ 0, 0, 0, 0, 0 },
-    segment_3: [num_segments_3]u8 = [_]u8{ 0, 0, 0, 0, 0 },
-    segment_4: [num_segments_4]u8 = [_]u8{ 0, 0, 0, 0 },
-    segment_5: [num_segments_5]u8 = [_]u8{ 0, 0, 0, 0, 0 },
-    segment_6: [num_segments_6]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
-    segment_7: [num_segments_7]u8 = [_]u8{ 0, 0, 0 },
-    segment_8: [num_segments_8]u8 = [_]u8{ 0, 0, 0, 0, 0, 0, 0 },
-    segment_9: [num_segments_9]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
-    segment_0: [num_segments_0]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 }
+    digit_1: [num_segments_1]u8 = [_]u8{ 0, 0 },
+    digit_2: [num_segments_2]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_3: [num_segments_3]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_4: [num_segments_4]u8 = [_]u8{ 0, 0, 0, 0 },
+    digit_5: [num_segments_5]u8 = [_]u8{ 0, 0, 0, 0, 0 },
+    digit_6: [num_segments_6]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_7: [num_segments_7]u8 = [_]u8{ 0, 0, 0 },
+    digit_8: [num_segments_8]u8 = [_]u8{ 0, 0, 0, 0, 0, 0, 0 },
+    digit_9: [num_segments_9]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+    digit_0: [num_segments_0]u8 = [_]u8{ 0, 0, 0, 0, 0, 0 },
+
+    segment_a: u8 = 0,
+    segment_b: u8 = 0,
+    segment_c: u8 = 0,
+    segment_d: u8 = 0,
+    segment_e: u8 = 0,
+    segment_f: u8 = 0,
+    segment_g: u8 = 0,
 };
 
 pub fn solve() anyerror!void {
@@ -118,24 +126,33 @@ pub fn solve() anyerror!void {
         var ddd = Display{};
         _ = ddd;
 
-        //pick out the unique digits (1, 4, 7, 8)
+        //pick out the unique digits (1, 4, 7, 8) and put into Display
         for (displays.items) |display| {
             var length: usize = std.mem.len(display.items);
 
             info("display len {d}", .{length});
 
             switch (length) {
-                num_segments_1 => { ddd.segment_1 = display.items[0..num_segments_1].*; },
-                num_segments_4 => { ddd.segment_4 = display.items[0..num_segments_4].*; },
-                num_segments_7 => { ddd.segment_7 = display.items[0..num_segments_7].*; },
-                num_segments_8 => { ddd.segment_8 = display.items[0..num_segments_8].*; },
-                else => {}
-
+                num_segments_1 => {
+                    ddd.digit_1 = display.items[0..num_segments_1].*;
+                },
+                num_segments_4 => {
+                    ddd.digit_4 = display.items[0..num_segments_4].*;
+                },
+                num_segments_7 => {
+                    ddd.digit_7 = display.items[0..num_segments_7].*;
+                },
+                num_segments_8 => {
+                    ddd.digit_8 = display.items[0..num_segments_8].*;
+                },
+                else => {},
             }
             info("ddd {any}", .{ddd});
         }
-    }
 
+        //figure out known segments
+        // aaa is whatever one isn't shared by 7 and 1
+    }
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, part2_smallest_total_fuel });
