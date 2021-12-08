@@ -181,6 +181,22 @@ pub fn solve() anyerror!void {
         std.debug.assert(segment_a != null);
 
         info("segment_a: {u}", .{segment_a});
+
+        //segment E is what isn't shared by 8 and 9
+        var segment_e: ?u8 = null;
+        for (ddd.digit_8) |char_8| {
+            var found_match = false;
+            for (ddd.digit_9) |char_9| {
+                if (char_9 == char_8) {
+                    found_match = true;
+                    break;
+                }
+            }
+            if (!found_match) { segment_e = char_8; }
+        }
+        std.debug.assert(segment_e != null);
+
+        info("segment_e: {u}", .{segment_e});
     }
 
     // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, part1_smallest_total_fuel });
