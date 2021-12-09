@@ -69,7 +69,7 @@ pub fn is_lower_than_neighbors(map: std.ArrayList(u8), x: usize, y: usize, cur_v
         var ox: i32 = @intCast(i32, x) + offset[0];
         var oy: i32 = @intCast(i32, y) + offset[1];
         var offset_idx: i32 = lookup(ox, oy);
-        if (ox < cols and oy < rows and offset_idx <= std.mem.len(map.items) and offset_idx >= 0) {
+        if (ox >= 0 and ox < cols and oy >= 0 and oy < rows and offset_idx <= std.mem.len(map.items) and offset_idx >= 0) {
             var offset_val = map.items[@intCast(usize, offset_idx)];
 
             if (cur_val >= offset_val) {
@@ -113,7 +113,7 @@ pub fn solve() anyerror!void {
         }
     }
 
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560, not 578
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, running_total });
 
     std.log.info("done", .{});
