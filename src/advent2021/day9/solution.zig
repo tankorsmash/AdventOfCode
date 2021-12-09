@@ -39,8 +39,11 @@ pub fn parse_i32(bytes: []const u8) std.fmt.ParseIntError!i32 {
     return value;
 }
 
-const cols: i32 = 10;
-const rows: i32 = 5;
+const cols: i32 = 100;
+const rows: i32 = 100;
+
+// const cols: i32 = 10;
+// const rows: i32 = 5;
 
 pub fn rev_lookup(coord: i32) [2]i32 {
     var x: i32 = @mod(coord, cols);
@@ -179,7 +182,7 @@ pub fn solve() anyerror!void {
             total_risk_level += height + 1;
 
             var basin_size = try calc_basin_size(allocator, height_map, @intCast(usize, xy[0]), @intCast(usize, xy[1]), height);
-            info("found basin_size {d}", .{basin_size});
+            // info("found basin_size {d}", .{basin_size});
             try basin_sizes.append(basin_size);
         }
     }
@@ -187,13 +190,14 @@ pub fn solve() anyerror!void {
     info("found {d} basin_sizes", .{std.mem.len(basin_sizes.items)});
 
     _ = std.sort.sort(i32, basin_sizes.items, {}, comptime std.sort.desc(i32));
+    info("found basin_sizes: {any}", .{basin_sizes.items});
 
     std.debug.assert(std.mem.len(basin_sizes.items) >= 3);
 
     var top3_basin_product = basin_sizes.items[0] * basin_sizes.items[1] * basin_sizes.items[2];
 
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560, not 578, not 74679, it was 585
-    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, top3_basin_product });
+    std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, top3_basin_product }); //not 751872 , too low
 
     std.log.info("done", .{});
 }
