@@ -40,7 +40,7 @@ pub fn parse_i32(bytes: []const u8) std.fmt.ParseIntError!i32 {
 }
 
 const cols: i32 = 10;
-const rows: i32 = 10;
+const rows: i32 = 5;
 
 pub fn rev_lookup(coord: i32) [2]i32 {
     var x: i32 = @mod(coord, cols);
@@ -94,13 +94,10 @@ pub fn is_lower_than_neighbors(map: std.ArrayList(u8), x: usize, y: usize, cur_v
 }
 
 pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), init_x: usize, init_y: usize, initial_lowest_point: u8) !i32 {
-    var basin_size: i32 = 0;
+    var basin_size: i32 = 1;
 
     var points_to_check = std.ArrayList([2]i32).init(allocator);
-    try points_to_check.append(([2]i32{
-        @intCast(i32, init_x),
-        @intCast(i32, init_y)
-    }));
+    try points_to_check.append(([2]i32{ @intCast(i32, init_x), @intCast(i32, init_y) }));
 
     var next_points_to_check = std.ArrayList([2]i32).init(allocator);
 
@@ -110,21 +107,30 @@ pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), in
         for (points_to_check.items) |xy| {
             const x = xy[0];
             const y = xy[1];
-            for (offsets_perpendicular) |offset| {
+            for (offsets_all) |offset| {
                 var ox: i32 = @intCast(i32, x) + offset[0];
                 var oy: i32 = @intCast(i32, y) + offset[1];
                 var offset_idx: i32 = lookup(ox, oy);
                 //basic validation
                 if (ox >= 0 and ox < cols and oy >= 0 and oy < rows and offset_idx <= std.mem.len(map.items) and offset_idx >= 0) {
+                    // info("offset_idx {d}, x {d}, y {d}", .{offset_idx, ox, oy});
                     var offset_val = map.items[@intCast(usize, offset_idx)];
 
-                    if (cur_lowest_point == offset_val + 1) {
+                    if (cur_lowest_point + 1 == offset_val) {
                         basin_size += 1;
-                        try next_points_to_check.append([2]i32{ ox, oy });
+
+                        var already_added = false;
+                        for (next_points_to_check.items) |pt| {
+                            if (pt[0] == ox and pt[1] == oy)  {
+                                already_added = true;
+                            }
+                        }
+                        if (!already_added) {
+                            try next_points_to_check.append([2]i32{ ox, oy });
+                        }
                     }
                 }
             }
-
         }
 
         points_to_check = std.ArrayList([2]i32).init(allocator);
@@ -132,6 +138,8 @@ pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), in
             try points_to_check.append(new_xy);
         }
         next_points_to_check = std.ArrayList([2]i32).init(allocator);
+
+        cur_lowest_point += 1;
     }
 
     return basin_size;
@@ -172,7 +180,6 @@ pub fn solve() anyerror!void {
             var basin_size = try calc_basin_size(allocator, height_map, @intCast(usize, xy[0]), @intCast(usize, xy[1]), height);
             info("found basin_size {d}", .{basin_size});
             try basin_sizes.append(basin_size);
-
         }
     }
 
@@ -182,7 +189,7 @@ pub fn solve() anyerror!void {
 
     std.debug.assert(std.mem.len(basin_sizes.items) >= 3);
 
-    var top3_basin_product = basin_sizes.items[0] *basin_sizes.items[1] *basin_sizes.items[2];
+    var top3_basin_product = basin_sizes.items[0] * basin_sizes.items[1] * basin_sizes.items[2];
 
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560, not 578, not 74679, it was 585
     std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, top3_basin_product });
