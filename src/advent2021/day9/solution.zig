@@ -53,15 +53,15 @@ pub fn lookup(x: i32, y: i32) i32 {
 }
 
 const offsets = [_][2]i32{
-    [2]i32{ -1, -1 },
+    // [2]i32{ -1, -1 },
     [2]i32{ -1, 0 },
-    [2]i32{ -1, 1 },
+    // [2]i32{ -1, 1 },
     [2]i32{ 0, -1 },
     // [2]i32{0, 0},
     [2]i32{ 0, 1 },
-    [2]i32{ 1, -1 },
+    // [2]i32{ 1, -1 },
     [2]i32{ 1, 0 },
-    [2]i32{ 1, 1 },
+    // [2]i32{ 1, 1 },
 };
 
 pub fn is_lower_than_neighbors(map: std.ArrayList(u8), x: usize, y: usize, cur_val: u8) bool {
@@ -75,6 +75,8 @@ pub fn is_lower_than_neighbors(map: std.ArrayList(u8), x: usize, y: usize, cur_v
             if (cur_val >= offset_val) {
                 return false;
             }
+        } else {
+            info("invalid offset: {d} -- x: {d}, y: {d}", .{offset_idx, ox, oy});
         }
     }
 
@@ -113,7 +115,7 @@ pub fn solve() anyerror!void {
         }
     }
 
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560, not 578
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560, not 578, not 74679, 585?
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, running_total });
 
     std.log.info("done", .{});
