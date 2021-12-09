@@ -42,25 +42,12 @@ pub fn parse_i32(bytes: []const u8) std.fmt.ParseIntError!i32 {
 const cols: i32 = 100;
 
 pub fn rev_lookup(coord: i32) [2]i32 {
-    // const rows: i32 = 990 + 1;
-    // const rows: i32 = 9 + 1;
-    // const cols: i32 = 9 + 1;
-    _ = cols;
-
-    // x
-
-    // coord = (cols * y) + x;
     var x: i32 = @mod(coord, cols);
     var y: i32 = @divFloor((coord - x), cols);
 
     return [2]i32{ x, y };
 }
 pub fn lookup(x: i32, y: i32) i32 {
-    // const rows: i32 = 990 + 1;
-    // const rows: i32 = 9 + 1;
-    // const cols: i32 = 9 + 1;
-    _ = cols;
-
     return cols * y + x;
 }
 
@@ -81,7 +68,7 @@ pub fn is_lower_than_neighbors(map: std.ArrayList(u8), x: usize, y: usize, cur_v
         var ox:i32 = @intCast(i32, x) + offset[0];
         var oy:i32 = @intCast(i32, y) + offset[1];
         var offset_idx:i32 = lookup(ox, oy);
-        if (offset_idx <= std.mem.len(map.items) and offset_idx >= 0) {
+        if (ox < cols and offset_idx <= std.mem.len(map.items) and offset_idx >= 0) {
             var offset_val = map.items[@intCast(usize, offset_idx)];
 
             if (cur_val >= offset_val) {
