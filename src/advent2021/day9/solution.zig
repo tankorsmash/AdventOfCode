@@ -120,10 +120,9 @@ pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), in
                     var offset_val = map.items[@intCast(usize, offset_idx)];
 
                     if (cur_lowest_point + 1 == offset_val) {
-
                         var already_added = false;
                         for (next_points_to_check.items) |pt| {
-                            if (pt[0] == ox and pt[1] == oy)  {
+                            if (pt[0] == ox and pt[1] == oy) {
                                 already_added = true;
                             }
                         }
@@ -143,7 +142,9 @@ pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), in
         next_points_to_check = std.ArrayList([2]i32).init(allocator);
 
         cur_lowest_point += 1;
-        if (cur_lowest_point == 8) { break; }
+        if (cur_lowest_point == 8) {
+            break;
+        }
     }
 
     return basin_size;
