@@ -98,7 +98,7 @@ pub fn solve() anyerror!void {
     defer arena.deinit();
 
     const allocator = &arena.allocator;
-    const day = 8;
+    const day = 9;
 
     var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
@@ -110,7 +110,7 @@ pub fn solve() anyerror!void {
     for (all_values.items) |line| {
         _ = line;
         for (line.items) |digit| {
-            try height_map.append(digit);
+            try height_map.append(@intCast(u8, try parse_u32(([_]u8{digit})[0..])));
         }
     }
 
@@ -121,11 +121,12 @@ pub fn solve() anyerror!void {
         _ = height;
         var xy = rev_lookup(@intCast(i32, height_idx));
         if (is_lower_than_neighbors(height_map, @intCast(usize, xy[0]), @intCast(usize, xy[1]), height)) {
+            info("lower {d} idx {d}, {any}", .{height, height_idx, xy});
             total_risk_level += height + 1;
         }
     }
 
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, running_total });
 
     std.log.info("done", .{});
