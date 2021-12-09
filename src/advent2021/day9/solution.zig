@@ -126,7 +126,7 @@ pub fn solve() anyerror!void {
         }
     }
 
-    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, running_total });
 
     std.log.info("done", .{});
