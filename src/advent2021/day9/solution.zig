@@ -66,9 +66,9 @@ const offsets = [_][2]i32{
 
 pub fn is_lower_than_neighbors(map: std.ArrayList(u8), x: usize, y: usize, cur_val: u8) bool {
     for (offsets) |offset| {
-        var ox:i32 = @intCast(i32, x) + offset[0];
-        var oy:i32 = @intCast(i32, y) + offset[1];
-        var offset_idx:i32 = lookup(ox, oy);
+        var ox: i32 = @intCast(i32, x) + offset[0];
+        var oy: i32 = @intCast(i32, y) + offset[1];
+        var offset_idx: i32 = lookup(ox, oy);
         if (ox < cols and oy < rows and offset_idx <= std.mem.len(map.items) and offset_idx >= 0) {
             var offset_val = map.items[@intCast(usize, offset_idx)];
 
@@ -108,7 +108,7 @@ pub fn solve() anyerror!void {
         _ = height;
         var xy = rev_lookup(@intCast(i32, height_idx));
         if (is_lower_than_neighbors(height_map, @intCast(usize, xy[0]), @intCast(usize, xy[1]), height)) {
-            info("lower {d} idx {d}, {any}", .{height, height_idx, xy});
+            info("lower {d} idx {d}, {any}", .{ height, height_idx, xy });
             total_risk_level += height + 1;
         }
     }
