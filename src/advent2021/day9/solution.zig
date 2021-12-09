@@ -117,7 +117,6 @@ pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), in
                     var offset_val = map.items[@intCast(usize, offset_idx)];
 
                     if (cur_lowest_point + 1 == offset_val) {
-                        basin_size += 1;
 
                         var already_added = false;
                         for (next_points_to_check.items) |pt| {
@@ -126,6 +125,7 @@ pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), in
                             }
                         }
                         if (!already_added) {
+                            basin_size += 1;
                             try next_points_to_check.append([2]i32{ ox, oy });
                         }
                     }
@@ -140,6 +140,7 @@ pub fn calc_basin_size(allocator: *std.mem.Allocator, map: std.ArrayList(u8), in
         next_points_to_check = std.ArrayList([2]i32).init(allocator);
 
         cur_lowest_point += 1;
+        if (cur_lowest_point == 8) { break; }
     }
 
     return basin_size;
