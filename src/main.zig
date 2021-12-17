@@ -16,7 +16,8 @@ const expectEqual = std.testing.expectEqual;
 // const day6_2021 = @import("advent2021/day6/solution.zig");
 // const day7_2021 = @import("advent2021/day7/solution.zig");
 // const day8_2021 = @import("advent2021/day8/solution.zig");
-const day9_2021 = @import("advent2021/day9/solution.zig");
+// const day9_2021 = @import("advent2021/day9/solution.zig");
+const day10_2021 = @import("advent2021/day10/solution.zig");
 
 pub fn main() anyerror!void {
     var year : i32 = 2020;
@@ -35,7 +36,8 @@ pub fn main() anyerror!void {
     // std.log.info("{d} Day6 Error?: {}", .{year, day6_2021.solve()});
     // std.log.info("{d} Day7 Error?: {}", .{year, day7_2021.solve()});
     // std.log.info("{d} Day8 Error?: {}", .{year, day8_2021.solve()});
-    std.log.info("{d} Day9 Error?: {}", .{year, day9_2021.solve()});
+    // std.log.info("{d} Day9 Error?: {}", .{year, day9_2021.solve()});
+    std.log.info("{d} Day10 Error?: {}", .{year, day10_2021.solve()});
 
 }
 
