@@ -42,6 +42,49 @@ pub fn parse_i32(bytes: []const u8) std.fmt.ParseIntError!i32 {
     return value;
 }
 
+pub const openers = "[({<";
+pub const closers = "])}>";
+
+pub fn to_str(char: u8) [1]u8 {
+    return [1]u8{char};
+}
+
+pub fn to_slice(char: u8) []u8 {
+    return to_str(char)[0..];
+}
+
+pub fn matching_char(char: u8) u8 {
+    if (char == '[') { return ']'; }
+    if (char == '(') { return ')'; }
+    if (char == '{') { return '}'; }
+    if (char == '<') { return '>'; }
+
+    if (char == ']') { return '['; }
+    if (char == ')') { return '('; }
+    if (char == '}') { return '{'; }
+    if (char == '>') { return '<'; }
+
+    return ' ';
+}
+
+pub fn parse_line(allocator:*std.mem.Allocator, line:[]u8) !void {
+    var chunk_symbols = std.StringHashMap(u32).init(allocator);
+    for ("[](){}<>") | char | {
+        try chunk_symbols.put(([1]u8{char})[0..], 0);
+    }
+    _ = chunk_symbols;
+
+    for (line) |char| {
+        if (std.mem.indexOf(u8, closers, to_str(char)[0..]) != null) {
+            var opener_char = matching_char(char);
+            var opener_count = chunk_symbols.get(to_slice(opener_char));
+            if (opener_count == null or opener_count.? == 0) {
+
+            }
+        }
+    }
+}
+
 pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -54,8 +97,9 @@ pub fn solve() anyerror!void {
         return err;
     };
 
+
     for (all_values.items) |line| {
-        _ = line;
+        try parse_line(allocator, line.items);
     }
 
 
