@@ -64,25 +64,47 @@ pub fn matching_char(char: u8) u8 {
     if (char == '}') { return '{'; }
     if (char == '>') { return '<'; }
 
+    std.debug.assert(false);
     return ' ';
 }
 
-pub fn parse_line(allocator:*std.mem.Allocator, line:[]u8) !void {
-    var chunk_symbols = std.StringHashMap(u32).init(allocator);
+pub fn parse_line_for_part_1(allocator:*std.mem.Allocator, line:[]u8) !i32 {
+    var chunk_symbols = std.AutoHashMap(u8, u32).init(allocator);
     for ("[](){}<>") | char | {
-        try chunk_symbols.put(([1]u8{char})[0..], 0);
+        try chunk_symbols.put(char, 0);
     }
     _ = chunk_symbols;
 
     for (line) |char| {
-        if (std.mem.indexOf(u8, closers, to_str(char)[0..]) != null) {
-            var opener_char = matching_char(char);
-            var opener_count = chunk_symbols.get(to_slice(opener_char));
-            if (opener_count == null or opener_count.? == 0) {
+        var char_count = chunk_symbols.get(char).?;
+        var is_closer_char: bool = std.mem.indexOfScalar(u8, closers, char) != null;
 
+        if (is_closer_char) {
+            var opener_char = matching_char(char);
+            var opener_count = chunk_symbols.get(opener_char);
+
+            if (opener_count == null or opener_count.? == 0) {
+                //handle invalid closers
+                if (char == ')') { return 3; }
+                else if (char == ']') { return 57; }
+                else if (char == '}') { return 1197; }
+                else if (char == '>') { return 25137; }
+
+                else { info("WTF", .{}); }
+            } else {
+                try chunk_symbols.put(opener_char, opener_count.? - 1);
             }
+
         }
+        try chunk_symbols.put(char, char_count + 1);
     }
+
+    var chunk_splitter = chunk_symbols.iterator();
+    while (chunk_splitter.next()) |item| {
+        info("{c}: {d}", .{item.key_ptr.*, item.value_ptr.*});
+    }
+
+    return 0;
 }
 
 pub fn solve() anyerror!void {
@@ -98,12 +120,16 @@ pub fn solve() anyerror!void {
     };
 
 
+    var total_score_p1 : i32 = 0;
     for (all_values.items) |line| {
-        try parse_line(allocator, line.items);
+        var score_p1 = try parse_line_for_part_1(allocator, line.items);
+        info("score_p1 {d}", .{score_p1});
+        total_score_p1 += score_p1;
+        
     }
 
 
-    // std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_risk_level }); //not 34128, not 574, not 560, not 578, not 74679, it was 585
+    std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, total_score_p1 });
     // std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, top3_basin_product }); //not 751872 , too low
 
     std.log.info("done", .{});
