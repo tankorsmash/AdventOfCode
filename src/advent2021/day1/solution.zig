@@ -26,55 +26,55 @@ pub fn solve() anyerror!void {
     const allocator = &arena.allocator;
     const day = 1;
 
-    var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
-        std.log.err("error loading input for Day {d}! {any}", .{ day, err });
-        return;
-    };
-
-    var prev_val = try parse_int(all_values.items[0].items);
-    var times_incremented : i32 = 0;
-
-    var rolling_vals: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
-    try rolling_vals.append(-1);
-    try rolling_vals.append(-1);
-    try rolling_vals.append(-1);
-
-    var rolling_incremented : i32 = 0;
-    var prev_sum : i32= 0;
-
-    for (all_values.items) |line, idx| {
-        var val = try parse_int(line.items);
-
-        if (val > prev_val) {
-            times_incremented += 1;
-        }
-        prev_val = val;
-
-
-        //what is a queue even mean
-        _ = rolling_vals.items[0];
-        var el1= rolling_vals.items[1];
-        var el2= rolling_vals.items[2];
-
-        rolling_vals = std.ArrayList(i32).init(allocator);
-        try rolling_vals.append(el1);
-        try rolling_vals.append(el2);
-        try rolling_vals.append(val);
-
-
-        if (idx >= 3) {
-            var cur_sum: i32 = 0;
-            for (rolling_vals.items) |v| {
-                cur_sum += v;
-            }
-
-            if (cur_sum > prev_sum) {
-                rolling_incremented += 1;
-            }
-            prev_sum = cur_sum;
-        }
-
-    }
+    // var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
+    //     std.log.err("error loading input for Day {d}! {any}", .{ day, err });
+    //     return;
+    // };
+    //
+    // var prev_val = try parse_int(all_values.items[0].items);
+    // var times_incremented : i32 = 0;
+    //
+    // var rolling_vals: std.ArrayList(i32) = std.ArrayList(i32).init(allocator);
+    // try rolling_vals.append(-1);
+    // try rolling_vals.append(-1);
+    // try rolling_vals.append(-1);
+    //
+    // var rolling_incremented : i32 = 0;
+    // var prev_sum : i32= 0;
+    //
+    // for (all_values.items) |line, idx| {
+    //     var val = try parse_int(line.items);
+    //
+    //     if (val > prev_val) {
+    //         times_incremented += 1;
+    //     }
+    //     prev_val = val;
+    //
+    //
+    //     //what is a queue even mean
+    //     _ = rolling_vals.items[0];
+    //     var el1= rolling_vals.items[1];
+    //     var el2= rolling_vals.items[2];
+    //
+    //     rolling_vals = std.ArrayList(i32).init(allocator);
+    //     try rolling_vals.append(el1);
+    //     try rolling_vals.append(el2);
+    //     try rolling_vals.append(val);
+    //
+    //
+    //     if (idx >= 3) {
+    //         var cur_sum: i32 = 0;
+    //         for (rolling_vals.items) |v| {
+    //             cur_sum += v;
+    //         }
+    //
+    //         if (cur_sum > prev_sum) {
+    //             rolling_incremented += 1;
+    //         }
+    //         prev_sum = cur_sum;
+    //     }
+    //
+    // }
 
     std.log.info("Advent 2021 Day {d} Part 1:: {d}", .{ day, times_incremented });
     std.log.info("Advent 2021 Day {d} Part 2:: {d}", .{ day, rolling_incremented });
