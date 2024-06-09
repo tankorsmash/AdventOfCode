@@ -2,6 +2,7 @@ const std = @import("std");
 const File = std.fs.File;
 const fmt = std.fmt;
 const info = std.log.info;
+const mem = std.mem;
 
 const testing = std.testing;
 const expect = testing.expect;
@@ -69,12 +70,10 @@ pub fn matching_char(char: u8) u8 {
 }
 
 pub fn parse_line_for_part_1(allocator:*std.mem.Allocator, line:[]u8) !i32 {
-    var chunk_symbols = std.AutoHashMap(u8, u32).init(allocator);
+    var chunk_symbols = std.AutoHashMap(u8, u32).init(allocator.*);
     for ("[](){}<>") | char | {
         try chunk_symbols.put(char, 0);
     }
-    _ = chunk_symbols;
-
     for (line) |char| {
         var char_count = chunk_symbols.get(char).?;
         var is_closer_char: bool = std.mem.indexOfScalar(u8, closers, char) != null;
@@ -111,10 +110,10 @@ pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
-    const allocator = &arena.allocator;
+    var allocator : mem.Allocator = arena.allocator();
     const day = 10;
 
-    var all_values = load_input.load_input_line_bytes_2021(allocator, day) catch |err| {
+    var all_values = load_input.load_input_line_bytes_2021(&allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
         return err;
     };
@@ -122,7 +121,7 @@ pub fn solve() anyerror!void {
 
     var total_score_p1 : i32 = 0;
     for (all_values.items) |line| {
-        var score_p1 = try parse_line_for_part_1(allocator, line.items);
+        var score_p1 = try parse_line_for_part_1(&allocator, line.items);
         info("score_p1 {d}", .{score_p1});
         total_score_p1 += score_p1;
         

@@ -37,7 +37,7 @@ pub fn main() anyerror!void {
     // std.log.info("{d} Day7 Error?: {}", .{year, day7_2021.solve()});
     // std.log.info("{d} Day8 Error?: {}", .{year, day8_2021.solve()});
     // std.log.info("{d} Day9 Error?: {}", .{year, day9_2021.solve()});
-    std.log.info("{d} Day10 Error?: {}", .{year, day10_2021.solve()});
+    std.log.info("{d} Day10 Error?: {!}", .{year, day10_2021.solve()});
 
 }
 
