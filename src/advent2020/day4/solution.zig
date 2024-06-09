@@ -12,7 +12,7 @@ pub fn expectFalse(result: bool) !void {
 
 
 pub fn valid_len(bytes: []const u8, req_size: u32) bool {
-    return std.mem.len(bytes) == req_size;
+    return bytes.len == req_size;
 }
 
 pub fn parse_int(bytes: []const u8) std.fmt.ParseIntError!i32 {
@@ -63,7 +63,6 @@ pub fn process_eyr(bytes: []const u8) bool {
 }
 
 pub fn process_hgt(bytes: []const u8) bool {
-    _ = bytes;
 
     const cm_idx = std.mem.indexOf(u8, bytes, "cm");
     if (cm_idx != null) {
@@ -92,14 +91,13 @@ pub fn process_hgt(bytes: []const u8) bool {
 }
 
 pub fn process_hcl(bytes: []const u8) bool {
-    _ = bytes;
     const hcl_idx = std.mem.indexOfPos(u8, bytes, 0, "#");
     if (hcl_idx == null) {
         return false;
     }
 
     //exactly 6 bytes
-    if (std.mem.len(bytes[1..]) != 6) {
+    if (bytes[1..].len != 6) {
         return false;
     }
 
@@ -111,14 +109,12 @@ pub fn process_hcl(bytes: []const u8) bool {
         if (!(is_char or is_num)) {
             return false;
         }
-        _ = char;
     }
     return true;
 }
 pub fn process_ecl(bytes: []const u8) bool {
-    _ = bytes;
 
-    if (std.mem.len(bytes) != 3) {
+    if (bytes.len != 3) {
         return false;
     }
 
@@ -133,9 +129,7 @@ pub fn process_ecl(bytes: []const u8) bool {
     return false;
 }
 pub fn process_pid(bytes: []const u8) bool {
-    _ = bytes;
-    const len = std.mem.len(bytes);
-    if (len != 9) {
+    if (bytes.len != 9) {
         // std.log.info("length is wrong: {d}", .{len});
         return false;
     }
@@ -149,7 +143,7 @@ pub fn process_cid(bytes: []const u8) bool {
 }
 
 pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
-    var valid_fields = std.StringHashMap(bool).init(allocator);
+    var valid_fields = std.StringHashMap(bool).init(allocator.*);
     try valid_fields.put("byr", false); // (Birth Year)
     try valid_fields.put("iyr", false); // (Issue Year)
     try valid_fields.put("eyr", false); // (Expiration Year)
@@ -163,7 +157,7 @@ pub fn init_valid_map(allocator: *std.mem.Allocator) !std.StringHashMap(bool) {
 }
 
 pub fn init_value_map(allocator: *std.mem.Allocator) !std.StringHashMap(?[]const u8) {
-    var valid_fields = std.StringHashMap(?[]const u8).init(allocator);
+    var valid_fields = std.StringHashMap(?[]const u8).init(allocator.*);
     try valid_fields.put("byr", null); // (Birth Year)
     try valid_fields.put("iyr", null); // (Issue Year)
     try valid_fields.put("eyr", null); // (Expiration Year)
@@ -176,24 +170,20 @@ pub fn init_value_map(allocator: *std.mem.Allocator) !std.StringHashMap(?[]const
     return valid_fields;
 }
 
-var validator_map: std.StringHashMap(fn ([]const u8) bool) = undefined;
+var validator_map: std.StringHashMap(*const fn ([]const u8) bool) = undefined;
 
-pub fn get_validator(key: []const u8) ?(fn ([]const u8) bool) {
+pub fn get_validator(key: []const u8) ?(*const fn ([]const u8) bool) {
     return validator_map.get(key);
 }
 
 pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(std.ArrayList(u8))) !bool {
-    _ = entries;
     var num_fields_found: i32 = 0; //for part1,otherwise unused though
     var valid_fields = try init_valid_map(allocator);
     var value_map = try init_value_map(allocator);
-    _ = value_map;
-    _ = valid_fields;
 
     for (entries.items) |entry| {
         // std.log.info("processing the entry {s}", .{entry.items});
         var split_entries = std.mem.split(u8, entry.items, ":");
-        _ = split_entries;
 
         var key = split_entries.next().?;
         // try field_keys_found.append(key);
@@ -242,14 +232,12 @@ pub fn is_passport_valid(allocator: *std.mem.Allocator, entries: std.ArrayList(s
 }
 
 pub fn collect_entries(allocator: *std.mem.Allocator, raw_lines: std.ArrayList(std.ArrayList(u8))) !std.ArrayList(std.ArrayList(u8)) {
-    var all_entries = std.ArrayList(std.ArrayList(u8)).init(allocator);
-    _ = all_entries;
+    var all_entries = std.ArrayList(std.ArrayList(u8)).init(allocator.*);
     //process old passport
     for (raw_lines.items) |pp_bytes| {
         var entries = std.mem.split(u8, pp_bytes.items, " ");
-        _ = entries;
         while (entries.next()) |entry| {
-            var sub_arr = std.ArrayList(u8).init(allocator);
+            var sub_arr = std.ArrayList(u8).init(allocator.*);
             for (entry) |el| {
                 try sub_arr.append(el);
             }
@@ -275,24 +263,24 @@ pub fn solve() anyerror!void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
-    const allocator = &arena.allocator;
+    var allocator = arena.allocator();
     const day = 4;
 
     // var all_values :std.ArrayList(std.ArrayList(u8)) = undefined;
-    var all_values = load_input.load_input_line_bytes(allocator, day) catch |err| {
+    var all_values = load_input.load_input_line_bytes(&allocator, day) catch |err| {
         std.log.err("error loading input for Day {d}! {any}", .{ day, err });
         return;
     };
 
-    validator_map = std.StringHashMap(fn ([]const u8) bool).init(allocator);
-    try validator_map.put("byr", process_byr); // (Birth Year)
-    try validator_map.put("iyr", process_iyr); // (Issue Year)
-    try validator_map.put("eyr", process_eyr); // (Expiration Year)
-    try validator_map.put("hgt", process_hgt); // (Height)
-    try validator_map.put("hcl", process_hcl); // (Hair Color)
-    try validator_map.put("ecl", process_ecl); // (Eye Color)
-    try validator_map.put("pid", process_pid); // (Passport ID)
-    try validator_map.put("cid", process_cid); // (Country ID)
+    validator_map = std.StringHashMap(*const fn ([]const u8) bool).init(allocator);
+    try validator_map.put("byr",  process_byr); // (Birth Year)
+    try validator_map.put("iyr",  process_iyr); // (Issue Year)
+    try validator_map.put("eyr",  process_eyr); // (Expiration Year)
+    try validator_map.put("hgt",  process_hgt); // (Height)
+    try validator_map.put("hcl",  process_hcl); // (Hair Color)
+    try validator_map.put("ecl",  process_ecl); // (Eye Color)
+    try validator_map.put("pid",  process_pid); // (Passport ID)
+    try validator_map.put("cid",  process_cid); // (Country ID)
 
     // const num_req_fields = std.mem.len(req_fields);
     // std.log.info("There are {d} required fields", .{num_req_fields});
@@ -301,18 +289,16 @@ pub fn solve() anyerror!void {
     var part2_valid_passports_found: i32 = 0;
 
     var raw_lines: std.ArrayList(std.ArrayList(u8)) = std.ArrayList(std.ArrayList(u8)).init(allocator);
-    _ = raw_lines;
 
-    for (all_values.items) |arr_bytes, line_idx| {
-        _ = line_idx;
+    for (all_values.items) |arr_bytes| {
         var bytes: []u8 = arr_bytes.items;
-        _ = bytes;
 
-        var len_bytes = std.mem.len(bytes);
+        // var len_bytes = std.mem.len(arr_bytes.items);
+        var len_bytes = bytes.len;
         var empty_line: bool = len_bytes == 0;
         if (empty_line) {
-            var all_entries = try collect_entries(allocator, raw_lines);
-            var passport_is_valid = try is_passport_valid(allocator, all_entries);
+            var all_entries = try collect_entries(&allocator, raw_lines);
+            var passport_is_valid = try is_passport_valid(&allocator, all_entries);
 
             // std.log.info("Passport valid? {b}", .{passport_is_valid});
 
@@ -329,8 +315,8 @@ pub fn solve() anyerror!void {
         try raw_lines.append(arr_bytes);
     }
 
-    var all_entries = try collect_entries(allocator, raw_lines);
-    var passport_is_valid = try is_passport_valid(allocator, all_entries);
+    var all_entries = try collect_entries(&allocator, raw_lines);
+    var passport_is_valid = try is_passport_valid(&allocator, all_entries);
 
     // std.log.info("is pp valid? {b}", .{passport_is_valid});
 
